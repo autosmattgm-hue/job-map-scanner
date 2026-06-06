@@ -78,6 +78,8 @@ const businessTypes = [
 ];
 
 let activeLeadReport = null;
+const defaultCountries = ["The Gambia"];
+const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -188,17 +190,31 @@ function populateCountries() {
   const select = byId("country");
   if (!select) return;
   select.innerHTML = countries.map((country) => (
-    `<option value="${escapeHtml(country)}"${country === "The Gambia" ? " selected" : ""}>${escapeHtml(country)}</option>`
+    `<option value="${escapeHtml(country)}"${defaultCountries.includes(country) ? " selected" : ""}>${escapeHtml(country)}</option>`
   )).join("");
 }
 
 function populateBusinessTypes() {
   const select = byId("businessTypes");
   if (!select) return;
-  const selectedDefaults = new Set(["restaurants", "hotels", "boutiques", "car_dealers"]);
+  const selectedDefaults = new Set(defaultBusinessTypes);
   select.innerHTML = businessTypes.map(([value, label]) => (
     `<option value="${escapeHtml(value)}"${selectedDefaults.has(value) ? " selected" : ""}>${escapeHtml(label)}</option>`
   )).join("");
+}
+
+function selectedValues(select, fallback = []) {
+  if (!select) return [...fallback];
+  const values = Array.from(select.selectedOptions || []).map((option) => option.value).filter(Boolean);
+  if (values.length) return values;
+  if (select.value) return [select.value];
+  return [...fallback];
+}
+
+function normalizedInteger(value, fallback, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.max(min, Math.min(max, Math.round(number)));
 }
 
 function getSearchPayload(form) {
@@ -208,20 +224,19 @@ function getSearchPayload(form) {
     if (!payload[key] && value) payload[key] = value;
   }
   const countrySelect = byId("country");
-  const selectedCountries = countrySelect
-    ? Array.from(countrySelect.selectedOptions).map((option) => option.value).filter(Boolean)
-    : [];
+  const selectedCountries = selectedValues(countrySelect, defaultCountries);
   payload.countries = selectedCountries;
   payload.country = selectedCountries[0] || payload.country || "";
 
   const businessTypeSelect = byId("businessTypes");
-  const selectedBusinessTypes = businessTypeSelect
-    ? Array.from(businessTypeSelect.selectedOptions).map((option) => option.value).filter(Boolean)
-    : [];
+  const selectedBusinessTypes = selectedValues(businessTypeSelect, defaultBusinessTypes);
   payload.businessTypes = selectedBusinessTypes;
   if (!payload.industry && selectedBusinessTypes.length) {
     payload.industry = selectedBusinessTypes.join(", ");
   }
+  payload.mapLink = String(payload.mapLink || "").trim();
+  payload.radiusMeters = normalizedInteger(payload.radiusMeters, 15000, 500, 50000);
+  payload.limit = normalizedInteger(payload.limit, 20, 1, 50);
   return payload;
 }
 

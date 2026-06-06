@@ -111,7 +111,14 @@ export async function apiFetch(path, options = {}) {
       clearToken();
       if (requiresAuth) redirectToLogin();
     }
-    const message = typeof payload === "object" && payload?.error ? payload.error.message : "Request failed";
+    const fieldErrors = payload?.error?.details?.fieldErrors || payload?.error?.details;
+    const fieldMessage = fieldErrors && typeof fieldErrors === "object"
+      ? Object.entries(fieldErrors)
+        .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+        .join(" | ")
+      : "";
+    const baseMessage = typeof payload === "object" && payload?.error ? payload.error.message : "Request failed";
+    const message = fieldMessage ? `${baseMessage} (${fieldMessage})` : baseMessage;
     throw new Error(message);
   }
 

@@ -37,6 +37,15 @@
           "value": "camera=(), microphone=(), geolocation=(self)"
         }
       ]
+    },
+    {
+      "source": "/(.*)\\.(js|css|html)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     }
   ]
 }

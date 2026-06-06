@@ -388,9 +388,12 @@ async function serveStatic(req, res, url) {
     const body = await fs.readFile(filePath);
     const type = mimeTypes.get(path.extname(filePath).toLowerCase()) || "application/octet-stream";
     if (req.method === "HEAD") return send(res, 200, "", { "Content-Type": type });
+    const cacheControl = type.includes("text/html") || type.includes("javascript") || type.includes("css")
+      ? "no-store"
+      : "public, max-age=3600";
     return send(res, 200, body, {
       "Content-Type": type,
-      "Cache-Control": type.includes("text/html") ? "no-store" : "public, max-age=3600"
+      "Cache-Control": cacheControl
     });
   } catch {
     const fallback = await fs.readFile(path.join(projectRoot, "index.html"));

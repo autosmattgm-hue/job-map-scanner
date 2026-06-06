@@ -27,11 +27,12 @@ function stringField(input, field, options = {}) {
 
   if (options.required && !value) errors.push("Required");
   if (options.min && value.length < options.min) errors.push(`Must be at least ${options.min} characters`);
-  if (options.max && value.length > options.max) errors.push(`Must be at most ${options.max} characters`);
+  if (options.max && value.length > options.max && !options.truncate) errors.push(`Must be at most ${options.max} characters`);
   if (options.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errors.push("Must be a valid email");
 
   if (errors.length) throw validationError({ [field]: errors });
-  return value || options.default || "";
+  const normalized = options.max && options.truncate ? value.slice(0, options.max) : value;
+  return normalized || options.default || "";
 }
 
 function stringListField(input, field, options = {}) {
@@ -57,11 +58,20 @@ function stringListField(input, field, options = {}) {
 
 function numberField(input, field, options = {}) {
   const value = input[field] === undefined || input[field] === "" ? options.default : Number(input[field]);
-  if (!Number.isFinite(value)) throw validationError({ [field]: ["Must be a number"] });
-  if (options.int && !Number.isInteger(value)) throw validationError({ [field]: ["Must be an integer"] });
-  if (options.min !== undefined && value < options.min) throw validationError({ [field]: [`Must be at least ${options.min}`] });
-  if (options.max !== undefined && value > options.max) throw validationError({ [field]: [`Must be at most ${options.max}`] });
-  return value;
+  if (!Number.isFinite(value)) {
+    if (options.defaultOnInvalid) return options.default;
+    throw validationError({ [field]: ["Must be a number"] });
+  }
+  const normalized = options.int ? Math.round(value) : value;
+  if (options.min !== undefined && normalized < options.min) {
+    if (options.clamp) return options.min;
+    throw validationError({ [field]: [`Must be at least ${options.min}`] });
+  }
+  if (options.max !== undefined && normalized > options.max) {
+    if (options.clamp) return options.max;
+    throw validationError({ [field]: [`Must be at most ${options.max}`] });
+  }
+  return normalized;
 }
 
 function optionalCoordinate(input, field, min, max) {
@@ -92,32 +102,29 @@ export const authSchemas = {
 };
 
 export const leadSearchSchema = schema((input) => {
-  const mapLink = stringField(input, "mapLink", { max: 1200 });
+  const mapLink = stringField(input, "mapLink", { max: 4000, truncate: true });
   const latitude = optionalCoordinate(input, "latitude", -90, 90);
   const longitude = optionalCoordinate(input, "longitude", -180, 180);
   const hasMapLocation = Boolean(mapLink || (latitude !== null && longitude !== null));
   const country = stringField(input, "country", { max: 80 });
   const countries = stringListField(input, "countries", { max: 80, maxItems: 12 });
   const selectedCountries = [...new Set([country, ...countries].filter(Boolean))];
-
-  if (!hasMapLocation && selectedCountries.length === 0) {
-    throw validationError({ country: ["Required unless a Google Maps link or coordinates are provided"] });
-  }
+  const normalizedCountries = selectedCountries.length || hasMapLocation ? selectedCountries : ["The Gambia"];
 
   return {
-    country: selectedCountries[0] || "",
-    countries: selectedCountries,
-    state: stringField(input, "state", { max: 80 }),
-    city: stringField(input, "city", { max: 80 }),
-    zip: stringField(input, "zip", { max: 24 }),
-    industry: stringField(input, "industry", { max: 120 }),
-    keyword: stringField(input, "keyword", { max: 160 }),
+    country: normalizedCountries[0] || "",
+    countries: normalizedCountries,
+    state: stringField(input, "state", { max: 80, truncate: true }),
+    city: stringField(input, "city", { max: 80, truncate: true }),
+    zip: stringField(input, "zip", { max: 24, truncate: true }),
+    industry: stringField(input, "industry", { max: 240, truncate: true }),
+    keyword: stringField(input, "keyword", { max: 240, truncate: true }),
     businessTypes: stringListField(input, "businessTypes", { max: 80, maxItems: 20 }),
     mapLink,
     latitude,
     longitude,
-    radiusMeters: numberField(input, "radiusMeters", { int: true, min: 500, max: 50000, default: 15000 }),
-    limit: numberField(input, "limit", { int: true, min: 1, max: 50, default: 20 })
+    radiusMeters: numberField(input, "radiusMeters", { int: true, min: 500, max: 50000, default: 15000, defaultOnInvalid: true, clamp: true }),
+    limit: numberField(input, "limit", { int: true, min: 1, max: 50, default: 20, defaultOnInvalid: true, clamp: true })
   };
 });
 

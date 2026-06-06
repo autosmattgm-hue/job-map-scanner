@@ -604,6 +604,34 @@ function parseGoogleMapsLink(mapLink) {
   return null;
 }
 
+async function resolveGoogleMapsLink(mapLink) {
+  if (!mapLink) return "";
+  try {
+    const url = new URL(mapLink);
+    const host = url.hostname.toLowerCase();
+    const canResolve = ["maps.app.goo.gl", "goo.gl"].includes(host);
+    if (!canResolve || !["http:", "https:"].includes(url.protocol)) return mapLink;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    try {
+      const response = await fetch(url, {
+        method: "HEAD",
+        redirect: "follow",
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "MATLeadsAIProX/1.0"
+        }
+      });
+      return response.url || mapLink;
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch {
+    return mapLink;
+  }
+}
+
 function zoomToRadiusMeters(zoom) {
   if (!Number.isFinite(zoom)) return null;
   if (zoom >= 15) return 2500;
@@ -1095,9 +1123,13 @@ function mapPlace(place) {
 
 export class GooglePlacesService {
   async search(search) {
-    const location = searchLocation(search);
-    const selectedCountries = selectedCountryNames(search);
-    const unsupportedCountries = unsupportedCountryNames(search);
+    const normalizedSearch = {
+      ...search,
+      mapLink: await resolveGoogleMapsLink(search.mapLink)
+    };
+    const location = searchLocation(normalizedSearch);
+    const selectedCountries = selectedCountryNames(normalizedSearch);
+    const unsupportedCountries = unsupportedCountryNames(normalizedSearch);
 
     if (unsupportedCountries.length) {
       throw new AppError(`Unsupported countries: ${unsupportedCountries.join(", ")}.`, 422, "UNSUPPORTED_COUNTRY");
@@ -1108,12 +1140,12 @@ export class GooglePlacesService {
     }
 
     if (!env.google.placesApiKey) {
-      return this.searchOpenStreetMap(search, location);
+      return this.searchOpenStreetMap(normalizedSearch, location);
     }
 
     const requestBody = {
-      textQuery: buildTextQuery(search),
-      maxResultCount: search.limit,
+      textQuery: buildTextQuery(normalizedSearch),
+      maxResultCount: normalizedSearch.limit,
       languageCode: "en"
     };
 
