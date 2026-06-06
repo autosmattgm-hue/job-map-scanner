@@ -632,6 +632,11 @@ async function resolveGoogleMapsLink(mapLink) {
   }
 }
 
+function isLegacyDefaultMapLink(mapLink) {
+  const normalized = decodeURIComponent(String(mapLink || "")).trim();
+  return normalized.includes("@13.4053888,-16.6887424,11z");
+}
+
 function zoomToRadiusMeters(zoom) {
   if (!Number.isFinite(zoom)) return null;
   if (zoom >= 15) return 2500;
@@ -1123,9 +1128,11 @@ function mapPlace(place) {
 
 export class GooglePlacesService {
   async search(search) {
+    const initialSelectedCountries = selectedCountryNames(search);
+    const shouldIgnoreLegacyDefaultMap = initialSelectedCountries.length > 0 && isLegacyDefaultMapLink(search.mapLink);
     const normalizedSearch = {
       ...search,
-      mapLink: await resolveGoogleMapsLink(search.mapLink)
+      mapLink: shouldIgnoreLegacyDefaultMap ? "" : await resolveGoogleMapsLink(search.mapLink)
     };
     const location = searchLocation(normalizedSearch);
     const selectedCountries = selectedCountryNames(normalizedSearch);

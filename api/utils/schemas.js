@@ -109,7 +109,7 @@ export const leadSearchSchema = schema((input) => {
   const country = stringField(input, "country", { max: 80 });
   const countries = stringListField(input, "countries", { max: 80, maxItems: 12 });
   const selectedCountries = [...new Set([country, ...countries].filter(Boolean))];
-  const normalizedCountries = selectedCountries.length || hasMapLocation ? selectedCountries : ["The Gambia"];
+  const normalizedCountries = selectedCountries.length || hasMapLocation ? selectedCountries : ["Germany"];
 
   return {
     country: normalizedCountries[0] || "",

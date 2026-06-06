@@ -78,8 +78,13 @@ const businessTypes = [
 ];
 
 let activeLeadReport = null;
-const defaultCountries = ["The Gambia"];
+const defaultCountries = ["Germany"];
 const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
+const defaultMapLinks = [
+  "https://www.google.com/maps/@13.4053888,-16.6887424,11z?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D",
+  "https://www.google.com/maps/@13.4053888,-16.6887424,11z?entry=ttu",
+  "https://www.google.com/maps/place/Germany/@51.0635856,5.1719926,6z/data=!3m1!4b1!4m6!3m5!1s0x479a721ec2b1be6b:0x75e85d6b8e91e55b!8m2!3d51.165691!4d10.451526!16zL20vMDM0NWg?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
+];
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -209,6 +214,15 @@ function selectedValues(select, fallback = []) {
   if (values.length) return values;
   if (select.value) return [select.value];
   return [...fallback];
+}
+
+function normalizedMapLink(value) {
+  return decodeURIComponent(String(value || "").trim()).replace(/&amp;/g, "&");
+}
+
+function isDefaultMapLink(value) {
+  const normalized = normalizedMapLink(value);
+  return defaultMapLinks.some((link) => normalized === normalizedMapLink(link));
 }
 
 function normalizedInteger(value, fallback, min, max) {
@@ -387,9 +401,16 @@ function initLeadSearch() {
 function initMapLinkPreview() {
   const field = byId("mapLink");
   const radius = byId("radiusMeters");
+  const country = byId("country");
   if (!field) return;
   field.addEventListener("input", updateMapPreview);
   radius?.addEventListener("change", updateMapPreview);
+  country?.addEventListener("change", () => {
+    if (isDefaultMapLink(field.value)) {
+      field.value = "";
+    }
+    updateMapPreview();
+  });
   updateMapPreview();
 }
 
