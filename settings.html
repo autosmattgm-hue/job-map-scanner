@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings | MAT LEADS AI PRO X</title>
+    <meta name="description" content="Configure integrations, security, notifications, and lead scoring settings.">
+    <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body data-page="settings">
+    <div class="app-layout" data-app-shell>
+      <main class="workspace">
+        <section class="workspace-header">
+          <div><h1>Settings</h1><p>API integrations, scoring weights, alerts, and workspace controls.</p></div>
+          <button class="btn btn-primary" type="button">Save Settings</button>
+        </section>
+        <section class="report-grid">
+          <article class="panel">
+            <h2>Integrations</h2>
+            <div class="audit-list" id="integrationStatus">
+              <div class="skeleton">Checking live providers...</div>
+            </div>
+            <p class="notice" id="missingConfig" style="margin-top:12px;">Real mode is active.</p>
+          </article>
+          <article class="panel">
+            <h2>Security</h2>
+            <div class="audit-list">
+              <div class="audit-item"><span>Rate limiting</span><span class="status-pill success">On</span></div>
+              <div class="audit-item"><span>CSP headers</span><span class="status-pill success">On</span></div>
+              <div class="audit-item"><span>CSRF guard</span><span class="status-pill success">On</span></div>
+              <div class="audit-item"><span>Audit logs</span><span class="status-pill success">On</span></div>
+            </div>
+          </article>
+          <article class="panel">
+            <h2>Scoring</h2>
+            <div class="audit-list">
+              <div class="audit-item"><span>No website</span><span class="tag">50</span></div>
+              <div class="audit-item"><span>Poor mobile</span><span class="tag">20</span></div>
+              <div class="audit-item"><span>Weak SEO</span><span class="tag">20</span></div>
+              <div class="audit-item"><span>No SSL</span><span class="tag">10</span></div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="/js/settings.js"></script>
+  </body>
+</html>
