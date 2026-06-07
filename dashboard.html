@@ -116,10 +116,11 @@
             </div>
             <div class="form-actions">
               <button class="btn btn-primary" type="submit">Search Leads</button>
+              <button class="btn btn-secondary" type="button" data-refresh-leads>Refresh Leads</button>
               <button class="btn btn-secondary" type="button" data-save-visible-leads>Save All</button>
               <button class="btn btn-secondary" type="button" data-export-visible-leads>Export CSV</button>
             </div>
-            <p id="searchNote" class="notice" style="grid-column:1 / -1;">Selected countries and business types control the scan. Country and continent links search profitable business hubs using real OpenStreetMap Overpass data, no Google API key required.</p>
+            <p id="searchNote" class="notice" style="grid-column:1 / -1;">Selected countries and business types control the scan. Use Next below the cards to browse returned leads, then Refresh Leads for a new real batch.</p>
           </form>
         </section>
 
@@ -131,9 +132,45 @@
                 <p>Cards include contact data, website status, and opportunity scoring.</p>
               </div>
             </div>
+            <section class="panel lead-command-center" aria-label="Lead command center">
+              <div class="section-header compact-header">
+                <div>
+                  <h2>Lead Command Center</h2>
+                  <p>Filter, select, save, export, and clean the current real search results.</p>
+                </div>
+                <div class="toolbar">
+                  <button class="btn btn-secondary" type="button" data-select-visible-leads>Select Visible</button>
+                  <button class="btn btn-secondary" type="button" data-save-selected-leads>Save Selected</button>
+                  <button class="btn btn-secondary" type="button" data-export-selected-leads>Export Selected</button>
+                </div>
+              </div>
+              <div class="form-grid compact lead-command-grid">
+                <div class="field">
+                  <label for="visibleLeadSearch">Search Results</label>
+                  <input id="visibleLeadSearch" placeholder="Business, city, phone, email">
+                </div>
+                <div class="field">
+                  <label for="visibleLeadFilter">Result Filter</label>
+                  <select id="visibleLeadFilter">
+                    <option value="all">All results</option>
+                    <option value="contact_ready">Contact ready</option>
+                    <option value="has_whatsapp">Has WhatsApp action</option>
+                    <option value="needs_website">Needs website</option>
+                    <option value="has_social">Has social links</option>
+                    <option value="high_score">High score</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="visibleLeadMinScore">Minimum Score</label>
+                  <input id="visibleLeadMinScore" type="number" min="0" max="100" value="0">
+                </div>
+              </div>
+              <div id="leadCommandSummary" class="notice">Run a search to activate lead filters and bulk actions.</div>
+            </section>
             <div class="leads-grid" id="leadResults" aria-live="polite">
               <div class="empty-state">Start a search to discover leads.</div>
             </div>
+            <div id="leadPagination" aria-label="Lead result pages"></div>
           </div>
           <aside class="panel">
             <h2>Map Location</h2>
@@ -154,7 +191,37 @@
             </div>
             <div class="toolbar">
               <button class="btn btn-secondary" type="button" data-export-local-leads>Export Saved</button>
+              <button class="btn btn-secondary" type="button" data-dedupe-local-leads>Clean Duplicates</button>
               <button class="btn btn-ghost" type="button" data-clear-local-leads>Clear Saved</button>
+            </div>
+          </div>
+          <div class="form-grid compact local-vault-filters">
+            <div class="field">
+              <label for="localLeadSearch">Search Saved</label>
+              <input id="localLeadSearch" placeholder="Name, city, phone, note">
+            </div>
+            <div class="field">
+              <label for="localLeadStageFilter">Pipeline Stage</label>
+              <select id="localLeadStageFilter">
+                <option value="all">All stages</option>
+                <option>New</option>
+                <option>Contacted</option>
+                <option>Follow Up</option>
+                <option>Proposal Sent</option>
+                <option>Meeting Scheduled</option>
+                <option>Negotiation</option>
+                <option>Won</option>
+                <option>Lost</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="localLeadDueFilter">Follow-Up</label>
+              <select id="localLeadDueFilter">
+                <option value="all">All saved leads</option>
+                <option value="due">Due now</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="none">No reminder</option>
+              </select>
             </div>
           </div>
           <div id="localSavedLeadSummary" class="notice">No local saved leads yet.</div>

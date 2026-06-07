@@ -221,6 +221,11 @@ const countryCallingCodesByName = {
 
 let activeLeadReport = null;
 let currentLeadResults = [];
+let currentFilteredLeadResults = [];
+let currentVisibleLeadResults = [];
+let currentResultPage = 1;
+let hasLeadSearchRun = false;
+const resultPageSize = 12;
 const localSavedLeadsKey = "mat_local_saved_leads_v1";
 const defaultCountries = ["Germany"];
 const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
@@ -229,6 +234,7 @@ const defaultMapLinks = [
   "https://www.google.com/maps/@13.4053888,-16.6887424,11z?entry=ttu",
   "https://www.google.com/maps/place/Germany/@51.0635856,5.1719926,6z/data=!3m1!4b1!4m6!3m5!1s0x479a721ec2b1be6b:0x75e85d6b8e91e55b!8m2!3d51.165691!4d10.451526!16zL20vMDM0NWg?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
 ];
+const pipelineStages = ["New", "Contacted", "Follow Up", "Proposal Sent", "Meeting Scheduled", "Negotiation", "Won", "Lost"];
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -388,6 +394,150 @@ function renderWhatsappContact(lead = {}) {
   `;
 }
 
+function primaryPhone(lead = {}) {
+  return firstPhoneFromLead(lead) || lead.phone || "";
+}
+
+function telLinkFromLead(lead = {}) {
+  const phone = primaryPhone(lead);
+  const normalized = String(phone || "").replace(/[^\d+]/g, "");
+  return normalized.length >= 7 ? `tel:${normalized}` : "";
+}
+
+function mailtoLinkFromLead(lead = {}, body = "") {
+  const email = lead.email || lead.details?.contact?.email || lead.audit?.publicProfile?.emails?.[0] || "";
+  if (!email) return "";
+  const subject = `${lead.name || "Business"} website and lead growth`;
+  return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function leadText(lead = {}) {
+  return [
+    lead.name,
+    lead.businessType,
+    lead.category,
+    lead.address,
+    lead.phone,
+    lead.email,
+    lead.websiteUrl,
+    lead.marketName,
+    lead.countryName,
+    lead.country,
+    lead.localStage,
+    lead.localCampaign,
+    lead.localNotes
+  ].filter(Boolean).join(" ").toLowerCase();
+}
+
+function hasSocialLinks(lead = {}) {
+  return Boolean(firstSocialUrl(lead) || Object.keys(socialLinksFromLead(lead)).length);
+}
+
+function leadStrengthScore(lead = {}) {
+  const baseScore = Number(lead.opportunityScore ?? lead.audit?.score ?? 0);
+  let score = Math.round(baseScore * 0.55);
+  if (primaryPhone(lead)) score += 14;
+  if (whatsappActionFromLead(lead)) score += 12;
+  if (lead.email || lead.details?.contact?.email) score += 10;
+  if (lead.websiteUrl) score += 6;
+  if (!lead.websiteUrl) score += 10;
+  if (hasSocialLinks(lead)) score += 10;
+  if (lead.openingHours || lead.details?.operations?.openingHours) score += 4;
+  if (lead.address || lead.details?.location?.address) score += 4;
+  return Math.max(0, Math.min(100, score));
+}
+
+function leadStrengthTags(lead = {}) {
+  return [
+    primaryPhone(lead) && "Phone",
+    whatsappActionFromLead(lead) && "WhatsApp",
+    (lead.email || lead.details?.contact?.email) && "Email",
+    hasSocialLinks(lead) && "Social",
+    !lead.websiteUrl && "Needs website",
+    lead.websiteUrl && "Website"
+  ].filter(Boolean);
+}
+
+function renderLeadStrength(lead = {}) {
+  const strength = leadStrengthScore(lead);
+  const tags = leadStrengthTags(lead).slice(0, 5);
+  return `
+    <div class="lead-strength" aria-label="Lead quality score">
+      <div>
+        <strong>${strength}/100</strong>
+        <span>Lead quality</span>
+      </div>
+      <div class="strength-track"><span style="width:${strength}%;"></span></div>
+      <div class="lead-meta">${tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+    </div>
+  `;
+}
+
+function outreachMessage(lead = {}, channel = "email") {
+  const businessName = lead.name || "your business";
+  const businessType = lead.businessType || lead.category || "local business";
+  const websiteGap = lead.websiteUrl
+    ? "I noticed there may be room to improve the website conversion, local SEO, and contact flow."
+    : "I noticed your business appears online without a strong website connected to the lead flow.";
+  const contactLine = whatsappActionFromLead(lead)
+    ? "I can also help connect your website, Google Maps visitors, and WhatsApp inquiries into one simple flow."
+    : "I can help turn more Google Maps visitors into calls, messages, and booked inquiries.";
+
+  if (channel === "whatsapp") {
+    return `Hi ${businessName}, I found your ${businessType} listing and wanted to share a quick idea. ${websiteGap} ${contactLine} Would you like me to send a short example?`;
+  }
+
+  return [
+    `Hi ${businessName},`,
+    "",
+    `I found your ${businessType} listing and noticed an opportunity to improve how customers contact you from Google Maps and your online presence.`,
+    "",
+    websiteGap,
+    contactLine,
+    "",
+    "I can prepare a short website/lead audit showing what can be improved and where more calls, WhatsApp messages, and bookings can come from.",
+    "",
+    "Would you like me to send the quick audit?"
+  ].join("\n");
+}
+
+function renderContactActions(lead = {}) {
+  const whatsapp = renderWhatsappButton(lead, "btn btn-secondary");
+  const phoneLink = telLinkFromLead(lead);
+  const emailMessage = outreachMessage(lead, "email");
+  const mailto = mailtoLinkFromLead(lead, emailMessage);
+  const id = escapeHtml(localLeadId(lead));
+  return `
+    <div class="contact-action-grid">
+      ${phoneLink ? `<a class="btn btn-secondary" href="${escapeHtml(phoneLink)}">Call</a>` : ""}
+      ${whatsapp}
+      ${mailto ? `<a class="btn btn-secondary" href="${escapeHtml(mailto)}">Email</a>` : ""}
+      <button class="btn btn-secondary" type="button" data-copy-outreach="${id}" data-outreach-channel="whatsapp">Copy WhatsApp Pitch</button>
+      <button class="btn btn-secondary" type="button" data-copy-outreach="${id}" data-outreach-channel="email">Copy Email Pitch</button>
+    </div>
+  `;
+}
+
+function leadDedupeKey(lead = {}) {
+  const name = normalizedName(lead.name);
+  const address = normalizedName(lead.address || lead.details?.location?.address);
+  const phone = String(primaryPhone(lead)).replace(/\D/g, "");
+  const website = safeExternalUrl(lead.websiteUrl).replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
+  return [name, phone || website || address].filter(Boolean).join("|") || localLeadId(lead);
+}
+
+function dedupeLeads(leads = []) {
+  const byKey = new Map();
+  for (const lead of leads) {
+    const key = leadDedupeKey(lead);
+    const existing = byKey.get(key);
+    if (!existing || leadStrengthScore(lead) >= leadStrengthScore(existing)) {
+      byKey.set(key, { ...(existing || {}), ...lead });
+    }
+  }
+  return [...byKey.values()];
+}
+
 function localLeadId(lead = {}) {
   return String(lead.id || `${lead.name || "lead"}-${lead.address || ""}-${lead.googleMapsLink || ""}`)
     .toLowerCase()
@@ -463,6 +613,79 @@ function findLocalSavedLead(id) {
     localLeadId(lead) === requested ||
     localLeadId(lead) === requestedNormalized
   )) || null;
+}
+
+function updateLocalSavedLead(id, patch = {}) {
+  const targetId = String(id || "");
+  const leads = readLocalSavedLeads();
+  const updated = leads.map((lead) => {
+    const isMatch = localLeadId(lead) === targetId || String(lead.id || "") === targetId;
+    return isMatch
+      ? { ...lead, ...patch, localUpdatedAt: new Date().toISOString() }
+      : lead;
+  });
+  return writeLocalSavedLeads(updated);
+}
+
+function localReminderStatus(lead = {}) {
+  if (!lead.localReminderAt) return "none";
+  const reminder = new Date(lead.localReminderAt);
+  if (Number.isNaN(reminder.getTime())) return "none";
+  const now = new Date();
+  return reminder <= now ? "due" : "upcoming";
+}
+
+function filteredLocalSavedLeads() {
+  const query = String(byId("localLeadSearch")?.value || "").trim().toLowerCase();
+  const stage = byId("localLeadStageFilter")?.value || "all";
+  const due = byId("localLeadDueFilter")?.value || "all";
+  return readLocalSavedLeads().filter((lead) => {
+    if (query && !leadText(lead).includes(query)) return false;
+    if (stage !== "all" && (lead.localStage || lead.stage || "New") !== stage) return false;
+    if (due !== "all" && localReminderStatus(lead) !== due) return false;
+    return true;
+  });
+}
+
+function renderStageOptions(selected = "New") {
+  return pipelineStages.map((stage) => `<option value="${escapeHtml(stage)}"${stage === selected ? " selected" : ""}>${escapeHtml(stage)}</option>`).join("");
+}
+
+function reminderText(lead = {}) {
+  if (!lead.localReminderAt) return "No reminder set";
+  const date = new Date(lead.localReminderAt);
+  if (Number.isNaN(date.getTime())) return "No reminder set";
+  const status = localReminderStatus(lead);
+  return `${status === "due" ? "Due" : "Upcoming"}: ${date.toLocaleString()}`;
+}
+
+function renderLocalLeadTools(lead = {}) {
+  const id = escapeHtml(localLeadId(lead));
+  const selectedStage = lead.localStage || lead.stage || "New";
+  const reminderDate = lead.localReminderAt ? String(lead.localReminderAt).slice(0, 10) : "";
+  return `
+    <div class="local-lead-tools">
+      <div class="field">
+        <label for="stage-${id}">Stage</label>
+        <select id="stage-${id}" data-local-stage="${id}">
+          ${renderStageOptions(selectedStage)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="campaign-${id}">Campaign</label>
+        <input id="campaign-${id}" value="${escapeHtml(lead.localCampaign || "")}" placeholder="Germany boutiques" data-local-campaign="${id}">
+      </div>
+      <div class="field">
+        <label for="reminder-${id}">Follow-Up Date</label>
+        <input id="reminder-${id}" type="date" value="${escapeHtml(reminderDate)}" data-local-reminder="${id}">
+      </div>
+      <div class="field" style="grid-column:1 / -1;">
+        <label for="notes-${id}">Notes</label>
+        <textarea id="notes-${id}" data-local-notes="${id}" placeholder="Call result, owner name, offer, next step">${escapeHtml(lead.localNotes || "")}</textarea>
+      </div>
+      <div class="notice" style="grid-column:1 / -1;">${escapeHtml(reminderText(lead))}</div>
+    </div>
+  `;
 }
 
 function localWebsiteBrief(lead) {
@@ -728,7 +951,7 @@ function normalizedInteger(value, fallback, min, max) {
   return Math.max(min, Math.min(max, Math.round(number)));
 }
 
-function getSearchPayload(form) {
+function getSearchPayload(form, options = {}) {
   const params = new URLSearchParams(window.location.search);
   const payload = Object.fromEntries(new FormData(form).entries());
   for (const [key, value] of params.entries()) {
@@ -754,6 +977,10 @@ function getSearchPayload(form) {
   payload.sortBy = payload.sortBy || "opportunity";
   payload.requireContact = Boolean(byId("requireContact")?.checked);
   payload.missingWebsiteOnly = Boolean(byId("missingWebsiteOnly")?.checked);
+  if (options.refresh) {
+    payload.bypassCache = true;
+    payload.refreshSeed = `${Date.now()}-${globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2)}`;
+  }
   return payload;
 }
 
@@ -822,9 +1049,14 @@ function renderLead(lead) {
         <div>
           <h3>${escapeHtml(lead.name)}</h3>
           <p>${escapeHtml(lead.businessType || lead.category || "Local business")} - ${escapeHtml(lead.address || "Address unavailable")}</p>
+          <label class="select-check">
+            <input type="checkbox" data-result-select="${escapeHtml(lead.id)}">
+            <span>Select lead</span>
+          </label>
         </div>
         <span class="score-pill ${scoreClass(score)}">${score}/100</span>
       </div>
+      ${renderLeadStrength(lead)}
       <div class="lead-meta">
         <span class="tag">${escapeHtml(lead.rating || "No")} rating</span>
         <span class="tag">${escapeHtml(lead.reviewsCount || 0)} reviews</span>
@@ -839,6 +1071,7 @@ function renderLead(lead) {
         ${source}
       </div>
       <p>${website}</p>
+      ${renderContactActions(lead)}
       <div class="lead-actions">
         <a class="btn btn-secondary" href="/lead-details.html?id=${encodeURIComponent(lead.id)}">View</a>
         <button class="btn btn-primary" type="button" data-save-lead="${lead.id}">Save Lead</button>
@@ -866,8 +1099,12 @@ function renderLocalSavedLead(lead) {
         </div>
         <span class="score-pill ${scoreClass(score)}">${score}/100</span>
       </div>
+      ${renderLeadStrength(lead)}
       <div class="lead-meta">
         <span class="tag success">Local saved</span>
+        <span class="tag">${escapeHtml(lead.localStage || lead.stage || "New")}</span>
+        ${lead.localCampaign ? `<span class="tag">${escapeHtml(lead.localCampaign)}</span>` : ""}
+        ${localReminderStatus(lead) === "due" ? `<span class="tag warning">Follow up due</span>` : ""}
         ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
         ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
         <span class="tag">${escapeHtml(lead.phone || "No phone")}</span>
@@ -876,6 +1113,8 @@ function renderLocalSavedLead(lead) {
       </div>
       <p>${websiteUrl ? `<a href="${websiteUrl}" target="_blank" rel="noreferrer">${escapeHtml(websiteUrl)}</a>` : "Website missing"}</p>
       <p class="muted-value">${escapeHtml(savedAt)}</p>
+      ${renderContactActions(lead)}
+      ${renderLocalLeadTools(lead)}
       <div class="lead-actions">
         <a class="btn btn-secondary" href="/lead-details.html?id=${encodeURIComponent(localLeadId(lead))}">View</a>
         ${renderWhatsappButton(lead, "btn btn-secondary")}
@@ -892,10 +1131,12 @@ function renderLocalSavedLeads() {
   const summary = byId("localSavedLeadSummary");
   if (!target) return;
 
-  const leads = readLocalSavedLeads();
+  const allLeads = readLocalSavedLeads();
+  const leads = filteredLocalSavedLeads();
+  const dueCount = allLeads.filter((lead) => localReminderStatus(lead) === "due").length;
   if (summary) {
-    summary.textContent = leads.length
-      ? `${leads.length} leads saved in this browser. They stay after logout until you delete them.`
+    summary.textContent = allLeads.length
+      ? `${leads.length} of ${allLeads.length} saved leads shown. ${dueCount} follow-ups due. Leads stay after logout until you delete them.`
       : "No local saved leads yet.";
   }
   target.innerHTML = leads.length
@@ -930,6 +1171,7 @@ function renderLocalLeadDetail(target, lead) {
         ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
         ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
       </div>
+      ${renderLeadStrength(lead)}
       <div class="lead-actions" style="margin-top:16px;">
         ${websiteUrl ? `<a class="btn btn-secondary" href="${websiteUrl}" target="_blank" rel="noreferrer">Website</a>` : ""}
         ${mapsUrl ? `<a class="btn btn-secondary" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
@@ -941,6 +1183,8 @@ function renderLocalLeadDetail(target, lead) {
         <button class="btn btn-secondary" type="button" data-download-csv>CSV</button>
         <button class="btn btn-ghost" type="button" data-delete-local-lead="${escapeHtml(localLeadId(lead))}">Delete Local</button>
       </div>
+      <h2 style="margin-top:20px;">Verified Contact Actions</h2>
+      ${renderContactActions(lead)}
     </section>
 
     <section class="panel" style="grid-column:1 / -1;">
@@ -959,6 +1203,8 @@ function renderLocalLeadDetail(target, lead) {
         ])}
         ${renderWhatsappContact(lead)}
       </div>
+      <h2 style="margin-top:20px;">Local CRM</h2>
+      ${renderLocalLeadTools(lead)}
     </section>
 
     <section class="panel">
@@ -996,17 +1242,119 @@ function renderLocalLeadDetail(target, lead) {
   `;
 }
 
-function renderResults(leads) {
-  const target = byId("leadResults");
-  if (!target) return;
-  currentLeadResults = Array.isArray(leads) ? leads : [];
+function visibleLeadFilterState() {
+  return {
+    query: String(byId("visibleLeadSearch")?.value || "").trim().toLowerCase(),
+    filter: byId("visibleLeadFilter")?.value || "all",
+    minScore: Number(byId("visibleLeadMinScore")?.value || 0)
+  };
+}
 
-  if (!currentLeadResults.length) {
-    target.innerHTML = `<div class="empty-state">No leads found for this search.</div>`;
+function leadMatchesVisibleFilter(lead, state) {
+  if (state.query && !leadText(lead).includes(state.query)) return false;
+  if (leadStrengthScore(lead) < state.minScore) return false;
+  if (state.filter === "contact_ready" && !(primaryPhone(lead) || lead.email || whatsappActionFromLead(lead))) return false;
+  if (state.filter === "has_whatsapp" && !whatsappActionFromLead(lead)) return false;
+  if (state.filter === "needs_website" && lead.websiteUrl) return false;
+  if (state.filter === "has_social" && !hasSocialLinks(lead)) return false;
+  if (state.filter === "high_score" && leadStrengthScore(lead) < 70) return false;
+  return true;
+}
+
+function filteredVisibleLeadResults() {
+  const state = visibleLeadFilterState();
+  return currentLeadResults.filter((lead) => leadMatchesVisibleFilter(lead, state));
+}
+
+function resetLeadResultPage() {
+  currentResultPage = 1;
+}
+
+function totalLeadResultPages() {
+  return Math.max(1, Math.ceil(currentFilteredLeadResults.length / resultPageSize));
+}
+
+function selectedVisibleLeadIds() {
+  return new Set(Array.from(document.querySelectorAll("[data-result-select]:checked")).map((input) => input.dataset.resultSelect));
+}
+
+function selectedVisibleLeads() {
+  const selected = selectedVisibleLeadIds();
+  return currentVisibleLeadResults.filter((lead) => selected.has(String(lead.id)));
+}
+
+function updateLeadCommandSummary() {
+  const target = byId("leadCommandSummary");
+  if (!target) return;
+  const selectedCount = selectedVisibleLeadIds().size;
+  const totalPages = totalLeadResultPages();
+  const whatsappCount = currentFilteredLeadResults.filter((lead) => whatsappActionFromLead(lead)).length;
+  const noWebsiteCount = currentFilteredLeadResults.filter((lead) => !lead.websiteUrl).length;
+  const contactCount = currentFilteredLeadResults.filter((lead) => primaryPhone(lead) || lead.email || whatsappActionFromLead(lead)).length;
+  target.textContent = currentLeadResults.length
+    ? `Page ${currentResultPage} of ${totalPages}. Showing ${currentVisibleLeadResults.length} of ${currentFilteredLeadResults.length} filtered leads (${currentLeadResults.length} total). ${contactCount} contact-ready, ${whatsappCount} WhatsApp actions, ${noWebsiteCount} need websites. ${selectedCount} selected on this page.`
+    : "Run a search to activate lead filters and bulk actions.";
+}
+
+function renderLeadPagination() {
+  const target = byId("leadPagination");
+  if (!target) return;
+
+  if (!currentFilteredLeadResults.length) {
+    target.innerHTML = "";
     return;
   }
 
-  target.innerHTML = currentLeadResults.map(renderLead).join("");
+  const totalPages = totalLeadResultPages();
+  const start = (currentResultPage - 1) * resultPageSize + 1;
+  const end = Math.min(currentResultPage * resultPageSize, currentFilteredLeadResults.length);
+  const needsPaging = totalPages > 1;
+  target.innerHTML = `
+    <div class="pagination-controls">
+      <button class="btn btn-secondary" type="button" data-lead-page="prev" ${currentResultPage <= 1 ? "disabled" : ""}>Previous</button>
+      <span class="pagination-status">Showing ${start}-${end} of ${currentFilteredLeadResults.length} leads</span>
+      <button class="btn btn-primary" type="button" data-lead-page="next" ${currentResultPage >= totalPages ? "disabled" : ""}>Next</button>
+      <button class="btn btn-secondary" type="button" data-refresh-leads>Refresh Leads</button>
+    </div>
+    ${needsPaging ? "" : `<div class="notice pagination-note">All matching leads are on this page.</div>`}
+  `;
+}
+
+function renderFilteredLeadResults() {
+  const target = byId("leadResults");
+  if (!target) return;
+  currentFilteredLeadResults = filteredVisibleLeadResults();
+  const totalPages = totalLeadResultPages();
+  currentResultPage = Math.min(Math.max(currentResultPage, 1), totalPages);
+  const pageStart = (currentResultPage - 1) * resultPageSize;
+  currentVisibleLeadResults = currentFilteredLeadResults.slice(pageStart, pageStart + resultPageSize);
+
+  if (!currentLeadResults.length) {
+    target.innerHTML = `<div class="empty-state">${hasLeadSearchRun ? "No leads found for this search." : "Start a search to discover leads."}</div>`;
+    renderLeadPagination();
+    updateLeadCommandSummary();
+    return;
+  }
+
+  if (!currentFilteredLeadResults.length) {
+    target.innerHTML = `<div class="empty-state">No leads match the current filters.</div>`;
+    renderLeadPagination();
+    updateLeadCommandSummary();
+    return;
+  }
+
+  target.innerHTML = currentVisibleLeadResults.map(renderLead).join("");
+  renderLeadPagination();
+  updateLeadCommandSummary();
+}
+
+function renderResults(leads) {
+  const target = byId("leadResults");
+  if (!target) return;
+  hasLeadSearchRun = true;
+  currentLeadResults = dedupeLeads(Array.isArray(leads) ? leads : []);
+  resetLeadResultPage();
+  renderFilteredLeadResults();
 }
 
 function initLeadSearch() {
@@ -1034,15 +1382,24 @@ function initLeadSearch() {
     }
   }
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  async function runLeadSearch({ refresh = false } = {}) {
     if (!requireAuth()) return;
-    target.innerHTML = `<div class="skeleton">Searching real business map data...</div>`;
+    const actionButtons = form.querySelectorAll("button");
+    actionButtons.forEach((button) => {
+      button.disabled = true;
+    });
+    currentLeadResults = [];
+    currentFilteredLeadResults = [];
+    currentVisibleLeadResults = [];
+    resetLeadResultPage();
+    renderLeadPagination();
+    updateLeadCommandSummary();
+    target.innerHTML = `<div class="skeleton">${refresh ? "Refreshing with new real leads..." : "Searching real business map data..."}</div>`;
 
     try {
       const result = await apiFetch("/api/leads/search", {
         method: "POST",
-        body: JSON.stringify(getSearchPayload(form))
+        body: JSON.stringify(getSearchPayload(form, { refresh }))
       });
       renderResults(result.leads || []);
       const note = byId("searchNote");
@@ -1053,16 +1410,34 @@ function initLeadSearch() {
         const provider = result.providerLabel || (result.source === "openstreetmap_overpass" ? "OpenStreetMap Overpass" : "Google Places");
         const countryText = result.selectedCountries?.length ? ` Countries: ${result.selectedCountries.join(", ")}.` : "";
         const stats = result.searchStats
-          ? ` Scanned ${result.searchStats.rawCount} raw, qualified ${result.searchStats.qualifiedCount}, depth ${result.searchStats.searchDepth}.`
+          ? ` Scanned ${result.searchStats.rawCount} raw, qualified ${result.searchStats.qualifiedCount} from ${result.searchStats.qualifiedPoolCount || result.searchStats.qualifiedCount} matching candidates, depth ${result.searchStats.searchDepth}.`
           : "";
         const cacheText = result.cached ? " Cached repeat search." : "";
-        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText} Query: ${result.query || "businesses"}.`;
+        const refreshText = result.refreshed ? " Fresh lead refresh was used." : "";
+        const pageText = (result.leads || []).length > resultPageSize ? " Use Next and Previous below the cards to browse all returned leads." : "";
+        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText}${refreshText}${pageText} Query: ${result.query || "businesses"}.`;
       }
     } catch (error) {
       target.innerHTML = `<div class="error-state">${error.message}</div>`;
       const note = byId("searchNote");
       if (note) note.textContent = "Real map-link search needs valid coordinates and an available map data provider.";
+    } finally {
+      actionButtons.forEach((button) => {
+        button.disabled = false;
+      });
     }
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await runLeadSearch();
+  });
+
+  document.addEventListener("click", async (event) => {
+    const refreshButton = event.target.closest("[data-refresh-leads]");
+    if (!refreshButton) return;
+    if (!form.contains(refreshButton) && !byId("leadPagination")?.contains(refreshButton)) return;
+    await runLeadSearch({ refresh: true });
   });
 
   if (params.size > 0) form.requestSubmit();
@@ -1082,6 +1457,48 @@ function initMapLinkPreview() {
     updateMapPreview();
   });
   updateMapPreview();
+}
+
+function initLeadCommandCenter() {
+  ["visibleLeadSearch", "visibleLeadFilter", "visibleLeadMinScore"].forEach((id) => {
+    const field = byId(id);
+    field?.addEventListener("input", () => {
+      resetLeadResultPage();
+      renderFilteredLeadResults();
+    });
+    field?.addEventListener("change", () => {
+      resetLeadResultPage();
+      renderFilteredLeadResults();
+    });
+  });
+
+  document.addEventListener("change", (event) => {
+    if (event.target.closest("[data-result-select]")) {
+      updateLeadCommandSummary();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    const selectButton = event.target.closest("[data-select-visible-leads]");
+    const pageButton = event.target.closest("[data-lead-page]");
+
+    if (pageButton) {
+      const totalPages = totalLeadResultPages();
+      currentResultPage += pageButton.dataset.leadPage === "next" ? 1 : -1;
+      currentResultPage = Math.min(Math.max(currentResultPage, 1), totalPages);
+      renderFilteredLeadResults();
+      byId("leadResults")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    if (!selectButton) return;
+    const checkboxes = Array.from(document.querySelectorAll("[data-result-select]"));
+    const shouldSelect = checkboxes.some((checkbox) => !checkbox.checked);
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = shouldSelect;
+    });
+    updateLeadCommandSummary();
+  });
 }
 
 function initLeadActions() {
@@ -1115,29 +1532,34 @@ function initBulkLeadActions() {
   document.addEventListener("click", async (event) => {
     const exportButton = event.target.closest("[data-export-visible-leads]");
     const saveButton = event.target.closest("[data-save-visible-leads]");
-    if (!exportButton && !saveButton) return;
+    const exportSelectedButton = event.target.closest("[data-export-selected-leads]");
+    const saveSelectedButton = event.target.closest("[data-save-selected-leads]");
+    if (!exportButton && !saveButton && !exportSelectedButton && !saveSelectedButton) return;
     if (!requireAuth()) return;
 
     const note = byId("searchNote");
-    if (!currentLeadResults.length) {
+    const selectedLeads = selectedVisibleLeads();
+    const actionLeads = (exportSelectedButton || saveSelectedButton) ? selectedLeads : currentFilteredLeadResults;
+    if (!actionLeads.length) {
       if (note) note.textContent = "Run a search first, then save or export the visible leads.";
       return;
     }
 
-    if (exportButton) {
-      downloadFile(`mat-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(currentLeadResults));
-      if (note) note.textContent = `Exported ${currentLeadResults.length} visible leads to CSV.`;
+    if (exportButton || exportSelectedButton) {
+      downloadFile(`mat-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(actionLeads));
+      if (note) note.textContent = `Exported ${actionLeads.length} ${exportSelectedButton ? "selected" : "filtered"} leads to CSV.`;
       return;
     }
 
-    const original = saveButton.textContent;
-    saveButton.disabled = true;
-    saveButton.textContent = "Saving...";
+    const activeButton = saveButton || saveSelectedButton;
+    const original = activeButton.textContent;
+    activeButton.disabled = true;
+    activeButton.textContent = "Saving...";
     try {
-      saveLeadsToLocalStorage(currentLeadResults);
+      saveLeadsToLocalStorage(actionLeads);
       renderLocalSavedLeads();
-      for (let index = 0; index < currentLeadResults.length; index += 10) {
-        const batch = currentLeadResults.slice(index, index + 10);
+      for (let index = 0; index < actionLeads.length; index += 10) {
+        const batch = actionLeads.slice(index, index + 10);
         await Promise.all(batch.map((lead) => (
           apiFetch(`/api/leads/${encodeURIComponent(lead.id)}/save`, {
             method: "POST",
@@ -1145,12 +1567,12 @@ function initBulkLeadActions() {
           })
         )));
       }
-      if (note) note.textContent = `Saved ${currentLeadResults.length} visible leads to CRM.`;
+      if (note) note.textContent = `Saved ${actionLeads.length} ${saveSelectedButton ? "selected" : "filtered"} leads to CRM and local storage.`;
     } catch (error) {
       if (note) note.textContent = error.message;
     } finally {
-      saveButton.disabled = false;
-      saveButton.textContent = original;
+      activeButton.disabled = false;
+      activeButton.textContent = original;
     }
   });
 }
@@ -1159,8 +1581,9 @@ function initLocalSavedLeadActions() {
   document.addEventListener("click", (event) => {
     const deleteButton = event.target.closest("[data-delete-local-lead]");
     const exportButton = event.target.closest("[data-export-local-leads]");
+    const dedupeButton = event.target.closest("[data-dedupe-local-leads]");
     const clearButton = event.target.closest("[data-clear-local-leads]");
-    if (!deleteButton && !exportButton && !clearButton) return;
+    if (!deleteButton && !exportButton && !dedupeButton && !clearButton) return;
 
     const note = byId("localSavedLeadSummary");
     const leads = readLocalSavedLeads();
@@ -1170,8 +1593,17 @@ function initLocalSavedLeadActions() {
         if (note) note.textContent = "No local saved leads to export.";
         return;
       }
-      downloadFile(`mat-local-saved-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(leads));
-      if (note) note.textContent = `Exported ${leads.length} local saved leads.`;
+      const filtered = filteredLocalSavedLeads();
+      downloadFile(`mat-local-saved-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(filtered));
+      if (note) note.textContent = `Exported ${filtered.length} filtered local saved leads.`;
+      return;
+    }
+
+    if (dedupeButton) {
+      const cleaned = dedupeLeads(leads);
+      writeLocalSavedLeads(cleaned);
+      renderLocalSavedLeads();
+      if (note) note.textContent = `Cleaned duplicates. ${cleaned.length} saved leads remain.`;
       return;
     }
 
@@ -1192,6 +1624,42 @@ function initLocalSavedLeadActions() {
         if (detail) detail.innerHTML = `<div class="empty-state">Local saved lead deleted from this browser.</div>`;
       }
     }
+  });
+
+  document.addEventListener("change", (event) => {
+    const stage = event.target.closest("[data-local-stage]");
+    const reminder = event.target.closest("[data-local-reminder]");
+    if (stage) {
+      updateLocalSavedLead(stage.dataset.localStage, { localStage: stage.value });
+      renderLocalSavedLeads();
+      return;
+    }
+    if (reminder) {
+      updateLocalSavedLead(reminder.dataset.localReminder, { localReminderAt: reminder.value ? `${reminder.value}T09:00:00` : "" });
+      renderLocalSavedLeads();
+    }
+  });
+
+  document.addEventListener("focusout", (event) => {
+    const campaign = event.target.closest("[data-local-campaign]");
+    const notes = event.target.closest("[data-local-notes]");
+    if (campaign) {
+      updateLocalSavedLead(campaign.dataset.localCampaign, { localCampaign: campaign.value.trim() });
+      renderLocalSavedLeads();
+      return;
+    }
+    if (notes) {
+      updateLocalSavedLead(notes.dataset.localNotes, { localNotes: notes.value.trim() });
+      renderLocalSavedLeads();
+    }
+  });
+}
+
+function initLocalSavedLeadFilters() {
+  ["localLeadSearch", "localLeadStageFilter", "localLeadDueFilter"].forEach((id) => {
+    const field = byId(id);
+    field?.addEventListener("input", renderLocalSavedLeads);
+    field?.addEventListener("change", renderLocalSavedLeads);
   });
 }
 
@@ -1240,6 +1708,7 @@ function initLeadDetails() {
             ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
             ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
           </div>
+          ${renderLeadStrength(lead)}
           <div class="lead-actions" style="margin-top:16px;">
             ${websiteUrl ? `<a class="btn btn-secondary" href="${websiteUrl}" target="_blank" rel="noreferrer">Website</a>` : ""}
             ${mapsUrl ? `<a class="btn btn-secondary" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
@@ -1250,6 +1719,8 @@ function initLeadDetails() {
             <button class="btn btn-secondary" type="button" data-download-json>JSON</button>
             <button class="btn btn-secondary" type="button" data-download-csv>CSV</button>
           </div>
+          <h2 style="margin-top:20px;">Verified Contact Actions</h2>
+          ${renderContactActions(lead)}
         </section>
 
         <section class="panel" style="grid-column:1 / -1;">
@@ -1378,6 +1849,31 @@ function initLeadDetails() {
     });
 }
 
+function findLeadForAction(id) {
+  const requested = String(id || "");
+  return currentLeadResults.find((lead) => String(lead.id) === requested || localLeadId(lead) === requested)
+    || findLocalSavedLead(requested)
+    || (activeLeadReport?.lead && (String(activeLeadReport.lead.id) === requested || localLeadId(activeLeadReport.lead) === requested) ? activeLeadReport.lead : null);
+}
+
+function initOutreachActions() {
+  document.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-copy-outreach]");
+    if (!button) return;
+    const lead = findLeadForAction(button.dataset.copyOutreach);
+    if (!lead) return;
+
+    const original = button.textContent;
+    const channel = button.dataset.outreachChannel || "email";
+    const message = outreachMessage(lead, channel);
+    await navigator.clipboard.writeText(message);
+    button.textContent = "Copied";
+    setTimeout(() => {
+      button.textContent = original;
+    }, 1400);
+  });
+}
+
 function initAiButtons() {
   document.addEventListener("click", async (event) => {
     const analyze = event.target.closest("[data-ai-analyze]");
@@ -1452,12 +1948,15 @@ document.addEventListener("DOMContentLoaded", () => {
   populateCountries();
   populateBusinessTypes();
   initMapLinkPreview();
+  initLeadCommandCenter();
   initLeadSearch();
   initLeadActions();
   initBulkLeadActions();
   initLocalSavedLeadActions();
+  initLocalSavedLeadFilters();
   renderLocalSavedLeads();
   initLeadDetails();
+  initOutreachActions();
   initAiButtons();
   initLeadDossierActions();
 });

@@ -592,6 +592,26 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function hashString(value) {
+  let hash = 2166136261;
+  for (const character of String(value || "")) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function freshOrder(values, seed, namespace = "item") {
+  if (!seed) return [...values];
+  return [...values]
+    .map((value, index) => ({
+      value,
+      rank: hashString(`${namespace}:${seed}:${JSON.stringify(value)}:${index}`)
+    }))
+    .sort((left, right) => left.rank - right.rank)
+    .map(({ value }) => value);
+}
+
 function marketKey(placeName) {
   return normalize(placeName)
     .replace(/^the /, "")
@@ -1240,8 +1260,9 @@ async function searchNominatimFallback(search, location, limitOverride, profileK
   const countrycodes = countryCodesFor(selectedCountries).map((code) => code.toLowerCase()).join(",");
   const collected = [];
   const seen = new Set();
+  const orderedProfileKeys = freshOrder(profileKeys, search.refreshSeed, "nominatim-profile");
 
-  for (const profileKey of profileKeys.slice(0, 6)) {
+  for (const profileKey of orderedProfileKeys.slice(0, 6)) {
     if (collected.length >= limitOverride) break;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -1543,7 +1564,8 @@ export class GooglePlacesService {
       placeName: selectedCountries.join(", "),
       coordinateSource: "selected_countries"
     };
-    const sampled = markets.slice(0, Math.min(
+    const orderedMarkets = freshOrder(markets, search.refreshSeed, "market");
+    const sampled = orderedMarkets.slice(0, Math.min(
       markets.length,
       depth.maxMarkets,
       Math.max(selectedCountries.length * depth.marketsPerCountry, 2, Math.ceil(search.limit / perMarketLimit))

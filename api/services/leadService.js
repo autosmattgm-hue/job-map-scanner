@@ -25,6 +25,15 @@ function stableJson(value) {
   return JSON.stringify(value);
 }
 
+function hashString(value) {
+  let hash = 2166136261;
+  for (const character of String(value || "")) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
 function cacheKeyForSearch(search, isAdmin) {
   return stableJson({ search, isAdmin });
 }
@@ -109,6 +118,17 @@ function applyLeadFilters(leads, search) {
   };
   const sorter = sorters[search.sortBy] || sorters.opportunity;
   return filtered.sort((left, right) => sorter(left, right) || String(left.name || "").localeCompare(String(right.name || "")));
+}
+
+function freshLeadOrder(leads, refreshSeed) {
+  if (!refreshSeed) return leads;
+  return [...leads]
+    .map((lead, index) => ({
+      lead,
+      rank: hashString(`${refreshSeed}:${lead.id || lead.name || "lead"}:${lead.address || ""}:${index}`)
+    }))
+    .sort((left, right) => left.rank - right.rank)
+    .map(({ lead }) => lead);
 }
 
 function mergePublicWebsiteProfile(lead, audit) {
@@ -625,12 +645,15 @@ export class LeadService {
   async search(search, user) {
     const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
     const effectiveSearch = normalizeSearchForUser(search, user);
+    const bypassCache = Boolean(effectiveSearch.bypassCache || effectiveSearch.refreshSeed);
+    const refreshSeed = effectiveSearch.refreshSeed || (bypassCache ? String(Date.now()) : "");
     const providerSearch = {
       ...effectiveSearch,
+      refreshSeed,
       limit: candidateLimitForSearch(effectiveSearch, admin)
     };
     const cacheKey = cacheKeyForSearch(providerSearch, admin);
-    const cached = getCachedSearch(cacheKey);
+    const cached = bypassCache ? null : getCachedSearch(cacheKey);
     if (cached) {
       await this.auditLogs.create({
         actor: user?.email || "guest",
@@ -656,7 +679,8 @@ export class LeadService {
         };
       }
     }));
-    const qualified = applyLeadFilters(audited, effectiveSearch).slice(0, effectiveSearch.limit);
+    const qualifiedPool = freshLeadOrder(applyLeadFilters(audited, effectiveSearch), refreshSeed);
+    const qualified = qualifiedPool.slice(0, effectiveSearch.limit);
 
     await Promise.all(qualified.map((lead) => this.leads.upsert(lead.id, {
       ...lead,
@@ -676,6 +700,8 @@ export class LeadService {
       ...result,
       leads: qualified,
       cached: false,
+      refreshed: bypassCache,
+      refreshSeed,
       adminUnlimited: admin,
       searchStats: {
         requestedLimit: effectiveSearch.limit,
@@ -683,12 +709,14 @@ export class LeadService {
         rawCount: result.leads.length,
         auditedCount: audited.length,
         qualifiedCount: qualified.length,
+        qualifiedPoolCount: qualifiedPool.length,
+        bypassCache,
         searchDepth: effectiveSearch.searchDepth,
         leadQuality: effectiveSearch.leadQuality,
         sortBy: effectiveSearch.sortBy
       }
     };
-    setCachedSearch(cacheKey, response);
+    if (!bypassCache) setCachedSearch(cacheKey, response);
     return response;
   }
 

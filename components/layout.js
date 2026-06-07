@@ -76,7 +76,11 @@ function initAppShell() {
   const topbar = document.createElement("header");
   topbar.className = "topbar";
   topbar.innerHTML = `
-    <button class="icon-button mobile-menu" type="button" data-menu-toggle aria-controls="sidebar" aria-label="Open navigation">M</button>
+    <button class="icon-button mobile-menu hamburger-button" type="button" data-menu-toggle aria-controls="sidebar" aria-label="Open navigation" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
     <div class="notice" role="status" data-session-badge>NVIDIA-only AI pipeline connected through secure server endpoints.</div>
     <div class="topbar-actions">
       <button class="icon-button" type="button" data-theme-toggle aria-label="Toggle theme">T</button>
@@ -141,13 +145,17 @@ function initMenu() {
     const sidebar = document.getElementById("sidebar");
     if (toggle && sidebar) {
       sidebar.classList.toggle("open");
-      document.body.classList.toggle("locked", sidebar.classList.contains("open"));
+      const isOpen = sidebar.classList.contains("open");
+      document.body.classList.toggle("locked", isOpen);
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
       return;
     }
 
     if (sidebar?.classList.contains("open") && !event.target.closest(".sidebar")) {
       sidebar.classList.remove("open");
       document.body.classList.remove("locked");
+      document.querySelector("[data-menu-toggle]")?.setAttribute("aria-expanded", "false");
     }
   });
 }

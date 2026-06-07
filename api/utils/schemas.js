@@ -141,7 +141,9 @@ export const leadSearchSchema = schema((input) => {
     sortBy: enumField(input, "sortBy", ["opportunity", "contact", "website_missing", "name"], { default: "opportunity" }),
     minOpportunityScore: numberField(input, "minOpportunityScore", { int: true, min: 0, max: 100, default: 0, defaultOnInvalid: true, clamp: true }),
     requireContact: booleanField(input, "requireContact", { default: false }),
-    missingWebsiteOnly: booleanField(input, "missingWebsiteOnly", { default: false })
+    missingWebsiteOnly: booleanField(input, "missingWebsiteOnly", { default: false }),
+    bypassCache: booleanField(input, "bypassCache", { default: false }),
+    refreshSeed: stringField(input, "refreshSeed", { max: 80, truncate: true })
   };
 });
 
