@@ -2,6 +2,11 @@ import { FirestoreRepository } from "../repositories/firestoreRepository.js";
 import { env } from "../config/env.js";
 import { GooglePlacesService } from "./googlePlacesService.js";
 import { WebsiteAuditService } from "./websiteAuditService.js";
+import { isAdminUser } from "../utils/entitlements.js";
+
+const searchCache = new Map();
+const SEARCH_CACHE_TTL_MS = 5 * 60 * 1000;
+const MAX_SEARCH_CACHE_ENTRIES = 80;
 
 function compactObject(object) {
   return Object.fromEntries(Object.entries(object).filter(([, value]) => {
@@ -10,6 +15,151 @@ function compactObject(object) {
     if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false;
     return true;
   }));
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function cacheKeyForSearch(search, isAdmin) {
+  return stableJson({ search, isAdmin });
+}
+
+function getCachedSearch(cacheKey) {
+  const cached = searchCache.get(cacheKey);
+  if (!cached) return null;
+  if (cached.expiresAt <= Date.now()) {
+    searchCache.delete(cacheKey);
+    return null;
+  }
+  return { ...cached.result, cached: true };
+}
+
+function setCachedSearch(cacheKey, result) {
+  searchCache.set(cacheKey, {
+    result,
+    expiresAt: Date.now() + SEARCH_CACHE_TTL_MS
+  });
+  while (searchCache.size > MAX_SEARCH_CACHE_ENTRIES) {
+    searchCache.delete(searchCache.keys().next().value);
+  }
+}
+
+function hasContact(lead) {
+  return Boolean(lead.phone || lead.email || lead.details?.contact?.mobile || lead.social || Object.keys(lead.details?.social || {}).length);
+}
+
+function hasOwnerData(lead) {
+  const owner = lead.details?.ownerContact || {};
+  return Boolean(owner.ownerName || owner.operator || owner.contactPerson);
+}
+
+function contactScore(lead) {
+  return [
+    lead.phone,
+    lead.email,
+    lead.details?.contact?.mobile,
+    lead.websiteUrl,
+    lead.social || Object.keys(lead.details?.social || {}).length
+  ].filter(Boolean).length;
+}
+
+function normalizeSearchForUser(search, user) {
+  const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
+  return {
+    ...search,
+    limit: Math.min(Math.max(Number(search.limit) || 20, 1), admin ? 200 : 50),
+    searchDepth: admin ? search.searchDepth : (search.searchDepth === "maximum" ? "deep" : search.searchDepth)
+  };
+}
+
+function candidateLimitForSearch(search, admin) {
+  const multiplier = {
+    quick: 1.2,
+    standard: 1.8,
+    deep: 2.6,
+    maximum: 4
+  }[search.searchDepth] || 2.6;
+  return Math.min(Math.ceil(search.limit * multiplier), admin ? 300 : 120);
+}
+
+function applyLeadFilters(leads, search) {
+  const minScore = Number(search.minOpportunityScore || 0);
+  const filtered = leads.filter((lead) => {
+    const score = lead.opportunityScore ?? lead.audit?.score ?? 0;
+    if (score < minScore) return false;
+    if (search.requireContact && !hasContact(lead)) return false;
+    if (search.missingWebsiteOnly && lead.websiteUrl) return false;
+    if (search.leadQuality === "contact_ready" && !hasContact(lead)) return false;
+    if (search.leadQuality === "needs_website" && lead.websiteUrl) return false;
+    if (search.leadQuality === "high_opportunity" && score < 70) return false;
+    if (search.leadQuality === "owner_data" && !hasOwnerData(lead)) return false;
+    return true;
+  });
+
+  const sorters = {
+    opportunity: (left, right) => (right.opportunityScore ?? right.audit?.score ?? 0) - (left.opportunityScore ?? left.audit?.score ?? 0),
+    contact: (left, right) => contactScore(right) - contactScore(left),
+    website_missing: (left, right) => Number(!right.websiteUrl) - Number(!left.websiteUrl),
+    name: (left, right) => String(left.name || "").localeCompare(String(right.name || ""))
+  };
+  const sorter = sorters[search.sortBy] || sorters.opportunity;
+  return filtered.sort((left, right) => sorter(left, right) || String(left.name || "").localeCompare(String(right.name || "")));
+}
+
+function mergePublicWebsiteProfile(lead, audit) {
+  const profile = audit?.publicProfile;
+  if (!profile) return lead;
+
+  const details = lead.details || {};
+  const contact = compactObject({
+    ...(details.contact || {}),
+    phone: lead.phone || details.contact?.phone || profile.phones?.[0],
+    email: lead.email || details.contact?.email || profile.emails?.[0],
+    website: lead.websiteUrl || details.contact?.website || profile.finalUrl
+  });
+  const social = compactObject({
+    ...(details.social || {}),
+    ...(profile.socialLinks || {})
+  });
+  const business = compactObject({
+    ...(details.business || {}),
+    websiteTitle: profile.metadata?.title,
+    websiteDescription: profile.metadata?.description
+  });
+  const source = compactObject({
+    ...(details.source || {}),
+    websiteScanUrl: profile.finalUrl,
+    websiteScanSource: profile.source,
+    websiteExtractedAt: new Date().toISOString()
+  });
+
+  return {
+    ...lead,
+    phone: lead.phone || contact.phone || "",
+    email: lead.email || contact.email || "",
+    websiteUrl: lead.websiteUrl || contact.website || "",
+    social: lead.social || Object.values(social)[0] || "",
+    details: {
+      ...details,
+      contact,
+      social,
+      business,
+      source,
+      publicWebsiteProfile: compactObject({
+        finalUrl: profile.finalUrl,
+        emails: profile.emails || [],
+        phones: profile.phones || [],
+        socialLinks: profile.socialLinks || {},
+        metadata: profile.metadata || {},
+        source: profile.source
+      })
+    }
+  };
 }
 
 function valueOrNotFound(value) {
@@ -33,6 +183,247 @@ function hostnameFromWebsite(website) {
   }
 }
 
+const countryCallingCodesByIso = {
+  US: "1",
+  CA: "1",
+  GB: "44",
+  IE: "353",
+  DE: "49",
+  FR: "33",
+  ES: "34",
+  IT: "39",
+  PT: "351",
+  NL: "31",
+  BE: "32",
+  CH: "41",
+  AT: "43",
+  PL: "48",
+  CZ: "420",
+  FI: "358",
+  SE: "46",
+  NO: "47",
+  DK: "45",
+  AU: "61",
+  NZ: "64",
+  SG: "65",
+  HK: "852",
+  TW: "886",
+  JP: "81",
+  KR: "82",
+  IN: "91",
+  MX: "52",
+  BR: "55",
+  AR: "54",
+  CL: "56",
+  CO: "57",
+  PE: "51",
+  PA: "507",
+  CR: "506",
+  ZA: "27",
+  NG: "234",
+  GH: "233",
+  KE: "254",
+  EG: "20",
+  MA: "212",
+  TR: "90",
+  IL: "972",
+  MY: "60",
+  PH: "63",
+  TH: "66",
+  VN: "84",
+  ID: "62",
+  SN: "221",
+  GM: "220",
+  KW: "965",
+  QA: "974",
+  BH: "973",
+  OM: "968",
+  JO: "962",
+  AE: "971",
+  SA: "966"
+};
+
+const countryCallingCodesByName = {
+  "united states": "1",
+  canada: "1",
+  "united kingdom": "44",
+  ireland: "353",
+  germany: "49",
+  france: "33",
+  spain: "34",
+  italy: "39",
+  portugal: "351",
+  netherlands: "31",
+  belgium: "32",
+  switzerland: "41",
+  austria: "43",
+  poland: "48",
+  "czech republic": "420",
+  finland: "358",
+  sweden: "46",
+  norway: "47",
+  denmark: "45",
+  australia: "61",
+  "new zealand": "64",
+  singapore: "65",
+  "hong kong": "852",
+  taiwan: "886",
+  japan: "81",
+  "south korea": "82",
+  india: "91",
+  mexico: "52",
+  brazil: "55",
+  argentina: "54",
+  chile: "56",
+  colombia: "57",
+  peru: "51",
+  panama: "507",
+  "costa rica": "506",
+  "south africa": "27",
+  nigeria: "234",
+  ghana: "233",
+  kenya: "254",
+  egypt: "20",
+  morocco: "212",
+  turkey: "90",
+  israel: "972",
+  malaysia: "60",
+  philippines: "63",
+  thailand: "66",
+  vietnam: "84",
+  indonesia: "62",
+  senegal: "221",
+  "the gambia": "220",
+  gambia: "220",
+  kuwait: "965",
+  qatar: "974",
+  bahrain: "973",
+  oman: "968",
+  jordan: "962",
+  "united arab emirates": "971",
+  "saudi arabia": "966"
+};
+
+function normalizedName(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function isWhatsappUrl(value) {
+  const url = safeHttpUrl(value);
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "wa.me" || host === "whatsapp.com" || host.endsWith(".whatsapp.com");
+  } catch {
+    return false;
+  }
+}
+
+function socialLinksForLead(lead = {}, audit = {}) {
+  return {
+    ...(lead.details?.social || {}),
+    ...(lead.details?.publicWebsiteProfile?.socialLinks || {}),
+    ...(audit?.publicProfile?.socialLinks || {})
+  };
+}
+
+function countryCallingCodeForLead(lead = {}, location = {}) {
+  const iso = String(
+    lead.countryCode ||
+    lead.details?.location?.countryCode ||
+    location.countryCode ||
+    ""
+  ).toUpperCase();
+  if (countryCallingCodesByIso[iso]) return countryCallingCodesByIso[iso];
+
+  const names = [
+    lead.country,
+    lead.countryName,
+    lead.details?.location?.country,
+    lead.details?.location?.countryName,
+    location.country,
+    location.countryName
+  ].map(normalizedName);
+
+  return names.map((name) => countryCallingCodesByName[name]).find(Boolean) || "";
+}
+
+function normalizePhoneForWhatsapp(phone, lead = {}, location = {}) {
+  const raw = String(phone || "").trim();
+  if (!raw) return "";
+  const firstNumber = raw.split(/[\/|;]/)[0].replace(/\s*(?:ext\.?|extension|x)\s*\d+$/i, "").trim();
+  let digits = firstNumber.replace(/\D/g, "");
+  if (!digits) return "";
+
+  if (firstNumber.startsWith("+")) {
+    // Already includes an international prefix.
+  } else if (digits.startsWith("00")) {
+    digits = digits.slice(2);
+  } else {
+    const callingCode = countryCallingCodeForLead(lead, location);
+    if (!callingCode) return "";
+    const nationalNumber = digits.replace(/^0+/, "");
+    digits = digits.startsWith(callingCode) && digits.length > callingCode.length + 5
+      ? digits
+      : `${callingCode}${nationalNumber}`;
+  }
+
+  return digits.length >= 8 && digits.length <= 15 ? digits : "";
+}
+
+function whatsappLinkFromPhone(phone, lead = {}, location = {}) {
+  const normalized = normalizePhoneForWhatsapp(phone, lead, location);
+  return normalized ? `https://wa.me/${normalized}` : "";
+}
+
+function whatsappContactForLead(lead = {}, contact = {}, location = {}, audit = {}) {
+  const socialLinks = socialLinksForLead(lead, audit);
+  const explicitWhatsapp = safeHttpUrl(socialLinks.whatsapp || contact.whatsapp || "");
+  if (explicitWhatsapp && isWhatsappUrl(explicitWhatsapp)) {
+    return {
+      url: explicitWhatsapp,
+      source: "public_whatsapp_link",
+      note: "A public WhatsApp link was found in map or website data."
+    };
+  }
+
+  const leadSocial = safeHttpUrl(lead.social || "");
+  if (leadSocial && isWhatsappUrl(leadSocial)) {
+    return {
+      url: leadSocial,
+      source: "public_whatsapp_link",
+      note: "A public WhatsApp link was found in map or website data."
+    };
+  }
+
+  const phone = [
+    contact.mobile,
+    contact.phone,
+    lead.details?.contact?.mobile,
+    lead.details?.contact?.phone,
+    lead.phone,
+    lead.details?.publicWebsiteProfile?.phones?.[0],
+    audit?.publicProfile?.phones?.[0]
+  ].find(Boolean);
+  const phoneLink = whatsappLinkFromPhone(phone, lead, location);
+  if (!phoneLink) return {};
+
+  return {
+    url: phoneLink,
+    source: "business_phone_number",
+    note: "Opens WhatsApp with the real business phone number; WhatsApp confirms whether the number is registered."
+  };
+}
+
 function buildVerificationLinks(lead, dossier) {
   const businessName = lead.name || "business";
   const address = dossier.location?.address || lead.address || "";
@@ -47,6 +438,10 @@ function buildVerificationLinks(lead, dossier) {
     facebookSearch: searchUrl(`${baseQuery} Facebook`),
     instagramSearch: searchUrl(`${baseQuery} Instagram`),
     linkedinSearch: searchUrl(`${baseQuery} LinkedIn owner manager`),
+    tiktokSearch: searchUrl(`${baseQuery} TikTok`),
+    youtubeSearch: searchUrl(`${baseQuery} YouTube`),
+    xSearch: searchUrl(`${baseQuery} X Twitter`),
+    whatsappContact: dossier.contact?.whatsappLink || "",
     websiteContactSearch: hostname ? searchUrl(`site:${hostname} contact email phone owner`) : ""
   });
 }
@@ -68,6 +463,8 @@ function formatWebsiteBuildBrief(lead, dossier) {
     `Operator/manager: ${valueOrNotFound(dossier.ownerContact?.operator || dossier.ownerContact?.contactPerson)}`,
     `Contact role: ${valueOrNotFound(dossier.ownerContact?.contactRole)}`,
     `Phone: ${valueOrNotFound(dossier.contact?.phone || dossier.contact?.mobile)}`,
+    `WhatsApp contact: ${valueOrNotFound(dossier.contact?.whatsappLink)}`,
+    `WhatsApp source note: ${valueOrNotFound(dossier.contact?.whatsappVerificationNote)}`,
     `Email: ${valueOrNotFound(dossier.contact?.email)}`,
     `Current website: ${valueOrNotFound(dossier.contact?.website || lead.websiteUrl)}`,
     `Google Maps: ${valueOrNotFound(dossier.location?.googleMapsLink || lead.googleMapsLink)}`,
@@ -79,6 +476,8 @@ function formatWebsiteBuildBrief(lead, dossier) {
     `Opening hours: ${valueOrNotFound(dossier.operations?.openingHours || lead.openingHours)}`,
     `Services/cuisine/category notes: ${valueOrNotFound(dossier.business?.cuisine || dossier.business?.description || dossier.business?.businessType)}`,
     `Social links: ${valueOrNotFound(dossier.social)}`,
+    `Website-discovered social links: ${valueOrNotFound(dossier.websiteDiscovery?.socialLinks)}`,
+    `Website-discovered emails: ${valueOrNotFound(dossier.websiteDiscovery?.emails)}`,
     `Payment info: ${valueOrNotFound(dossier.payments)}`,
     `Owner search link: ${valueOrNotFound(dossier.verificationLinks?.ownerSearch)}`,
     `Phone/email search link: ${valueOrNotFound(dossier.verificationLinks?.phoneEmailSearch)}`,
@@ -116,7 +515,7 @@ function buildLeadDossier(lead, audit) {
     contactRole: details.ownerContact?.contactRole || rawTags["contact:role"],
     publicContactNote: details.ownerContact?.publicContactNote
   });
-  const contact = compactObject({
+  let contact = compactObject({
     phone: lead.phone,
     email: lead.email,
     website: lead.websiteUrl,
@@ -131,6 +530,13 @@ function buildLeadDossier(lead, audit) {
     marketName: lead.marketName,
     countryName: lead.countryName,
     ...(details.location || {})
+  });
+  const whatsappContact = whatsappContactForLead(lead, contact, location, audit);
+  contact = compactObject({
+    ...contact,
+    whatsappLink: whatsappContact.url,
+    whatsappSource: whatsappContact.source,
+    whatsappVerificationNote: whatsappContact.note
   });
   const business = compactObject({
     name: lead.name,
@@ -158,6 +564,7 @@ function buildLeadDossier(lead, audit) {
     business,
     operations: details.operations || {},
     payments: details.payments || {},
+    websiteDiscovery: details.publicWebsiteProfile || audit?.publicProfile || {},
     onlinePresence: compactObject({
       website: lead.websiteUrl,
       googleMapsLink: lead.googleMapsLink,
@@ -165,7 +572,13 @@ function buildLeadDossier(lead, audit) {
       hasWebsite: Boolean(lead.websiteUrl),
       hasPhone: Boolean(contact.phone || contact.mobile),
       hasEmail: Boolean(contact.email),
-      hasSocial: Boolean(Object.keys(details.social || {}).length || lead.social)
+      hasWhatsapp: Boolean(contact.whatsappLink),
+      whatsappLink: contact.whatsappLink,
+      hasSocial: Boolean(Object.keys(details.social || {}).length || lead.social),
+      socialLinks: details.social || {},
+      websiteDiscoveredSocialLinks: details.publicWebsiteProfile?.socialLinks || audit?.publicProfile?.socialLinks || {},
+      websiteDiscoveredEmails: details.publicWebsiteProfile?.emails || audit?.publicProfile?.emails || [],
+      websiteDiscoveredPhones: details.publicWebsiteProfile?.phones || audit?.publicProfile?.phones || []
     }),
     audit: compactObject({
       score: audit?.score,
@@ -210,11 +623,30 @@ export class LeadService {
   }
 
   async search(search, user) {
-    const result = await this.googlePlaces.search(search);
+    const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
+    const effectiveSearch = normalizeSearchForUser(search, user);
+    const providerSearch = {
+      ...effectiveSearch,
+      limit: candidateLimitForSearch(effectiveSearch, admin)
+    };
+    const cacheKey = cacheKeyForSearch(providerSearch, admin);
+    const cached = getCachedSearch(cacheKey);
+    if (cached) {
+      await this.auditLogs.create({
+        actor: user?.email || "guest",
+        action: "lead_search_cached",
+        query: effectiveSearch,
+        count: cached.leads?.length || 0
+      });
+      return cached;
+    }
+
+    const result = await this.googlePlaces.search(providerSearch);
     const audited = await Promise.all(result.leads.map(async (lead) => {
       try {
-        const audit = lead.audit || await this.websiteAudit.audit(lead);
-        return { ...lead, audit, opportunityScore: audit.score, opportunityCategory: audit.category };
+        const audit = lead.audit?.publicProfile ? lead.audit : await this.websiteAudit.audit(lead);
+        const enrichedLead = mergePublicWebsiteProfile(lead, audit);
+        return { ...enrichedLead, audit, opportunityScore: audit.score, opportunityCategory: audit.category };
       } catch (error) {
         return {
           ...lead,
@@ -224,8 +656,9 @@ export class LeadService {
         };
       }
     }));
+    const qualified = applyLeadFilters(audited, effectiveSearch).slice(0, effectiveSearch.limit);
 
-    await Promise.all(audited.map((lead) => this.leads.upsert(lead.id, {
+    await Promise.all(qualified.map((lead) => this.leads.upsert(lead.id, {
       ...lead,
       source: result.source || "google_places",
       discoveredBy: user?.uid,
@@ -235,11 +668,28 @@ export class LeadService {
     await this.auditLogs.create({
       actor: user?.email || "guest",
       action: "lead_search",
-      query: search,
-      count: audited.length
+      query: effectiveSearch,
+      count: qualified.length
     });
 
-    return { ...result, leads: audited };
+    const response = {
+      ...result,
+      leads: qualified,
+      cached: false,
+      adminUnlimited: admin,
+      searchStats: {
+        requestedLimit: effectiveSearch.limit,
+        providerCandidateLimit: providerSearch.limit,
+        rawCount: result.leads.length,
+        auditedCount: audited.length,
+        qualifiedCount: qualified.length,
+        searchDepth: effectiveSearch.searchDepth,
+        leadQuality: effectiveSearch.leadQuality,
+        sortBy: effectiveSearch.sortBy
+      }
+    };
+    setCachedSearch(cacheKey, response);
+    return response;
   }
 
   async save(leadId, user) {
@@ -261,8 +711,9 @@ export class LeadService {
   async getReport(id) {
     const lead = await this.getById(id);
     if (!lead) return null;
-    const audit = lead.audit || await this.websiteAudit.audit(lead);
-    const enrichedLead = { ...lead, audit, opportunityScore: audit.score, opportunityCategory: audit.category };
+    const audit = lead.audit?.publicProfile ? lead.audit : await this.websiteAudit.audit(lead);
+    const publicEnrichedLead = mergePublicWebsiteProfile(lead, audit);
+    const enrichedLead = { ...publicEnrichedLead, audit, opportunityScore: audit.score, opportunityCategory: audit.category };
     return {
       lead: enrichedLead,
       dossier: buildLeadDossier(enrichedLead, audit),

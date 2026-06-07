@@ -68,16 +68,56 @@
               </select>
             </div>
             <div class="field">
+              <label for="searchDepth">Search Strength</label>
+              <select id="searchDepth" name="searchDepth">
+                <option value="quick">Quick</option>
+                <option value="standard">Standard</option>
+                <option value="deep" selected>Deep</option>
+                <option value="maximum">Maximum</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="leadQuality">Lead Quality</label>
+              <select id="leadQuality" name="leadQuality">
+                <option value="all" selected>All Leads</option>
+                <option value="contact_ready">Contact Ready</option>
+                <option value="needs_website">Needs Website</option>
+                <option value="high_opportunity">High Opportunity</option>
+                <option value="owner_data">Owner Data Found</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sortBy">Sort By</label>
+              <select id="sortBy" name="sortBy">
+                <option value="opportunity" selected>Opportunity</option>
+                <option value="contact">Contact Data</option>
+                <option value="website_missing">Missing Website</option>
+                <option value="name">Name</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="minOpportunityScore">Min Score</label>
+              <input id="minOpportunityScore" name="minOpportunityScore" type="number" min="0" max="100" value="0">
+            </div>
+            <div class="field">
               <label for="limit">Results</label>
               <select id="limit" name="limit">
                 <option value="10">10</option>
                 <option value="20" selected>20</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
               </select>
+            </div>
+            <div class="field checkbox-field">
+              <label><input id="requireContact" name="requireContact" type="checkbox"> Contact details only</label>
+              <label><input id="missingWebsiteOnly" name="missingWebsiteOnly" type="checkbox"> Missing website only</label>
             </div>
             <div class="form-actions">
               <button class="btn btn-primary" type="submit">Search Leads</button>
+              <button class="btn btn-secondary" type="button" data-save-visible-leads>Save All</button>
+              <button class="btn btn-secondary" type="button" data-export-visible-leads>Export CSV</button>
             </div>
             <p id="searchNote" class="notice" style="grid-column:1 / -1;">Selected countries and business types control the scan. Country and continent links search profitable business hubs using real OpenStreetMap Overpass data, no Google API key required.</p>
           </form>
@@ -98,12 +138,27 @@
           <aside class="panel">
             <h2>Map Location</h2>
             <div id="mapPreview" class="map-preview" aria-label="Selected Google Maps area">
-              <iframe title="Google Maps location preview" src="https://www.google.com/maps?q=13.4053888,-16.6887424&amp;z=11&amp;output=embed" loading="lazy"></iframe>
+              <iframe title="Germany default map preview" src="https://www.google.com/maps?q=52.52,13.405&amp;z=6&amp;output=embed" loading="lazy"></iframe>
             </div>
-            <p class="notice" id="mapMeta" style="margin-top:12px;">Centered at 13.4053888, -16.6887424.</p>
+            <p class="notice" id="mapMeta" style="margin-top:12px;">Default country scan: Germany.</p>
             <h2 style="margin-top:20px;">Monthly Growth</h2>
             <div class="chart" id="growthChart"></div>
           </aside>
+        </section>
+
+        <section class="panel local-vault" style="margin-top:14px;">
+          <div class="section-header">
+            <div>
+              <h2>Local Saved Leads</h2>
+              <p>Saved in this browser and kept after logout until you delete them.</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn btn-secondary" type="button" data-export-local-leads>Export Saved</button>
+              <button class="btn btn-ghost" type="button" data-clear-local-leads>Clear Saved</button>
+            </div>
+          </div>
+          <div id="localSavedLeadSummary" class="notice">No local saved leads yet.</div>
+          <div class="leads-grid" id="localSavedLeads" aria-live="polite"></div>
         </section>
       </main>
     </div>

@@ -24,11 +24,19 @@ const supportedCountries = new Map([
   ["Australia", "AU"],
   ["New Zealand", "NZ"],
   ["Singapore", "SG"],
+  ["Hong Kong", "HK"],
+  ["Taiwan", "TW"],
   ["Japan", "JP"],
   ["South Korea", "KR"],
   ["India", "IN"],
   ["Mexico", "MX"],
   ["Brazil", "BR"],
+  ["Argentina", "AR"],
+  ["Chile", "CL"],
+  ["Colombia", "CO"],
+  ["Peru", "PE"],
+  ["Panama", "PA"],
+  ["Costa Rica", "CR"],
   ["South Africa", "ZA"],
   ["Nigeria", "NG"],
   ["Ghana", "GH"],
@@ -40,11 +48,15 @@ const supportedCountries = new Map([
   ["Malaysia", "MY"],
   ["Philippines", "PH"],
   ["Thailand", "TH"],
+  ["Vietnam", "VN"],
   ["Indonesia", "ID"],
   ["Senegal", "SN"],
   ["The Gambia", "GM"],
   ["Kuwait", "KW"],
   ["Qatar", "QA"],
+  ["Bahrain", "BH"],
+  ["Oman", "OM"],
+  ["Jordan", "JO"],
   ["United Arab Emirates", "AE"],
   ["Saudi Arabia", "SA"]
 ]);
@@ -191,6 +203,16 @@ const profitableMarkets = {
   singapore: [
     ["Singapore", 1.3521, 103.8198]
   ],
+  "hong kong": [
+    ["Central", 22.2819, 114.1588],
+    ["Kowloon", 22.3193, 114.1694],
+    ["Tsim Sha Tsui", 22.2976, 114.1722]
+  ],
+  taiwan: [
+    ["Taipei", 25.033, 121.5654],
+    ["Taichung", 24.1477, 120.6736],
+    ["Kaohsiung", 22.6273, 120.3014]
+  ],
   japan: [
     ["Tokyo", 35.6762, 139.6503],
     ["Osaka", 34.6937, 135.5023],
@@ -216,6 +238,36 @@ const profitableMarkets = {
     ["Sao Paulo", -23.5558, -46.6396],
     ["Rio de Janeiro", -22.9068, -43.1729],
     ["Brasilia", -15.8267, -47.9218]
+  ],
+  argentina: [
+    ["Buenos Aires", -34.6037, -58.3816],
+    ["Cordoba", -31.4201, -64.1888],
+    ["Rosario", -32.9442, -60.6505]
+  ],
+  chile: [
+    ["Santiago", -33.4489, -70.6693],
+    ["Valparaiso", -33.0472, -71.6127],
+    ["Concepcion", -36.8201, -73.0444]
+  ],
+  colombia: [
+    ["Bogota", 4.711, -74.0721],
+    ["Medellin", 6.2442, -75.5812],
+    ["Cali", 3.4516, -76.532]
+  ],
+  peru: [
+    ["Lima", -12.0464, -77.0428],
+    ["Arequipa", -16.409, -71.5375],
+    ["Cusco", -13.5319, -71.9675]
+  ],
+  panama: [
+    ["Panama City", 8.9824, -79.5199],
+    ["David", 8.4273, -82.4308],
+    ["Colon", 9.3548, -79.9001]
+  ],
+  "costa rica": [
+    ["San Jose", 9.9281, -84.0907],
+    ["Escazu", 9.9189, -84.1397],
+    ["Liberia", 10.6346, -85.4407]
   ],
   "south africa": [
     ["Johannesburg", -26.2041, 28.0473],
@@ -272,6 +324,11 @@ const profitableMarkets = {
     ["Chiang Mai", 18.7883, 98.9853],
     ["Phuket", 7.8804, 98.3923]
   ],
+  vietnam: [
+    ["Ho Chi Minh City", 10.8231, 106.6297],
+    ["Hanoi", 21.0278, 105.8342],
+    ["Da Nang", 16.0544, 108.2022]
+  ],
   indonesia: [
     ["Jakarta", -6.2088, 106.8456],
     ["Surabaya", -7.2575, 112.7521],
@@ -297,6 +354,21 @@ const profitableMarkets = {
     ["Al Rayyan", 25.2919, 51.4244],
     ["Lusail", 25.4164, 51.4904]
   ],
+  bahrain: [
+    ["Manama", 26.2285, 50.586],
+    ["Riffa", 26.129, 50.555],
+    ["Muharraq", 26.2572, 50.6119]
+  ],
+  oman: [
+    ["Muscat", 23.588, 58.3829],
+    ["Salalah", 17.0194, 54.0897],
+    ["Sohar", 24.342, 56.7299]
+  ],
+  jordan: [
+    ["Amman", 31.9539, 35.9106],
+    ["Irbid", 32.5556, 35.85],
+    ["Aqaba", 29.5319, 35.0061]
+  ],
   "united arab emirates": [
     ["Dubai", 25.2048, 55.2708],
     ["Abu Dhabi", 24.4539, 54.3773],
@@ -315,6 +387,16 @@ const businessProfiles = {
     aliases: ["restaurant", "restaurants", "resturant", "resturants", "food", "dining", "cafe", "bar"],
     filters: [["amenity", "restaurant"], ["amenity", "cafe"], ["amenity", "fast_food"], ["amenity", "bar"], ["amenity", "pub"]]
   },
+  coffee_shops: {
+    label: "Coffee Shop",
+    aliases: ["coffee", "coffee shop", "cafe", "espresso"],
+    filters: [["amenity", "cafe"], ["shop", "coffee"]]
+  },
+  bakeries: {
+    label: "Bakery",
+    aliases: ["bakery", "bakeries", "pastry", "cake shop"],
+    filters: [["shop", "bakery"], ["shop", "pastry"], ["shop", "confectionery"]]
+  },
   hotels: {
     label: "Hotel",
     aliases: ["hotel", "hotels", "motel", "guest house", "guesthouse", "hostel", "lodging", "resort"],
@@ -329,6 +411,11 @@ const businessProfiles = {
     label: "Car Dealer",
     aliases: ["car dealer", "car dealers", "dealership", "auto sales", "vehicle sales", "cars"],
     filters: [["shop", "car"], ["shop", "motorcycle"], ["shop", "car_parts"], ["amenity", "car_rental"]]
+  },
+  car_wash: {
+    label: "Car Wash",
+    aliases: ["car wash", "detailing", "auto detailing"],
+    filters: [["amenity", "car_wash"], ["shop", "car_repair"]]
   },
   auto_repair: {
     label: "Auto Repair",
@@ -379,6 +466,16 @@ const businessProfiles = {
     label: "Contractor",
     aliases: ["contractor", "construction", "builder", "roofer", "painter", "carpenter"],
     filters: [["craft", "builder"], ["craft", "carpenter"], ["craft", "roofer"], ["craft", "painter"], ["shop", "hardware"]]
+  },
+  roofing: {
+    label: "Roofing Contractor",
+    aliases: ["roof", "roofer", "roofing"],
+    filters: [["craft", "roofer"], ["craft", "builder"]]
+  },
+  hvac: {
+    label: "HVAC Contractor",
+    aliases: ["hvac", "air conditioning", "heating", "ventilation"],
+    filters: [["craft", "hvac"], ["shop", "heating"], ["shop", "air_conditioning"]]
   },
   plumbers_electricians: {
     label: "Plumber & Electrician",
@@ -439,14 +536,37 @@ const businessProfiles = {
     label: "Finance & Insurance",
     aliases: ["insurance", "finance", "financial advisor", "bank", "broker"],
     filters: [["office", "insurance"], ["office", "financial_advisor"], ["amenity", "bank"], ["office", "financial"]]
+  },
+  laundromats: {
+    label: "Laundromat",
+    aliases: ["laundry", "laundromat", "dry cleaning", "dry cleaner"],
+    filters: [["shop", "laundry"], ["shop", "dry_cleaning"]]
+  },
+  moving_storage: {
+    label: "Moving & Storage",
+    aliases: ["moving", "storage", "self storage", "movers"],
+    filters: [["shop", "storage_rental"], ["amenity", "storage"], ["office", "logistics"]]
+  },
+  coworking: {
+    label: "Coworking Space",
+    aliases: ["coworking", "co-working", "shared office", "workspace"],
+    filters: [["office", "coworking"], ["amenity", "coworking_space"]]
+  },
+  photographers: {
+    label: "Photographer",
+    aliases: ["photographer", "photography", "photo studio"],
+    filters: [["craft", "photographer"], ["shop", "photo"]]
   }
 };
 
 const defaultBusinessProfileKeys = [
   "restaurants",
+  "coffee_shops",
+  "bakeries",
   "hotels",
   "boutiques",
   "car_dealers",
+  "car_wash",
   "auto_repair",
   "beauty_spas",
   "dental",
@@ -456,8 +576,12 @@ const defaultBusinessProfileKeys = [
   "law",
   "accounting",
   "contractors",
+  "roofing",
+  "hvac",
   "pharmacies",
-  "retail"
+  "retail",
+  "laundromats",
+  "moving_storage"
 ];
 
 function normalize(value) {
@@ -501,6 +625,21 @@ function countryCodesFor(names) {
   return names.map((name) => supportedCountries.get(name)).filter(Boolean);
 }
 
+function countryNameForCode(code) {
+  const normalized = String(code || "").toUpperCase();
+  return [...supportedCountries.entries()].find(([, countryCode]) => countryCode === normalized)?.[0] || "";
+}
+
+function displayCountry(tags = {}, context = {}) {
+  const code = tagValue(tags, ["addr:country", "ISO3166-1", "is_in:country_code"]);
+  const explicitCountry = tagValue(tags, ["is_in:country"]);
+  return explicitCountry || countryNameForCode(code) || context.countryName || "";
+}
+
+function displayCountryCode(tags = {}, context = {}) {
+  return tagValue(tags, ["addr:country", "ISO3166-1", "is_in:country_code"]) || context.countryCode || "";
+}
+
 function marketsForCountries(countryNames) {
   return countryNames.flatMap((countryName) => {
     const key = marketKey(countryName);
@@ -542,6 +681,17 @@ function selectedBusinessProfileKeys(search) {
   const inferred = textProfileKeys(search);
   const keys = explicit.length ? unique([...explicit, ...inferred]) : inferred;
   return keys.length ? keys : defaultBusinessProfileKeys;
+}
+
+function searchDepthConfig(search = {}) {
+  const depth = search.searchDepth || "deep";
+  const configs = {
+    quick: { maxMarkets: 2, marketsPerCountry: 1, perMarketMin: 3, marketRadius: 3000, overpassTimeout: 10, outMultiplier: 8 },
+    standard: { maxMarkets: 5, marketsPerCountry: 2, perMarketMin: 4, marketRadius: 5000, overpassTimeout: 12, outMultiplier: 10 },
+    deep: { maxMarkets: 10, marketsPerCountry: 3, perMarketMin: 5, marketRadius: 8000, overpassTimeout: 16, outMultiplier: 14 },
+    maximum: { maxMarkets: 18, marketsPerCountry: 4, perMarketMin: 6, marketRadius: 12000, overpassTimeout: 20, outMultiplier: 18 }
+  };
+  return configs[depth] || configs.deep;
 }
 
 function buildTextQuery(search) {
@@ -724,25 +874,70 @@ function compactObject(object) {
   }));
 }
 
+function socialUrlFromValue(platform, value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^[a-z]+:\/\//i.test(raw)) return "";
+  if (platform === "whatsapp") {
+    let digits = raw.replace(/\D/g, "");
+    if (digits.startsWith("00")) digits = digits.slice(2);
+    return digits.length >= 8 && digits.length <= 15 ? `https://wa.me/${digits}` : "";
+  }
+  const cleaned = raw.replace(/^@/, "").replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/$/, "");
+  if (!cleaned) return "";
+  if (cleaned.includes(".") && !cleaned.includes(" ")) return `https://${cleaned}`;
+  const slug = encodeURIComponent(cleaned);
+  const bases = {
+    facebook: "https://www.facebook.com/",
+    instagram: "https://www.instagram.com/",
+    linkedin: "https://www.linkedin.com/company/",
+    x: "https://x.com/",
+    youtube: "https://www.youtube.com/@",
+    tiktok: "https://www.tiktok.com/@",
+    pinterest: "https://www.pinterest.com/",
+    threads: "https://www.threads.net/@",
+    snapchat: "https://www.snapchat.com/add/",
+    whatsapp: "https://wa.me/"
+  };
+  return bases[platform] ? `${bases[platform]}${slug}` : raw;
+}
+
 function socialLinksFromTags(tags = {}) {
+  const values = {
+    facebook: tagValue(tags, ["contact:facebook", "facebook", "facebook:page", "social:facebook", "brand:facebook"]),
+    instagram: tagValue(tags, ["contact:instagram", "instagram", "social:instagram", "brand:instagram"]),
+    linkedin: tagValue(tags, ["contact:linkedin", "linkedin", "social:linkedin", "brand:linkedin"]),
+    x: tagValue(tags, ["contact:twitter", "twitter", "x", "contact:x", "social:twitter", "social:x", "brand:twitter", "brand:x"]),
+    youtube: tagValue(tags, ["contact:youtube", "youtube", "social:youtube", "brand:youtube"]),
+    tiktok: tagValue(tags, ["contact:tiktok", "tiktok", "social:tiktok", "brand:tiktok"]),
+    pinterest: tagValue(tags, ["contact:pinterest", "pinterest", "social:pinterest", "brand:pinterest"]),
+    threads: tagValue(tags, ["contact:threads", "threads", "social:threads", "brand:threads"]),
+    snapchat: tagValue(tags, ["contact:snapchat", "snapchat", "social:snapchat", "brand:snapchat"]),
+    whatsapp: tagValue(tags, ["contact:whatsapp", "whatsapp", "phone:whatsapp", "social:whatsapp"])
+  };
   return compactObject({
-    facebook: tagValue(tags, ["contact:facebook", "facebook"]),
-    instagram: tagValue(tags, ["contact:instagram", "instagram"]),
-    linkedin: tagValue(tags, ["contact:linkedin", "linkedin"]),
-    x: tagValue(tags, ["contact:twitter", "twitter", "x"]),
-    youtube: tagValue(tags, ["contact:youtube", "youtube"]),
-    tiktok: tagValue(tags, ["contact:tiktok", "tiktok"]),
-    whatsapp: tagValue(tags, ["contact:whatsapp", "whatsapp"])
+    facebook: socialUrlFromValue("facebook", values.facebook),
+    instagram: socialUrlFromValue("instagram", values.instagram),
+    linkedin: socialUrlFromValue("linkedin", values.linkedin),
+    x: socialUrlFromValue("x", values.x),
+    youtube: socialUrlFromValue("youtube", values.youtube),
+    tiktok: socialUrlFromValue("tiktok", values.tiktok),
+    pinterest: socialUrlFromValue("pinterest", values.pinterest),
+    threads: socialUrlFromValue("threads", values.threads),
+    snapchat: socialUrlFromValue("snapchat", values.snapchat),
+    whatsapp: socialUrlFromValue("whatsapp", values.whatsapp)
   });
 }
 
-function osmDetailsFromTags(tags = {}, coords = {}, element = {}) {
+function osmDetailsFromTags(tags = {}, coords = {}, element = {}, context = {}) {
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
   const phone = tagValue(tags, ["phone", "contact:phone"]);
   const mobile = tagValue(tags, ["mobile", "contact:mobile"]);
   const city = tags["addr:city"] || tags["addr:town"] || tags["addr:village"] || "";
-  const country = tags["addr:country"] || tags["is_in:country"] || "";
+  const country = displayCountry(tags, context);
+  const countryCode = displayCountryCode(tags, context);
   const ownerName = tagValue(tags, ["owner", "contact:owner"]);
   const operator = tagValue(tags, ["operator", "operator:name"]);
   const contactPerson = tagValue(tags, ["contact:person", "contact:name", "contact:contact_person", "manager"]);
@@ -774,7 +969,7 @@ function osmDetailsFromTags(tags = {}, coords = {}, element = {}) {
       city,
       postcode: tags["addr:postcode"],
       country,
-      countryCode: tags["addr:country"],
+      countryCode,
       googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${tags.name || tags.brand || ""} ${coords.latitude},${coords.longitude}`)}`
     }),
     business: compactObject({
@@ -820,7 +1015,7 @@ function osmCoordinates(element) {
   };
 }
 
-function mapOsmElement(element, profileKeys) {
+function mapOsmElement(element, profileKeys, context = {}) {
   const tags = element.tags || {};
   const coords = osmCoordinates(element);
   const name = tags.name || tags.brand || "Unnamed business";
@@ -829,10 +1024,12 @@ function mapOsmElement(element, profileKeys) {
   const phone = tagValue(tags, ["phone", "contact:phone", "mobile", "contact:mobile"]);
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
-  const social = tagValue(tags, ["contact:facebook", "contact:instagram", "contact:linkedin", "facebook", "instagram"]);
+  const social = Object.values(socialLinksFromTags(tags))[0] || "";
   const address = addressFromTags(tags);
   const mapsQuery = encodeURIComponent(`${name} ${coords.latitude},${coords.longitude}`);
-  const details = osmDetailsFromTags(tags, coords, element);
+  const country = displayCountry(tags, context);
+  const countryCode = displayCountryCode(tags, context);
+  const details = osmDetailsFromTags(tags, coords, element, context);
 
   return {
     id: `osm-${element.type}-${element.id}`,
@@ -847,6 +1044,8 @@ function mapOsmElement(element, profileKeys) {
     googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
     latitude: coords.latitude,
     longitude: coords.longitude,
+    country,
+    countryCode,
     email,
     social,
     openingHours: tags.opening_hours || "",
@@ -877,6 +1076,7 @@ function overpassFiltersForSearch(search) {
 }
 
 function buildOverpassQuery(location, limit, elementTypes = ["node"], search) {
+  const depth = searchDepthConfig(search);
   const radius = Math.min(Math.max(Number(location.radiusMeters || 15000), 500), 50000);
   const lat = location.latitude;
   const lon = location.longitude;
@@ -893,9 +1093,9 @@ function buildOverpassQuery(location, limit, elementTypes = ["node"], search) {
       `${type}(around:${radius},${lat},${lon})["name"]["${overpassEscape(key)}"~"${pattern}"];`
     ));
   });
-  const outLimit = Math.min(Math.max(limit * 10, 80), 250);
+  const outLimit = Math.min(Math.max(limit * depth.outMultiplier, 80), 500);
 
-  return `[out:json][timeout:12];(${selectors.join("")});out center tags ${outLimit};`;
+  return `[out:json][timeout:${depth.overpassTimeout}];(${selectors.join("")});out center tags ${outLimit};`;
 }
 
 function leadCountryAllowed(lead, countryCodes) {
@@ -944,9 +1144,12 @@ function viewboxFor(location) {
 function nominatimTerm(profileKey) {
   const terms = {
     restaurants: "restaurant",
+    coffee_shops: "coffee shop",
+    bakeries: "bakery",
     hotels: "hotel",
     boutiques: "boutique",
     car_dealers: "car dealer",
+    car_wash: "car wash",
     auto_repair: "auto repair",
     beauty_spas: "beauty salon",
     dental: "dentist",
@@ -957,6 +1160,8 @@ function nominatimTerm(profileKey) {
     accounting: "accountant",
     marketing_agencies: "marketing agency",
     contractors: "contractor",
+    roofing: "roofing contractor",
+    hvac: "hvac contractor",
     plumbers_electricians: "plumber",
     pharmacies: "pharmacy",
     veterinary: "veterinary",
@@ -968,12 +1173,16 @@ function nominatimTerm(profileKey) {
     electronics: "electronics store",
     travel_agencies: "travel agency",
     event_venues: "event venue",
-    finance_insurance: "insurance"
+    finance_insurance: "insurance",
+    laundromats: "laundromat",
+    moving_storage: "self storage",
+    coworking: "coworking space",
+    photographers: "photographer"
   };
   return terms[profileKey] || businessProfiles[profileKey]?.label || "business";
 }
 
-function mapNominatimPlace(place, profileKey) {
+function mapNominatimPlace(place, profileKey, context = {}) {
   const profile = businessProfiles[profileKey];
   const tags = place.extratags || {};
   const latitude = Number(place.lat);
@@ -982,10 +1191,12 @@ function mapNominatimPlace(place, profileKey) {
   const phone = tagValue(tags, ["phone", "contact:phone", "mobile", "contact:mobile"]);
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
-  const social = tagValue(tags, ["contact:facebook", "contact:instagram", "contact:linkedin", "facebook", "instagram"]);
+  const social = Object.values(socialLinksFromTags(tags))[0] || "";
   const mapsQuery = encodeURIComponent(`${name} ${latitude},${longitude}`);
+  const country = displayCountry(tags, context);
+  const countryCode = displayCountryCode(tags, context);
   const details = {
-    ...osmDetailsFromTags(tags, { latitude, longitude }, { type: place.osm_type, id: place.osm_id }),
+    ...osmDetailsFromTags(tags, { latitude, longitude }, { type: place.osm_type, id: place.osm_id }, context),
     source: compactObject({
       provider: "OpenStreetMap Nominatim",
       osmType: place.osm_type,
@@ -1010,6 +1221,8 @@ function mapNominatimPlace(place, profileKey) {
     googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
     latitude,
     longitude,
+    country,
+    countryCode,
     email,
     social,
     openingHours: tags.opening_hours || "",
@@ -1022,6 +1235,8 @@ function mapNominatimPlace(place, profileKey) {
 async function searchNominatimFallback(search, location, limitOverride, profileKeys) {
   if (!location) return [];
   const selectedCountries = selectedCountryNames(search);
+  const fallbackCountryName = location.countryName || selectedCountries[0] || "";
+  const fallbackCountryCode = location.countryCode || countryCodesFor(selectedCountries)[0] || "";
   const countrycodes = countryCodesFor(selectedCountries).map((code) => code.toLowerCase()).join(",");
   const collected = [];
   const seen = new Set();
@@ -1053,7 +1268,10 @@ async function searchNominatimFallback(search, location, limitOverride, profileK
 
       const places = await response.json();
       for (const place of places || []) {
-        const lead = mapNominatimPlace(place, profileKey);
+        const lead = mapNominatimPlace(place, profileKey, {
+          countryName: fallbackCountryName,
+          countryCode: fallbackCountryCode
+        });
         if (!lead.name || !Number.isFinite(lead.latitude) || !Number.isFinite(lead.longitude)) continue;
         const key = normalize(`${lead.name}-${lead.latitude.toFixed(5)}-${lead.longitude.toFixed(5)}`);
         if (seen.has(key)) continue;
@@ -1152,7 +1370,7 @@ export class GooglePlacesService {
 
     const requestBody = {
       textQuery: buildTextQuery(normalizedSearch),
-      maxResultCount: normalizedSearch.limit,
+      maxResultCount: Math.min(normalizedSearch.limit, 20),
       languageCode: "en"
     };
 
@@ -1234,13 +1452,18 @@ export class GooglePlacesService {
       { label: "nodes_and_ways", elementTypes: ["node", "way"] },
       { label: "relations", elementTypes: ["relation"] }
     ];
+    const depth = searchDepthConfig(search);
+    const mapContext = {
+      countryName: location?.countryName || selectedCountries[0] || "",
+      countryCode: location?.countryCode || countryCodesFor(selectedCountries)[0] || ""
+    };
 
     for (const variant of queryVariants) {
       const query = buildOverpassQuery(location, search.limit, variant.elementTypes, search);
       const profileKeys = selectedBusinessProfileKeys(search);
       for (const endpoint of env.osm.overpassEndpoints) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 16000);
+        const timeout = setTimeout(() => controller.abort(), (depth.overpassTimeout + 4) * 1000);
         try {
           const response = await fetch(endpoint, {
             method: "POST",
@@ -1261,7 +1484,7 @@ export class GooglePlacesService {
           const payload = await response.json();
           const seen = new Set();
           const leads = filterOsmLeads((payload.elements || [])
-            .map((element) => mapOsmElement(element, profileKeys))
+            .map((element) => mapOsmElement(element, profileKeys, mapContext))
             .filter((lead) => lead.name && Number.isFinite(lead.latitude) && Number.isFinite(lead.longitude))
             .filter((lead) => {
               const key = normalize(`${lead.name}-${lead.latitude.toFixed(5)}-${lead.longitude.toFixed(5)}`);
@@ -1309,7 +1532,9 @@ export class GooglePlacesService {
   }
 
   async searchOpenStreetMapMarkets(search, originalLocation, markets) {
-    const perMarketLimit = Math.max(3, Math.ceil(search.limit / Math.min(markets.length, 5)));
+    const depth = searchDepthConfig(search);
+    const maxMarkets = Math.min(markets.length, depth.maxMarkets);
+    const perMarketLimit = Math.max(depth.perMarketMin, Math.ceil(search.limit / Math.max(maxMarkets, 1)));
     const collected = [];
     const seen = new Set();
     const selectedCountries = selectedCountryNames(search);
@@ -1318,7 +1543,11 @@ export class GooglePlacesService {
       placeName: selectedCountries.join(", "),
       coordinateSource: "selected_countries"
     };
-    const sampled = markets.slice(0, Math.min(markets.length, Math.max(selectedCountries.length * 2, 2, Math.ceil(search.limit / perMarketLimit))));
+    const sampled = markets.slice(0, Math.min(
+      markets.length,
+      depth.maxMarkets,
+      Math.max(selectedCountries.length * depth.marketsPerCountry, 2, Math.ceil(search.limit / perMarketLimit))
+    ));
 
     const marketResults = await Promise.allSettled(sampled.map(async (market) => {
       const normalizedMarket = normalizeMarketEntry(market);
@@ -1326,7 +1555,7 @@ export class GooglePlacesService {
         ...baseLocation,
         latitude: normalizedMarket.latitude,
         longitude: normalizedMarket.longitude,
-        radiusMeters: Math.min(baseLocation.radiusMeters || 15000, 3000),
+        radiusMeters: Math.min(Math.max(baseLocation.radiusMeters || depth.marketRadius, depth.marketRadius), 50000),
         marketName: normalizedMarket.name,
         countryName: normalizedMarket.countryName,
         countryCode: normalizedMarket.countryCode
@@ -1378,12 +1607,18 @@ export class GooglePlacesService {
   async searchOpenStreetMapSingle(search, location, limitOverride = search.limit) {
     const query = buildOverpassQuery(location, limitOverride, ["node", "way"], search);
     const profileKeys = selectedBusinessProfileKeys(search);
+    const depth = searchDepthConfig(search);
+    const selectedCountries = selectedCountryNames(search);
+    const mapContext = {
+      countryName: location?.countryName || selectedCountries[0] || "",
+      countryCode: location?.countryCode || countryCodesFor(selectedCountries)[0] || ""
+    };
     let lastError = null;
     let emptyResult = null;
 
     for (const endpoint of env.osm.overpassEndpoints) {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 16000);
+      const timeout = setTimeout(() => controller.abort(), (depth.overpassTimeout + 4) * 1000);
       try {
         const response = await fetch(endpoint, {
           method: "POST",
@@ -1404,7 +1639,7 @@ export class GooglePlacesService {
         const payload = await response.json();
         const seen = new Set();
         const leads = filterOsmLeads((payload.elements || [])
-          .map((element) => mapOsmElement(element, profileKeys))
+          .map((element) => mapOsmElement(element, profileKeys, mapContext))
           .filter((lead) => lead.name && Number.isFinite(lead.latitude) && Number.isFinite(lead.longitude))
           .filter((lead) => {
             const key = normalize(`${lead.name}-${lead.latitude.toFixed(5)}-${lead.longitude.toFixed(5)}`);

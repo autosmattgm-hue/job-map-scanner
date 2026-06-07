@@ -23,11 +23,19 @@ const countries = [
   "Australia",
   "New Zealand",
   "Singapore",
+  "Hong Kong",
+  "Taiwan",
   "Japan",
   "South Korea",
   "India",
   "Mexico",
   "Brazil",
+  "Argentina",
+  "Chile",
+  "Colombia",
+  "Peru",
+  "Panama",
+  "Costa Rica",
   "South Africa",
   "Nigeria",
   "Ghana",
@@ -39,20 +47,27 @@ const countries = [
   "Malaysia",
   "Philippines",
   "Thailand",
+  "Vietnam",
   "Indonesia",
   "Senegal",
   "The Gambia",
   "Kuwait",
   "Qatar",
+  "Bahrain",
+  "Oman",
+  "Jordan",
   "United Arab Emirates",
   "Saudi Arabia"
 ];
 
 const businessTypes = [
   ["restaurants", "Restaurants"],
+  ["coffee_shops", "Coffee Shops"],
+  ["bakeries", "Bakeries"],
   ["hotels", "Hotels"],
   ["boutiques", "Boutiques"],
   ["car_dealers", "Car Dealers"],
+  ["car_wash", "Car Wash"],
   ["auto_repair", "Auto Repair"],
   ["beauty_spas", "Beauty Salons & Spas"],
   ["dental", "Dentists"],
@@ -63,6 +78,8 @@ const businessTypes = [
   ["accounting", "Accountants"],
   ["marketing_agencies", "Marketing Agencies"],
   ["contractors", "Contractors"],
+  ["roofing", "Roofing Contractors"],
+  ["hvac", "HVAC Contractors"],
   ["plumbers_electricians", "Plumbers & Electricians"],
   ["pharmacies", "Pharmacies"],
   ["veterinary", "Veterinarians"],
@@ -74,10 +91,137 @@ const businessTypes = [
   ["electronics", "Electronics Stores"],
   ["travel_agencies", "Travel Agencies"],
   ["event_venues", "Event Venues"],
-  ["finance_insurance", "Finance & Insurance"]
+  ["finance_insurance", "Finance & Insurance"],
+  ["laundromats", "Laundromats"],
+  ["moving_storage", "Moving & Storage"],
+  ["coworking", "Coworking Spaces"],
+  ["photographers", "Photographers"]
 ];
 
+const countryCallingCodesByIso = {
+  US: "1",
+  CA: "1",
+  GB: "44",
+  IE: "353",
+  DE: "49",
+  FR: "33",
+  ES: "34",
+  IT: "39",
+  PT: "351",
+  NL: "31",
+  BE: "32",
+  CH: "41",
+  AT: "43",
+  PL: "48",
+  CZ: "420",
+  FI: "358",
+  SE: "46",
+  NO: "47",
+  DK: "45",
+  AU: "61",
+  NZ: "64",
+  SG: "65",
+  HK: "852",
+  TW: "886",
+  JP: "81",
+  KR: "82",
+  IN: "91",
+  MX: "52",
+  BR: "55",
+  AR: "54",
+  CL: "56",
+  CO: "57",
+  PE: "51",
+  PA: "507",
+  CR: "506",
+  ZA: "27",
+  NG: "234",
+  GH: "233",
+  KE: "254",
+  EG: "20",
+  MA: "212",
+  TR: "90",
+  IL: "972",
+  MY: "60",
+  PH: "63",
+  TH: "66",
+  VN: "84",
+  ID: "62",
+  SN: "221",
+  GM: "220",
+  KW: "965",
+  QA: "974",
+  BH: "973",
+  OM: "968",
+  JO: "962",
+  AE: "971",
+  SA: "966"
+};
+
+const countryCallingCodesByName = {
+  "united states": "1",
+  canada: "1",
+  "united kingdom": "44",
+  ireland: "353",
+  germany: "49",
+  france: "33",
+  spain: "34",
+  italy: "39",
+  portugal: "351",
+  netherlands: "31",
+  belgium: "32",
+  switzerland: "41",
+  austria: "43",
+  poland: "48",
+  "czech republic": "420",
+  finland: "358",
+  sweden: "46",
+  norway: "47",
+  denmark: "45",
+  australia: "61",
+  "new zealand": "64",
+  singapore: "65",
+  "hong kong": "852",
+  taiwan: "886",
+  japan: "81",
+  "south korea": "82",
+  india: "91",
+  mexico: "52",
+  brazil: "55",
+  argentina: "54",
+  chile: "56",
+  colombia: "57",
+  peru: "51",
+  panama: "507",
+  "costa rica": "506",
+  "south africa": "27",
+  nigeria: "234",
+  ghana: "233",
+  kenya: "254",
+  egypt: "20",
+  morocco: "212",
+  turkey: "90",
+  israel: "972",
+  malaysia: "60",
+  philippines: "63",
+  thailand: "66",
+  vietnam: "84",
+  indonesia: "62",
+  senegal: "221",
+  "the gambia": "220",
+  gambia: "220",
+  kuwait: "965",
+  qatar: "974",
+  bahrain: "973",
+  oman: "968",
+  jordan: "962",
+  "united arab emirates": "971",
+  "saudi arabia": "966"
+};
+
 let activeLeadReport = null;
+let currentLeadResults = [];
+const localSavedLeadsKey = "mat_local_saved_leads_v1";
 const defaultCountries = ["Germany"];
 const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
 const defaultMapLinks = [
@@ -113,10 +257,340 @@ function displayValue(value) {
   return value ?? "";
 }
 
+function socialLinksFromLead(lead = {}) {
+  return {
+    ...(lead.details?.social || {}),
+    ...(lead.details?.publicWebsiteProfile?.socialLinks || {}),
+    ...(lead.audit?.publicProfile?.socialLinks || {})
+  };
+}
+
+function firstSocialUrl(lead = {}) {
+  return safeExternalUrl(lead.social) || safeExternalUrl(Object.values(socialLinksFromLead(lead))[0]);
+}
+
+function normalizedName(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function isWhatsappUrl(value) {
+  const url = safeExternalUrl(value);
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "wa.me" || host === "whatsapp.com" || host.endsWith(".whatsapp.com");
+  } catch {
+    return false;
+  }
+}
+
+function countryCallingCodeForLead(lead = {}) {
+  const iso = String(lead.countryCode || lead.details?.location?.countryCode || "").toUpperCase();
+  if (countryCallingCodesByIso[iso]) return countryCallingCodesByIso[iso];
+  const countryNames = [
+    lead.country,
+    lead.countryName,
+    lead.details?.location?.country,
+    lead.details?.location?.countryName
+  ].map(normalizedName);
+  return countryNames.map((name) => countryCallingCodesByName[name]).find(Boolean) || "";
+}
+
+function firstPhoneFromLead(lead = {}) {
+  return [
+    lead.details?.contact?.mobile,
+    lead.details?.contact?.phone,
+    lead.phone,
+    lead.details?.publicWebsiteProfile?.phones?.[0],
+    lead.audit?.publicProfile?.phones?.[0]
+  ].find(Boolean) || "";
+}
+
+function normalizePhoneForWhatsapp(phone, lead = {}) {
+  const raw = String(phone || "").trim();
+  if (!raw) return "";
+  const firstNumber = raw.split(/[\/|;]/)[0].replace(/\s*(?:ext\.?|extension|x)\s*\d+$/i, "").trim();
+  let digits = firstNumber.replace(/\D/g, "");
+  if (!digits) return "";
+
+  if (firstNumber.startsWith("+")) {
+    // Already includes an international prefix.
+  } else if (digits.startsWith("00")) {
+    digits = digits.slice(2);
+  } else {
+    const callingCode = countryCallingCodeForLead(lead);
+    if (!callingCode) return "";
+    const nationalNumber = digits.replace(/^0+/, "");
+    digits = digits.startsWith(callingCode) && digits.length > callingCode.length + 5
+      ? digits
+      : `${callingCode}${nationalNumber}`;
+  }
+
+  return digits.length >= 8 && digits.length <= 15 ? digits : "";
+}
+
+function whatsappLinkFromPhone(phone, lead = {}) {
+  const normalized = normalizePhoneForWhatsapp(phone, lead);
+  return normalized ? `https://wa.me/${normalized}` : "";
+}
+
+function whatsappActionFromLead(lead = {}) {
+  const socialLinks = socialLinksFromLead(lead);
+  const explicitWhatsapp = safeExternalUrl(socialLinks.whatsapp || lead.details?.contact?.whatsappLink || "");
+  if (explicitWhatsapp && isWhatsappUrl(explicitWhatsapp)) {
+    return {
+      url: explicitWhatsapp,
+      label: "WhatsApp",
+      status: "WhatsApp link",
+      note: "Public WhatsApp link found"
+    };
+  }
+
+  const leadSocial = safeExternalUrl(lead.social || "");
+  if (leadSocial && isWhatsappUrl(leadSocial)) {
+    return {
+      url: leadSocial,
+      label: "WhatsApp",
+      status: "WhatsApp link",
+      note: "Public WhatsApp link found"
+    };
+  }
+
+  const phone = firstPhoneFromLead(lead);
+  const phoneLink = whatsappLinkFromPhone(phone, lead);
+  if (!phoneLink) return null;
+
+  return {
+    url: phoneLink,
+    label: "Check WhatsApp",
+    status: "WhatsApp check",
+    note: "Uses real business phone number"
+  };
+}
+
+function renderWhatsappButton(lead = {}, className = "btn btn-secondary") {
+  const action = whatsappActionFromLead(lead);
+  if (!action) return "";
+  return `<a class="${escapeHtml(className)}" href="${escapeHtml(action.url)}" target="_blank" rel="noreferrer">${escapeHtml(action.label)}</a>`;
+}
+
+function renderWhatsappContact(lead = {}) {
+  const action = whatsappActionFromLead(lead);
+  const note = action
+    ? `${action.note}. WhatsApp will confirm if the number is registered.`
+    : "No valid WhatsApp-ready phone or public WhatsApp link found.";
+  return `
+    <div class="audit-item">
+      <span>WhatsApp</span>
+      <strong>${action ? `<a href="${escapeHtml(action.url)}" target="_blank" rel="noreferrer">${escapeHtml(action.label)}</a>` : `<span class="muted-value">${escapeHtml(note)}</span>`}</strong>
+    </div>
+    ${action ? `<div class="audit-item"><span>WhatsApp note</span><strong>${escapeHtml(note)}</strong></div>` : ""}
+  `;
+}
+
+function localLeadId(lead = {}) {
+  return String(lead.id || `${lead.name || "lead"}-${lead.address || ""}-${lead.googleMapsLink || ""}`)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 180) || `lead-${Date.now()}`;
+}
+
+function readLocalSavedLeads() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(localSavedLeadsKey) || "[]");
+    return Array.isArray(parsed) ? parsed.filter((lead) => lead?.id || lead?.name) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalSavedLeads(leads = []) {
+  let items = leads.slice(0, 500);
+  while (items.length >= 0) {
+    try {
+      localStorage.setItem(localSavedLeadsKey, JSON.stringify(items));
+      return items;
+    } catch {
+      if (items.length <= 50) throw new Error("Browser local storage is full. Export saved leads, delete old leads, then try again.");
+      items = items.slice(0, Math.ceil(items.length * 0.75));
+    }
+  }
+  return [];
+}
+
+function compactLeadForLocalStorage(lead = {}) {
+  const copy = JSON.parse(JSON.stringify(lead || {}));
+  const id = localLeadId(copy);
+  delete copy.raw;
+  if (copy.details?.source) {
+    delete copy.details.source.rawTags;
+    delete copy.details.source.rawPlace;
+    delete copy.details.source.raw;
+  }
+  return {
+    ...copy,
+    id,
+    localSavedAt: new Date().toISOString()
+  };
+}
+
+function saveLeadsToLocalStorage(leads = []) {
+  const existing = readLocalSavedLeads();
+  const byId = new Map(existing.map((lead) => [localLeadId(lead), lead]));
+  for (const lead of leads) {
+    if (!lead) continue;
+    const compact = compactLeadForLocalStorage(lead);
+    byId.set(compact.id, {
+      ...(byId.get(compact.id) || {}),
+      ...compact
+    });
+  }
+  const saved = [...byId.values()].sort((left, right) => String(right.localSavedAt || "").localeCompare(String(left.localSavedAt || "")));
+  return writeLocalSavedLeads(saved);
+}
+
+function deleteLocalSavedLead(id) {
+  const remaining = readLocalSavedLeads().filter((lead) => localLeadId(lead) !== id);
+  return writeLocalSavedLeads(remaining);
+}
+
+function findLocalSavedLead(id) {
+  const requested = String(id || "");
+  const requestedNormalized = localLeadId({ id: requested });
+  return readLocalSavedLeads().find((lead) => (
+    String(lead.id || "") === requested ||
+    localLeadId(lead) === requested ||
+    localLeadId(lead) === requestedNormalized
+  )) || null;
+}
+
+function localWebsiteBrief(lead) {
+  const whatsapp = whatsappActionFromLead(lead);
+  return [
+    "LOCAL SAVED LEAD BRIEF",
+    "",
+    `Business name: ${displayValue(lead.name)}`,
+    `Business type: ${displayValue(lead.businessType || lead.category)}`,
+    `Phone: ${displayValue(lead.phone)}`,
+    `WhatsApp contact: ${displayValue(whatsapp?.url)}`,
+    `WhatsApp note: ${whatsapp ? `${whatsapp.note}. WhatsApp confirms if the number is registered.` : "Not found in public data"}`,
+    `Email: ${displayValue(lead.email)}`,
+    `Website: ${displayValue(lead.websiteUrl)}`,
+    `Google Maps: ${displayValue(lead.googleMapsLink)}`,
+    `Social links: ${displayValue(lead.details?.social || lead.social)}`,
+    `Address: ${displayValue(lead.address)}`,
+    `Market: ${displayValue(lead.marketName || lead.countryName)}`,
+    `Opportunity score: ${displayValue(lead.opportunityScore ?? lead.audit?.score)}`,
+    "",
+    "NOTE",
+    "This lead is saved in browser local storage and remains after logout until deleted."
+  ].join("\n");
+}
+
+function searchUrl(query) {
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+}
+
+function localVerificationLinks(lead = {}) {
+  const baseQuery = [lead.name, lead.address].filter(Boolean).join(" ") || "business";
+  const whatsapp = whatsappActionFromLead(lead);
+  return {
+    facebookSearch: searchUrl(`${baseQuery} Facebook`),
+    instagramSearch: searchUrl(`${baseQuery} Instagram`),
+    linkedinSearch: searchUrl(`${baseQuery} LinkedIn owner manager`),
+    tiktokSearch: searchUrl(`${baseQuery} TikTok`),
+    youtubeSearch: searchUrl(`${baseQuery} YouTube`),
+    xSearch: searchUrl(`${baseQuery} X Twitter`),
+    whatsappContact: whatsapp?.url || ""
+  };
+}
+
+function localReportFromLead(lead) {
+  const details = lead.details || {};
+  const whatsapp = whatsappActionFromLead(lead);
+  const contact = {
+    phone: lead.phone,
+    email: lead.email,
+    website: lead.websiteUrl,
+    social: lead.social,
+    ...(details.contact || {}),
+    whatsappLink: whatsapp?.url,
+    whatsappSource: whatsapp?.status,
+    whatsappVerificationNote: whatsapp ? `${whatsapp.note}. WhatsApp confirms if the number is registered.` : ""
+  };
+  const location = {
+    address: lead.address,
+    latitude: lead.latitude,
+    longitude: lead.longitude,
+    googleMapsLink: lead.googleMapsLink,
+    marketName: lead.marketName,
+    countryName: lead.countryName,
+    ...(details.location || {})
+  };
+  const business = {
+    name: lead.name,
+    category: lead.category,
+    businessType: lead.businessType,
+    opportunityScore: lead.opportunityScore,
+    ...(details.business || {})
+  };
+  const dossier = {
+    summary: {
+      name: lead.name,
+      businessType: lead.businessType || lead.category,
+      source: lead.source,
+      score: lead.opportunityScore ?? lead.audit?.score
+    },
+    ownerContact: details.ownerContact || {},
+    contact,
+    social: details.social || {},
+    location,
+    business,
+    operations: details.operations || {},
+    websiteDiscovery: details.publicWebsiteProfile || {},
+    verificationLinks: localVerificationLinks(lead),
+    audit: lead.audit || {},
+    source: details.source || { provider: lead.source || "local_storage" },
+    copyReady: {
+      websiteBuildBrief: localWebsiteBrief(lead)
+    }
+  };
+  return { lead, dossier, aiSummary: "This lead was loaded from local browser storage." };
+}
+
 function renderExternalLink(value) {
   const url = safeExternalUrl(value);
   if (!url) return escapeHtml(displayValue(value));
   return `<a href="${url}" target="_blank" rel="noreferrer">${escapeHtml(url)}</a>`;
+}
+
+function renderCellValue(key, value) {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const rows = Object.entries(value).filter(([, item]) => item !== undefined && item !== null && item !== "");
+    if (!rows.length) return "";
+    return rows.map(([nestedKey, nestedValue]) => {
+      const label = nestedKey.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim();
+      const rendered = safeExternalUrl(nestedValue)
+        ? renderExternalLink(nestedValue)
+        : escapeHtml(displayValue(nestedValue));
+      return `<span class="inline-link-row"><em>${escapeHtml(label)}:</em> ${rendered}</span>`;
+    }).join("");
+  }
+  const shouldLink = /url|website|link|maps|osm|facebook|instagram|linkedin|twitter|youtube|tiktok|pinterest|threads|snapchat|whatsapp|social/i.test(key)
+    || Boolean(safeExternalUrl(value));
+  return shouldLink ? renderExternalLink(value) : escapeHtml(displayValue(value));
+}
+
+function renderSocialLinks(social = {}, empty = "No social links found yet.") {
+  const entries = Object.entries(social || {}).filter(([, value]) => safeExternalUrl(value));
+  if (!entries.length) return `<div class="empty-state">${escapeHtml(empty)}</div>`;
+  return entries.map(([platform, url]) => `
+    <div class="audit-item">
+      <span>${escapeHtml(platform.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim())}</span>
+      <strong>${renderExternalLink(url)}</strong>
+    </div>
+  `).join("");
 }
 
 function renderRows(data = {}, options = {}) {
@@ -130,11 +604,10 @@ function renderRows(data = {}, options = {}) {
 
   return entries.map(([key, value]) => {
     const label = key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim();
-    const isLink = /url|website|link|maps|osm/i.test(key);
     return `
       <div class="audit-item">
         <span>${escapeHtml(label)}</span>
-        <strong>${isLink ? renderExternalLink(value) : escapeHtml(displayValue(value))}</strong>
+        <strong>${renderCellValue(key, value)}</strong>
       </div>
     `;
   }).join("");
@@ -184,6 +657,30 @@ function downloadFile(filename, mimeType, content) {
 function dossierCsv(report) {
   const flat = flattenObject(report?.dossier || {});
   const rows = [["Field", "Value"], ...Object.entries(flat)];
+  return rows.map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, "\"\"")}"`).join(",")).join("\n");
+}
+
+function leadsCsv(leads = []) {
+  const rows = [
+    ["Name", "Business Type", "Address", "Phone", "WhatsApp", "Email", "Website", "Maps", "Score", "Market", "Source", "Social Links"],
+    ...leads.map((lead) => {
+      const whatsapp = whatsappActionFromLead(lead);
+      return [
+        lead.name,
+        lead.businessType || lead.category,
+        lead.address,
+        lead.phone,
+        whatsapp?.url || "",
+        lead.email,
+        lead.websiteUrl,
+        lead.googleMapsLink,
+        lead.opportunityScore ?? lead.audit?.score ?? "",
+        lead.marketName || lead.countryName || lead.country,
+        lead.source,
+        displayValue(lead.details?.social || lead.social || "")
+      ];
+    })
+  ];
   return rows.map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, "\"\"")}"`).join(",")).join("\n");
 }
 
@@ -250,7 +747,13 @@ function getSearchPayload(form) {
   }
   payload.mapLink = String(payload.mapLink || "").trim();
   payload.radiusMeters = normalizedInteger(payload.radiusMeters, 15000, 500, 50000);
-  payload.limit = normalizedInteger(payload.limit, 20, 1, 50);
+  payload.limit = normalizedInteger(payload.limit, 20, 1, 200);
+  payload.minOpportunityScore = normalizedInteger(payload.minOpportunityScore, 0, 0, 100);
+  payload.searchDepth = payload.searchDepth || "deep";
+  payload.leadQuality = payload.leadQuality || "all";
+  payload.sortBy = payload.sortBy || "opportunity";
+  payload.requireContact = Boolean(byId("requireContact")?.checked);
+  payload.missingWebsiteOnly = Boolean(byId("missingWebsiteOnly")?.checked);
   return payload;
 }
 
@@ -285,7 +788,8 @@ function updateMapPreview() {
 
   const parsed = parseMapLink(field.value);
   if (!parsed) {
-    meta.textContent = "Paste a Google Maps link with coordinates to search around that exact area.";
+    preview.innerHTML = `<iframe title="Germany default map preview" src="https://www.google.com/maps?q=52.52,13.405&z=6&output=embed" loading="lazy"></iframe>`;
+    meta.textContent = "Default country scan: Germany. Paste a Google Maps link only for an exact area.";
     return;
   }
 
@@ -303,6 +807,15 @@ function renderLead(lead) {
   const email = lead.email ? `<span class="tag">${escapeHtml(lead.email)}</span>` : "";
   const hours = lead.openingHours ? `<span class="tag">Hours found</span>` : "";
   const source = lead.source ? `<span class="tag">${escapeHtml(lead.source.replaceAll("_", " "))}</span>` : "";
+  const socialLinks = socialLinksFromLead(lead);
+  const socialUrl = firstSocialUrl(lead);
+  const whatsapp = whatsappActionFromLead(lead);
+  const socialFound = socialUrl || Object.keys(socialLinks).length
+    ? `<span class="tag success">Social found</span>`
+    : "";
+  const whatsappFound = whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : "";
+  const contactReady = (lead.phone || lead.email || lead.social || Object.keys(socialLinks).length) ? `<span class="tag success">Contact ready</span>` : "";
+  const websiteGap = !lead.websiteUrl ? `<span class="tag warning">Needs website</span>` : "";
   return `
     <article class="lead-card">
       <div class="lead-card__top">
@@ -319,28 +832,181 @@ function renderLead(lead) {
         ${market}
         ${email}
         ${hours}
+        ${socialFound}
+        ${whatsappFound}
+        ${contactReady}
+        ${websiteGap}
         ${source}
       </div>
       <p>${website}</p>
       <div class="lead-actions">
         <a class="btn btn-secondary" href="/lead-details.html?id=${encodeURIComponent(lead.id)}">View</a>
         <button class="btn btn-primary" type="button" data-save-lead="${lead.id}">Save Lead</button>
+        ${renderWhatsappButton(lead, "btn btn-secondary")}
+        ${socialUrl ? `<a class="btn btn-ghost" href="${socialUrl}" target="_blank" rel="noreferrer">Social</a>` : ""}
         ${mapsUrl ? `<a class="btn btn-ghost" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
       </div>
     </article>
   `;
 }
 
+function renderLocalSavedLead(lead) {
+  const score = lead.opportunityScore ?? lead.audit?.score ?? 0;
+  const mapsUrl = safeExternalUrl(lead.googleMapsLink);
+  const websiteUrl = safeExternalUrl(lead.websiteUrl);
+  const socialUrl = firstSocialUrl(lead);
+  const whatsapp = whatsappActionFromLead(lead);
+  const savedAt = lead.localSavedAt ? new Date(lead.localSavedAt).toLocaleString() : "Saved locally";
+  return `
+    <article class="lead-card local-lead-card">
+      <div class="lead-card__top">
+        <div>
+          <h3>${escapeHtml(lead.name || "Saved lead")}</h3>
+          <p>${escapeHtml(lead.businessType || lead.category || "Local business")} - ${escapeHtml(lead.address || "Address unavailable")}</p>
+        </div>
+        <span class="score-pill ${scoreClass(score)}">${score}/100</span>
+      </div>
+      <div class="lead-meta">
+        <span class="tag success">Local saved</span>
+        ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
+        ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
+        <span class="tag">${escapeHtml(lead.phone || "No phone")}</span>
+        ${lead.email ? `<span class="tag">${escapeHtml(lead.email)}</span>` : ""}
+        ${lead.marketName ? `<span class="tag">${escapeHtml(lead.marketName)}</span>` : ""}
+      </div>
+      <p>${websiteUrl ? `<a href="${websiteUrl}" target="_blank" rel="noreferrer">${escapeHtml(websiteUrl)}</a>` : "Website missing"}</p>
+      <p class="muted-value">${escapeHtml(savedAt)}</p>
+      <div class="lead-actions">
+        <a class="btn btn-secondary" href="/lead-details.html?id=${encodeURIComponent(localLeadId(lead))}">View</a>
+        ${renderWhatsappButton(lead, "btn btn-secondary")}
+        ${socialUrl ? `<a class="btn btn-ghost" href="${socialUrl}" target="_blank" rel="noreferrer">Social</a>` : ""}
+        ${mapsUrl ? `<a class="btn btn-ghost" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
+        <button class="btn btn-ghost" type="button" data-delete-local-lead="${escapeHtml(localLeadId(lead))}">Delete</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderLocalSavedLeads() {
+  const target = byId("localSavedLeads");
+  const summary = byId("localSavedLeadSummary");
+  if (!target) return;
+
+  const leads = readLocalSavedLeads();
+  if (summary) {
+    summary.textContent = leads.length
+      ? `${leads.length} leads saved in this browser. They stay after logout until you delete them.`
+      : "No local saved leads yet.";
+  }
+  target.innerHTML = leads.length
+    ? leads.map(renderLocalSavedLead).join("")
+    : `<div class="empty-state">Saved leads will appear here after you press Save Lead or Save All.</div>`;
+}
+
+function renderLocalLeadDetail(target, lead) {
+  const report = localReportFromLead(lead);
+  activeLeadReport = report;
+  const dossier = report.dossier;
+  const score = lead.opportunityScore ?? lead.audit?.score ?? 0;
+  const websiteUrl = safeExternalUrl(lead.websiteUrl);
+  const mapsUrl = safeExternalUrl(lead.googleMapsLink);
+  const socialLinks = socialLinksFromLead(lead);
+  const socialUrl = firstSocialUrl(lead);
+  const whatsapp = whatsappActionFromLead(lead);
+  target.innerHTML = `
+    <section class="panel">
+      <div class="lead-card__top">
+        <div>
+          <h2>${escapeHtml(lead.name || "Saved lead")}</h2>
+          <p>${escapeHtml(lead.businessType || lead.category || "Local business")} - ${escapeHtml(lead.address || "Address unavailable")}</p>
+        </div>
+        <span class="score-pill ${scoreClass(score)}">${score}/100</span>
+      </div>
+      <div class="lead-meta" style="margin-top:14px;">
+        <span class="tag success">Loaded from local storage</span>
+        <span class="tag">${lead.phone ? "Phone found" : "Phone missing"}</span>
+        <span class="tag">${lead.email ? "Email found" : "Email missing"}</span>
+        <span class="tag">${lead.websiteUrl ? "Website found" : "Website missing"}</span>
+        ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
+        ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
+      </div>
+      <div class="lead-actions" style="margin-top:16px;">
+        ${websiteUrl ? `<a class="btn btn-secondary" href="${websiteUrl}" target="_blank" rel="noreferrer">Website</a>` : ""}
+        ${mapsUrl ? `<a class="btn btn-secondary" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
+        ${renderWhatsappButton(lead, "btn btn-secondary")}
+        ${socialUrl ? `<a class="btn btn-secondary" href="${socialUrl}" target="_blank" rel="noreferrer">Social</a>` : ""}
+        <button class="btn btn-secondary" type="button" data-copy-dossier>Copy All Data</button>
+        <button class="btn btn-primary" type="button" data-copy-brief>Copy Website Brief</button>
+        <button class="btn btn-secondary" type="button" data-download-json>JSON</button>
+        <button class="btn btn-secondary" type="button" data-download-csv>CSV</button>
+        <button class="btn btn-ghost" type="button" data-delete-local-lead="${escapeHtml(localLeadId(lead))}">Delete Local</button>
+      </div>
+    </section>
+
+    <section class="panel" style="grid-column:1 / -1;">
+      <h2>Copy-Ready Website Build Brief</h2>
+      <pre class="copy-brief">${escapeHtml(localWebsiteBrief(lead))}</pre>
+    </section>
+
+    <section class="panel">
+      <h2>Contact Details</h2>
+      <div class="audit-list">
+        ${renderExpectedRows(dossier.contact, [
+          ["phone", "Phone"],
+          ["mobile", "Mobile"],
+          ["email", "Email"],
+          ["website", "Website", "website"]
+        ])}
+        ${renderWhatsappContact(lead)}
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Social Links</h2>
+      <div class="audit-list">${renderSocialLinks({ ...dossier.social, ...socialLinks }, "No social links saved locally.")}</div>
+      <h2 style="margin-top:20px;">Website Discovery</h2>
+      <div class="audit-list">${renderRows(dossier.websiteDiscovery, { empty: "No website discovery data saved locally." })}</div>
+      <h2 style="margin-top:20px;">Social Finder Links</h2>
+      <div class="audit-list">${renderRows({
+        facebookSearch: dossier.verificationLinks?.facebookSearch,
+        instagramSearch: dossier.verificationLinks?.instagramSearch,
+        linkedinSearch: dossier.verificationLinks?.linkedinSearch,
+        tiktokSearch: dossier.verificationLinks?.tiktokSearch,
+        youtubeSearch: dossier.verificationLinks?.youtubeSearch,
+        xSearch: dossier.verificationLinks?.xSearch,
+        whatsappContact: dossier.verificationLinks?.whatsappContact
+      }, { empty: "No social finder links saved locally." })}</div>
+    </section>
+
+    <section class="panel">
+      <h2>Business Details</h2>
+      <div class="audit-list">${renderRows(dossier.business, { empty: "No business details saved locally." })}</div>
+    </section>
+
+    <section class="panel">
+      <h2>Location</h2>
+      <div class="audit-list">${renderRows(dossier.location, { empty: "No location details saved locally." })}</div>
+    </section>
+
+    <section class="panel">
+      <h2>Local Storage Data</h2>
+      <p>This data is stored in this browser and remains after logout until deleted.</p>
+      <pre class="code-block">${escapeHtml(JSON.stringify(lead, null, 2))}</pre>
+    </section>
+  `;
+}
+
 function renderResults(leads) {
   const target = byId("leadResults");
   if (!target) return;
+  currentLeadResults = Array.isArray(leads) ? leads : [];
 
-  if (!leads.length) {
+  if (!currentLeadResults.length) {
     target.innerHTML = `<div class="empty-state">No leads found for this search.</div>`;
     return;
   }
 
-  target.innerHTML = leads.map(renderLead).join("");
+  target.innerHTML = currentLeadResults.map(renderLead).join("");
 }
 
 function initLeadSearch() {
@@ -386,7 +1052,11 @@ function initLeadSearch() {
           : "";
         const provider = result.providerLabel || (result.source === "openstreetmap_overpass" ? "OpenStreetMap Overpass" : "Google Places");
         const countryText = result.selectedCountries?.length ? ` Countries: ${result.selectedCountries.join(", ")}.` : "";
-        note.textContent = `Real ${provider} results loaded${locationText}.${countryText} Query: ${result.query || "businesses"}.`;
+        const stats = result.searchStats
+          ? ` Scanned ${result.searchStats.rawCount} raw, qualified ${result.searchStats.qualifiedCount}, depth ${result.searchStats.searchDepth}.`
+          : "";
+        const cacheText = result.cached ? " Cached repeat search." : "";
+        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText} Query: ${result.query || "businesses"}.`;
       }
     } catch (error) {
       target.innerHTML = `<div class="error-state">${error.message}</div>`;
@@ -424,6 +1094,11 @@ function initLeadActions() {
     button.textContent = "Saving...";
 
     try {
+      const lead = currentLeadResults.find((item) => item.id === button.dataset.saveLead);
+      if (lead) {
+        saveLeadsToLocalStorage([lead]);
+        renderLocalSavedLeads();
+      }
       await apiFetch(`/api/leads/${encodeURIComponent(button.dataset.saveLead)}/save`, {
         method: "POST",
         body: JSON.stringify({})
@@ -432,6 +1107,90 @@ function initLeadActions() {
     } catch (error) {
       button.textContent = error.message;
       button.disabled = false;
+    }
+  });
+}
+
+function initBulkLeadActions() {
+  document.addEventListener("click", async (event) => {
+    const exportButton = event.target.closest("[data-export-visible-leads]");
+    const saveButton = event.target.closest("[data-save-visible-leads]");
+    if (!exportButton && !saveButton) return;
+    if (!requireAuth()) return;
+
+    const note = byId("searchNote");
+    if (!currentLeadResults.length) {
+      if (note) note.textContent = "Run a search first, then save or export the visible leads.";
+      return;
+    }
+
+    if (exportButton) {
+      downloadFile(`mat-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(currentLeadResults));
+      if (note) note.textContent = `Exported ${currentLeadResults.length} visible leads to CSV.`;
+      return;
+    }
+
+    const original = saveButton.textContent;
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+    try {
+      saveLeadsToLocalStorage(currentLeadResults);
+      renderLocalSavedLeads();
+      for (let index = 0; index < currentLeadResults.length; index += 10) {
+        const batch = currentLeadResults.slice(index, index + 10);
+        await Promise.all(batch.map((lead) => (
+          apiFetch(`/api/leads/${encodeURIComponent(lead.id)}/save`, {
+            method: "POST",
+            body: JSON.stringify({})
+          })
+        )));
+      }
+      if (note) note.textContent = `Saved ${currentLeadResults.length} visible leads to CRM.`;
+    } catch (error) {
+      if (note) note.textContent = error.message;
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = original;
+    }
+  });
+}
+
+function initLocalSavedLeadActions() {
+  document.addEventListener("click", (event) => {
+    const deleteButton = event.target.closest("[data-delete-local-lead]");
+    const exportButton = event.target.closest("[data-export-local-leads]");
+    const clearButton = event.target.closest("[data-clear-local-leads]");
+    if (!deleteButton && !exportButton && !clearButton) return;
+
+    const note = byId("localSavedLeadSummary");
+    const leads = readLocalSavedLeads();
+
+    if (exportButton) {
+      if (!leads.length) {
+        if (note) note.textContent = "No local saved leads to export.";
+        return;
+      }
+      downloadFile(`mat-local-saved-leads-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv", leadsCsv(leads));
+      if (note) note.textContent = `Exported ${leads.length} local saved leads.`;
+      return;
+    }
+
+    if (clearButton) {
+      if (!leads.length) return;
+      const confirmed = window.confirm("Delete all local saved leads from this browser?");
+      if (!confirmed) return;
+      writeLocalSavedLeads([]);
+      renderLocalSavedLeads();
+      return;
+    }
+
+    if (deleteButton) {
+      deleteLocalSavedLead(deleteButton.dataset.deleteLocalLead);
+      renderLocalSavedLeads();
+      if (document.body.dataset.page === "lead-details") {
+        const detail = byId("leadDetail");
+        if (detail) detail.innerHTML = `<div class="empty-state">Local saved lead deleted from this browser.</div>`;
+      }
     }
   });
 }
@@ -459,6 +1218,9 @@ function initLeadDetails() {
       const score = audit.score || lead.opportunityScore || 0;
       const websiteUrl = safeExternalUrl(lead.websiteUrl);
       const mapsUrl = safeExternalUrl(lead.googleMapsLink);
+      const socialLinks = socialLinksFromLead(lead);
+      const socialUrl = firstSocialUrl(lead);
+      const whatsapp = whatsappActionFromLead(lead);
       const rawSnapshot = dossier.source?.rawTags || lead.raw || {};
       const brief = websiteBrief(result);
       target.innerHTML = `
@@ -475,10 +1237,14 @@ function initLeadDetails() {
             <span class="tag">${lead.websiteUrl ? "Website found" : "Website missing"}</span>
             <span class="tag">${lead.phone ? "Phone found" : "Phone missing"}</span>
             <span class="tag">${lead.email ? "Email found" : "Email missing"}</span>
+            ${socialUrl ? `<span class="tag success">Social found</span>` : ""}
+            ${whatsapp ? `<span class="tag success">${escapeHtml(whatsapp.status)}</span>` : ""}
           </div>
           <div class="lead-actions" style="margin-top:16px;">
             ${websiteUrl ? `<a class="btn btn-secondary" href="${websiteUrl}" target="_blank" rel="noreferrer">Website</a>` : ""}
             ${mapsUrl ? `<a class="btn btn-secondary" href="${mapsUrl}" target="_blank" rel="noreferrer">Maps</a>` : ""}
+            ${renderWhatsappButton(lead, "btn btn-secondary")}
+            ${socialUrl ? `<a class="btn btn-secondary" href="${socialUrl}" target="_blank" rel="noreferrer">Social</a>` : ""}
             <button class="btn btn-secondary" type="button" data-copy-dossier>Copy All Data</button>
             <button class="btn btn-primary" type="button" data-copy-brief>Copy Website Brief</button>
             <button class="btn btn-secondary" type="button" data-download-json>JSON</button>
@@ -519,10 +1285,31 @@ function initLeadDetails() {
               ["website", "Website", "website"],
               ["fax", "Fax"]
             ])}
+            ${renderWhatsappContact(lead)}
           </div>
           <h2 style="margin-top:20px;">Online Presence</h2>
           <div class="audit-list">
             ${renderRows(dossier.onlinePresence, { empty: "No online presence details found yet." })}
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Website Discovery</h2>
+          <p>Public contact and social data extracted from the business website when available.</p>
+          <div class="audit-list">
+            ${renderRows(dossier.websiteDiscovery, { empty: "No website discovery data found yet." })}
+          </div>
+          <h2 style="margin-top:20px;">Social Finder Links</h2>
+          <div class="audit-list">
+            ${renderRows({
+              facebookSearch: dossier.verificationLinks?.facebookSearch,
+              instagramSearch: dossier.verificationLinks?.instagramSearch,
+              linkedinSearch: dossier.verificationLinks?.linkedinSearch,
+              tiktokSearch: dossier.verificationLinks?.tiktokSearch,
+              youtubeSearch: dossier.verificationLinks?.youtubeSearch,
+              xSearch: dossier.verificationLinks?.xSearch,
+              whatsappContact: dossier.verificationLinks?.whatsappContact
+            }, { empty: "No social finder links available." })}
           </div>
         </section>
 
@@ -544,7 +1331,7 @@ function initLeadDetails() {
           </div>
           <h2 style="margin-top:20px;">Social Links</h2>
           <div class="audit-list">
-            ${renderRows(dossier.social, { empty: "No social links found yet." })}
+            ${renderSocialLinks({ ...dossier.social, ...socialLinks }, "No social links found yet.")}
           </div>
         </section>
 
@@ -582,6 +1369,11 @@ function initLeadDetails() {
       `;
     })
     .catch((error) => {
+      const localLead = findLocalSavedLead(leadId);
+      if (localLead) {
+        renderLocalLeadDetail(target, localLead);
+        return;
+      }
       target.innerHTML = `<div class="error-state">${error.message}</div>`;
     });
 }
@@ -594,6 +1386,10 @@ function initAiButtons() {
     if (!requireAuth()) return;
 
     const output = byId("aiOutput");
+    const button = analyze || outreach;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Running...";
     if (output) output.textContent = "Running NVIDIA analysis...";
 
     try {
@@ -605,6 +1401,9 @@ function initAiButtons() {
       if (output) output.textContent = result.content || result.message || "Complete";
     } catch (error) {
       if (output) output.textContent = error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
     }
   });
 }
@@ -655,6 +1454,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initMapLinkPreview();
   initLeadSearch();
   initLeadActions();
+  initBulkLeadActions();
+  initLocalSavedLeadActions();
+  renderLocalSavedLeads();
   initLeadDetails();
   initAiButtons();
   initLeadDossierActions();

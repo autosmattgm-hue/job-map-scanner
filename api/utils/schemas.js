@@ -74,6 +74,17 @@ function numberField(input, field, options = {}) {
   return normalized;
 }
 
+function booleanField(input, field, options = {}) {
+  const value = input[field];
+  if (value === undefined || value === null || value === "") return Boolean(options.default);
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+  const normalized = String(value).trim().toLowerCase();
+  if (["true", "1", "yes", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "off"].includes(normalized)) return false;
+  return Boolean(options.default);
+}
+
 function optionalCoordinate(input, field, min, max) {
   if (input[field] === undefined || input[field] === "") return null;
   const value = Number(input[field]);
@@ -124,7 +135,13 @@ export const leadSearchSchema = schema((input) => {
     latitude,
     longitude,
     radiusMeters: numberField(input, "radiusMeters", { int: true, min: 500, max: 50000, default: 15000, defaultOnInvalid: true, clamp: true }),
-    limit: numberField(input, "limit", { int: true, min: 1, max: 50, default: 20, defaultOnInvalid: true, clamp: true })
+    limit: numberField(input, "limit", { int: true, min: 1, max: 200, default: 20, defaultOnInvalid: true, clamp: true }),
+    searchDepth: enumField(input, "searchDepth", ["quick", "standard", "deep", "maximum"], { default: "deep" }),
+    leadQuality: enumField(input, "leadQuality", ["all", "contact_ready", "needs_website", "high_opportunity", "owner_data"], { default: "all" }),
+    sortBy: enumField(input, "sortBy", ["opportunity", "contact", "website_missing", "name"], { default: "opportunity" }),
+    minOpportunityScore: numberField(input, "minOpportunityScore", { int: true, min: 0, max: 100, default: 0, defaultOnInvalid: true, clamp: true }),
+    requireContact: booleanField(input, "requireContact", { default: false }),
+    missingWebsiteOnly: booleanField(input, "missingWebsiteOnly", { default: false })
   };
 });
 

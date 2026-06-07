@@ -9,6 +9,12 @@ function initAiConsole() {
     event.preventDefault();
     if (!requireAuth()) return;
     const prompt = new FormData(form).get("prompt");
+    const submit = form.querySelector("[type='submit']");
+    const originalText = submit?.textContent || "";
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Running...";
+    }
     output.textContent = "Running NVIDIA Maverick...";
 
     try {
@@ -19,6 +25,11 @@ function initAiConsole() {
       output.textContent = result.content;
     } catch (error) {
       output.textContent = error.message;
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = originalText;
+      }
     }
   });
 }
