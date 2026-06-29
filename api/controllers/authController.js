@@ -13,5 +13,22 @@ export async function login(req, res) {
 }
 
 export async function me(req, res) {
-  res.json({ user: req.user });
+  res.json({ user: await authService.currentUser(req.user) });
+}
+
+export async function profile(req, res) {
+  res.json({ user: await authService.currentUser(req.user) });
+}
+
+export async function updateProfile(req, res) {
+  res.json(await authService.updateProfile(req.user, req.body));
+}
+
+export async function settings(req, res) {
+  const user = await authService.currentUser(req.user);
+  res.json({ settings: user.settings, user });
+}
+
+export async function updateSettings(req, res) {
+  res.json(await authService.updateSettings(req.user, req.body));
 }

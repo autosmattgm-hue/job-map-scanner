@@ -13,15 +13,16 @@
       <main class="workspace">
         <section class="workspace-header">
           <div><h1>Settings</h1><p>API integrations, scoring weights, alerts, and workspace controls.</p></div>
-          <button class="btn btn-primary" type="button">Save Settings</button>
+          <button class="btn btn-primary" type="submit" form="workspaceSettingsForm">Save Settings</button>
         </section>
-        <section class="report-grid">
+        <form id="workspaceSettingsForm" data-settings-form>
+          <section class="report-grid">
           <article class="panel">
             <h2>Integrations</h2>
             <div class="audit-list" id="integrationStatus">
               <div class="skeleton">Checking live providers...</div>
             </div>
-            <p class="notice" id="missingConfig" style="margin-top:12px;">Real mode is active.</p>
+            <p class="notice" id="missingConfig" style="margin-top:12px;">Checking required production configuration...</p>
           </article>
           <article class="panel">
             <h2>Security</h2>
@@ -34,14 +35,36 @@
           </article>
           <article class="panel">
             <h2>Scoring</h2>
-            <div class="audit-list">
-              <div class="audit-item"><span>No website</span><span class="tag">50</span></div>
-              <div class="audit-item"><span>Poor mobile</span><span class="tag">20</span></div>
-              <div class="audit-item"><span>Weak SEO</span><span class="tag">20</span></div>
-              <div class="audit-item"><span>No SSL</span><span class="tag">10</span></div>
+            <div class="form-grid compact">
+              <div class="field"><label for="noWebsiteWeight">No Website</label><input id="noWebsiteWeight" name="noWebsiteWeight" type="number" min="0" max="100" value="50"></div>
+              <div class="field"><label for="poorMobileWeight">Poor Mobile</label><input id="poorMobileWeight" name="poorMobileWeight" type="number" min="0" max="100" value="20"></div>
+              <div class="field"><label for="weakSeoWeight">Weak SEO</label><input id="weakSeoWeight" name="weakSeoWeight" type="number" min="0" max="100" value="20"></div>
+              <div class="field"><label for="noSslWeight">No SSL</label><input id="noSslWeight" name="noSslWeight" type="number" min="0" max="100" value="10"></div>
             </div>
           </article>
-        </section>
+          <article class="panel">
+            <h2>Notifications</h2>
+            <div class="field checkbox-field">
+              <label><input id="leadAlerts" name="leadAlerts" type="checkbox" checked> Lead alerts</label>
+              <label><input id="weeklyDigest" name="weeklyDigest" type="checkbox" checked> Weekly digest</label>
+            </div>
+          </article>
+          <article class="panel">
+            <h2>Search Defaults</h2>
+            <div class="form-grid compact">
+              <div class="field"><label for="defaultCountry">Default Country</label><input id="defaultCountry" name="defaultCountry" value="United States"></div>
+              <div class="field"><label for="defaultResults">Default Results</label><input id="defaultResults" name="defaultResults" type="number" min="5" max="200" value="20"></div>
+            </div>
+          </article>
+          <article class="panel">
+            <h2>Workspace</h2>
+            <div class="audit-list" data-settings-summary>
+              <div class="skeleton">Loading workspace settings...</div>
+            </div>
+          </article>
+          </section>
+          <p class="notice" data-settings-status role="status" style="margin-top:14px;">Loading settings...</p>
+        </form>
       </main>
     </div>
     <script type="module" src="/components/layout.js"></script>

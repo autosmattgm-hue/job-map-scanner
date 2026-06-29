@@ -11,7 +11,7 @@ import { DashboardService } from "./services/dashboardService.js";
 import { LeadService } from "./services/leadService.js";
 import { NvidiaService } from "./services/nvidiaService.js";
 import { AppError } from "./utils/errors.js";
-import { aiSchemas, authSchemas, billingSchema, crmSchemas, leadSearchSchema } from "./utils/schemas.js";
+import { aiSchemas, authSchemas, billingSchema, crmSchemas, leadSearchSchema, paypalConfirmationSchema, profileSchema, settingsSchema } from "./utils/schemas.js";
 import { verifyAccessToken } from "./middleware/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -50,6 +50,7 @@ const publicFiles = new Set([
   "/crm.html",
   "/lead-details.html",
   "/pricing.html",
+  "/billing-success.html",
   "/profile.html",
   "/settings.html",
   "/admin.html",
@@ -198,14 +199,16 @@ const routes = [
         openStreetMap: Boolean(env.osm.overpassEndpoints.length),
         nvidia: Boolean(env.nvidia.apiKey),
         stripe: Boolean(env.stripe.secretKey),
-        paypal: Boolean(env.paypal.clientId && env.paypal.clientSecret)
+        paypal: Boolean((env.paypal.clientId && env.paypal.clientSecret) || Object.values(env.paypal.paymentLinks).every(Boolean)),
+        paypalApi: Boolean(env.paypal.clientId && env.paypal.clientSecret),
+        paypalHostedLinks: Object.values(env.paypal.paymentLinks).every(Boolean)
       },
       realMode: true,
       missingRequiredForLiveOperation: [
         !env.nvidia.apiKey && "NVIDIA_API_KEY",
-        !env.firebase.projectId && "FIREBASE_PROJECT_ID",
-        !env.stripe.secretKey && "STRIPE_SECRET_KEY",
-        !(env.paypal.clientId && env.paypal.clientSecret) && "PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET"
+        !env.firebase.projectId && "........",
+        !env.stripe.secretKey && "........",
+        !(env.paypal.clientId && env.paypal.clientSecret) && !Object.values(env.paypal.paymentLinks).every(Boolean) && "PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET or hosted PayPal payment links"
       ].filter(Boolean)
     })
   },
@@ -226,7 +229,34 @@ const routes = [
     method: "GET",
     regex: /^\/api\/auth\/me$/,
     keys: [],
-    handler: async ({ req }) => ({ user: await getUser(req) })
+    handler: async ({ req }) => ({ user: await authService.currentUser(await getUser(req)) })
+  },
+  {
+    method: "GET",
+    regex: /^\/api\/auth\/profile$/,
+    keys: [],
+    handler: async ({ req }) => ({ user: await authService.currentUser(await getUser(req)) })
+  },
+  {
+    method: "PATCH",
+    regex: /^\/api\/auth\/profile$/,
+    keys: [],
+    handler: async ({ req, body }) => authService.updateProfile(await getUser(req), validate(profileSchema, body))
+  },
+  {
+    method: "GET",
+    regex: /^\/api\/auth\/settings$/,
+    keys: [],
+    handler: async ({ req }) => {
+      const user = await authService.currentUser(await getUser(req));
+      return { settings: user.settings, user };
+    }
+  },
+  {
+    method: "PATCH",
+    regex: /^\/api\/auth\/settings$/,
+    keys: [],
+    handler: async ({ req, body }) => authService.updateSettings(await getUser(req), validate(settingsSchema, body))
   },
   {
     method: "POST",
@@ -337,6 +367,12 @@ const routes = [
     regex: /^\/api\/billing\/paypal\/order$/,
     keys: [],
     handler: async ({ req, body }) => billingService.createPaypalOrder(validate(billingSchema, body).plan, await getUser(req))
+  },
+  {
+    method: "POST",
+    regex: /^\/api\/billing\/paypal\/confirm$/,
+    keys: [],
+    handler: async ({ req, body }) => billingService.confirmPaypalPayment(validate(paypalConfirmationSchema, body), await getUser(req))
   },
   {
     method: "GET",

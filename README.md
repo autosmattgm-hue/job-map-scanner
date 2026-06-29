@@ -9,7 +9,7 @@ Premium Google Maps lead-generation SaaS for agencies, freelancers, SEO teams, a
 - Database: Firebase Firestore
 - Hosting: Vercel
 - AI: NVIDIA API / NVIDIA NIM models only
-- Payments: Stripe and PayPal integration stubs with server-side key handling
+- Payments: Stripe Payment Intents plus hosted PayPal plan links with server-side checkout sessions
 
 ## Quick Start
 
@@ -31,16 +31,21 @@ Use this local owner account for full, free enterprise access:
 
 Admin users receive unlimited enterprise access across lead search, CRM, reports, analytics, admin, billing, settings, and AI workflows. Billing is not required for admin accounts. Set `OWNER_EMAIL` and `OWNER_PASSWORD` in `.env` before deploying a public instance.
 
+## Free Trial Limits
+
+New free accounts start on the Free Trial plan. The API allows 2 lead searches total, with each trial search capped at 5 returned leads. After both trial searches are used, `/api/leads/search` returns `TRIAL_LIMIT_REACHED` until the user activates a paid plan.
+
 ## Production Setup
 
 1. Create a Firebase project with Authentication and Firestore enabled.
 2. Add Firebase Admin credentials and the Firebase Web API key to Vercel environment variables.
 3. Optional: enable Google Places API (New) and restrict the server key to your backend if you want Google Places results instead of the no-key OpenStreetMap fallback.
 4. Add the NVIDIA API key, base URL, and selected NVIDIA NIM model ID.
-5. Add Stripe and PayPal credentials.
-6. Deploy to Vercel and configure your custom domain, TLS, and monitoring.
+5. Add Stripe credentials and either PayPal API credentials or hosted PayPal plan links.
+6. Configure each hosted PayPal link to redirect successful payments to `https://your-domain.com/billing-success.html`.
+7. Deploy to Vercel and configure your custom domain, TLS, and monitoring.
 
-Complete paid SaaS operation requires Firebase credentials, `NVIDIA_API_KEY`, Stripe credentials, and PayPal credentials. `GOOGLE_PLACES_API_KEY` is optional because Google Maps links can seed real OpenStreetMap Overpass searches without a Google API key. The app will not fake provider responses.
+Complete paid SaaS operation requires Firebase credentials, `NVIDIA_API_KEY`, Stripe credentials, and either PayPal API credentials or hosted PayPal payment links. `GOOGLE_PLACES_API_KEY` is optional because Google Maps links can seed real OpenStreetMap Overpass searches without a Google API key. The app will not fake provider responses.
 
 ## Google Maps Link Search
 
@@ -72,3 +77,4 @@ For broad links like `/place/Europe/...` or `/place/United+States/...`, selected
 - `GET /api/dashboard/metrics`
 - `POST /api/billing/stripe/payment-intent`
 - `POST /api/billing/paypal/order`
+- `POST /api/billing/paypal/confirm`

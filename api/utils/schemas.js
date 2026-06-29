@@ -1,3 +1,5 @@
+import { paidPlanKeys } from "../config/plans.js";
+
 function validationError(fieldErrors) {
   const error = new Error("Validation failed");
   error.fieldErrors = fieldErrors;
@@ -112,6 +114,23 @@ export const authSchemas = {
   }))
 };
 
+export const profileSchema = schema((input) => ({
+  name: stringField(input, "name", { required: true, min: 2, max: 120 }),
+  company: stringField(input, "company", { max: 160, truncate: true }),
+  signature: stringField(input, "signature", { max: 1000, truncate: true })
+}));
+
+export const settingsSchema = schema((input) => ({
+  leadAlerts: booleanField(input, "leadAlerts", { default: true }),
+  weeklyDigest: booleanField(input, "weeklyDigest", { default: true }),
+  defaultCountry: stringField(input, "defaultCountry", { max: 80, truncate: true, default: "United States" }),
+  defaultResults: numberField(input, "defaultResults", { int: true, min: 5, max: 200, default: 20, defaultOnInvalid: true, clamp: true }),
+  noWebsiteWeight: numberField(input, "noWebsiteWeight", { int: true, min: 0, max: 100, default: 50, defaultOnInvalid: true, clamp: true }),
+  poorMobileWeight: numberField(input, "poorMobileWeight", { int: true, min: 0, max: 100, default: 20, defaultOnInvalid: true, clamp: true }),
+  weakSeoWeight: numberField(input, "weakSeoWeight", { int: true, min: 0, max: 100, default: 20, defaultOnInvalid: true, clamp: true }),
+  noSslWeight: numberField(input, "noSslWeight", { int: true, min: 0, max: 100, default: 10, defaultOnInvalid: true, clamp: true })
+}));
+
 export const leadSearchSchema = schema((input) => {
   const mapLink = stringField(input, "mapLink", { max: 4000, truncate: true });
   const latitude = optionalCoordinate(input, "latitude", -90, 90);
@@ -179,5 +198,13 @@ export const aiSchemas = {
 };
 
 export const billingSchema = schema((input) => ({
-  plan: enumField(input, "plan", ["starter", "professional", "agency"])
+  plan: enumField(input, "plan", paidPlanKeys)
+}));
+
+export const paypalConfirmationSchema = schema((input) => ({
+  plan: enumField(input, "plan", paidPlanKeys),
+  sessionId: stringField(input, "sessionId", { required: true, min: 8, max: 160 }),
+  paypalToken: stringField(input, "paypalToken", { max: 220, truncate: true }),
+  payerId: stringField(input, "payerId", { max: 220, truncate: true }),
+  transactionId: stringField(input, "transactionId", { max: 220, truncate: true })
 }));

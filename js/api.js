@@ -7,6 +7,8 @@ const PUBLIC_API_PATHS = new Set([
 ]);
 const PROTECTED_API_PREFIXES = [
   "/api/auth/me",
+  "/api/auth/profile",
+  "/api/auth/settings",
   "/api/dashboard/",
   "/api/leads/",
   "/api/crm/",

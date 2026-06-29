@@ -48,8 +48,17 @@ function renderAccessState() {
     return;
   }
 
-  plan.textContent = user.subscription || "Starter";
-  usage.textContent = "Usage healthy";
+  if (user.subscription === "trial" || user.billingStatus === "trial" || user.entitlements?.trial) {
+    const used = Number(user.trialSearchesUsed || user.entitlements?.trialSearchesUsed || 0);
+    const limit = Number(user.trialSearchLimit || user.entitlements?.trialSearchLimit || 2);
+    const leadLimit = Number(user.trialLeadLimit || user.entitlements?.trialLeadLimit || 5);
+    plan.textContent = "Free Trial";
+    usage.textContent = `${Math.max(0, limit - used)} of ${limit} searches left, ${leadLimit} leads each`;
+    return;
+  }
+
+  plan.textContent = user.planName || user.subscription || "Starter";
+  usage.textContent = "Paid plan active";
 }
 
 async function initDashboard() {

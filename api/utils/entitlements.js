@@ -23,8 +23,8 @@ export function applyAdminEntitlements(user = {}) {
   const normalized = {
     ...user,
     role: user.role || "user",
-    subscription: user.subscription || "starter",
-    billingStatus: user.billingStatus || "active",
+    subscription: user.subscription || "trial",
+    billingStatus: user.billingStatus || "trial",
     permissions: Array.isArray(user.permissions) ? user.permissions : []
   };
 

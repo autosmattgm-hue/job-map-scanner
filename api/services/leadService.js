@@ -1,7 +1,9 @@
 import { FirestoreRepository } from "../repositories/firestoreRepository.js";
 import { env } from "../config/env.js";
+import { getPlan } from "../config/plans.js";
 import { GooglePlacesService } from "./googlePlacesService.js";
 import { WebsiteAuditService } from "./websiteAuditService.js";
+import { AppError } from "../utils/errors.js";
 import { isAdminUser } from "../utils/entitlements.js";
 
 const searchCache = new Map();
@@ -77,12 +79,35 @@ function contactScore(lead) {
   ].filter(Boolean).length;
 }
 
+function isPaidUser(user = {}) {
+  return Boolean(user.entitlements?.activePlan || user.planActivatedAt || user.paypalCheckoutSessionId);
+}
+
+function isTrialUser(user = {}) {
+  if (isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited")) return false;
+  if (isPaidUser(user)) return false;
+  return !user.subscription || user.subscription === "trial" || user.billingStatus === "trial" || user.subscription === "starter";
+}
+
+function trialUsage(user = {}) {
+  const trialPlan = getPlan("trial");
+  const used = Math.max(0, Number(user.trialSearchesUsed || user.entitlements?.trialSearchesUsed || 0));
+  return {
+    used,
+    remaining: Math.max(0, trialPlan.trialSearchLimit - used),
+    searchLimit: trialPlan.trialSearchLimit,
+    leadLimit: trialPlan.trialLeadLimit
+  };
+}
+
 function normalizeSearchForUser(search, user) {
   const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
+  const trial = isTrialUser(user);
+  const trialPlan = getPlan("trial");
   return {
     ...search,
-    limit: Math.min(Math.max(Number(search.limit) || 20, 1), admin ? 200 : 50),
-    searchDepth: admin ? search.searchDepth : (search.searchDepth === "maximum" ? "deep" : search.searchDepth)
+    limit: trial ? trialPlan.trialLeadLimit : Math.min(Math.max(Number(search.limit) || 20, 1), admin ? 200 : 50),
+    searchDepth: admin ? search.searchDepth : (search.searchDepth === "maximum" || trial ? "deep" : search.searchDepth)
   };
 }
 
@@ -640,11 +665,61 @@ export class LeadService {
     this.websiteAudit = new WebsiteAuditService();
     this.leads = new FirestoreRepository("leads");
     this.auditLogs = new FirestoreRepository("auditLogs");
+    this.users = new FirestoreRepository("users");
+  }
+
+  async currentAccessUser(user) {
+    if (!user?.uid || isAdminUser(user)) return user;
+    const stored = await this.users.findById(user.uid);
+    return { ...user, ...(stored || {}) };
+  }
+
+  async assertTrialAccess(user) {
+    if (!isTrialUser(user)) return null;
+    const usage = trialUsage(user);
+    if (usage.remaining <= 0) {
+      throw new AppError(
+        "Your free trial includes 2 lead searches with up to 5 leads each. Subscribe to unlock more lead searches.",
+        402,
+        "TRIAL_LIMIT_REACHED",
+        { trial: usage, upgradeUrl: "/pricing.html" }
+      );
+    }
+    return usage;
+  }
+
+  async recordTrialSearch(user, usage) {
+    if (!usage || !user?.uid) return null;
+    const used = usage.used + 1;
+    const nextUsage = {
+      used,
+      remaining: Math.max(0, usage.searchLimit - used),
+      searchLimit: usage.searchLimit,
+      leadLimit: usage.leadLimit
+    };
+    await this.users.upsert(user.uid, {
+      trialSearchesUsed: used,
+      subscription: "trial",
+      planName: "Free Trial",
+      billingStatus: "trial",
+      monthlyLeadLimit: usage.leadLimit,
+      entitlements: {
+        billingRequired: true,
+        trial: true,
+        trialSearchesUsed: used,
+        trialSearchLimit: usage.searchLimit,
+        trialLeadLimit: usage.leadLimit,
+        upgradeRequiredAfterTrial: true
+      }
+    });
+    return nextUsage;
   }
 
   async search(search, user) {
-    const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
-    const effectiveSearch = normalizeSearchForUser(search, user);
+    const accessUser = await this.currentAccessUser(user);
+    const startingTrialUsage = await this.assertTrialAccess(accessUser);
+    const admin = isAdminUser(accessUser) || accessUser?.entitlements?.unlimitedAccess || accessUser?.permissions?.includes?.("unlimited");
+    const effectiveSearch = normalizeSearchForUser(search, accessUser);
     const bypassCache = Boolean(effectiveSearch.bypassCache || effectiveSearch.refreshSeed);
     const refreshSeed = effectiveSearch.refreshSeed || (bypassCache ? String(Date.now()) : "");
     const providerSearch = {
@@ -655,13 +730,21 @@ export class LeadService {
     const cacheKey = cacheKeyForSearch(providerSearch, admin);
     const cached = bypassCache ? null : getCachedSearch(cacheKey);
     if (cached) {
+      const updatedTrialUsage = await this.recordTrialSearch(accessUser, startingTrialUsage);
       await this.auditLogs.create({
-        actor: user?.email || "guest",
+        actor: accessUser?.email || "guest",
         action: "lead_search_cached",
         query: effectiveSearch,
         count: cached.leads?.length || 0
       });
-      return cached;
+      return {
+        ...cached,
+        trial: updatedTrialUsage ? {
+          ...updatedTrialUsage,
+          limited: true,
+          upgradeUrl: "/pricing.html"
+        } : cached.trial
+      };
     }
 
     const result = await this.googlePlaces.search(providerSearch);
@@ -685,12 +768,14 @@ export class LeadService {
     await Promise.all(qualified.map((lead) => this.leads.upsert(lead.id, {
       ...lead,
       source: result.source || "google_places",
-      discoveredBy: user?.uid,
+      discoveredBy: accessUser?.uid,
       discoveredAt: new Date().toISOString()
     })));
 
+    const updatedTrialUsage = await this.recordTrialSearch(accessUser, startingTrialUsage);
+
     await this.auditLogs.create({
-      actor: user?.email || "guest",
+      actor: accessUser?.email || "guest",
       action: "lead_search",
       query: effectiveSearch,
       count: qualified.length
@@ -714,7 +799,12 @@ export class LeadService {
         searchDepth: effectiveSearch.searchDepth,
         leadQuality: effectiveSearch.leadQuality,
         sortBy: effectiveSearch.sortBy
-      }
+      },
+      trial: updatedTrialUsage ? {
+        ...updatedTrialUsage,
+        limited: true,
+        upgradeUrl: "/pricing.html"
+      } : undefined
     };
     if (!bypassCache) setCachedSearch(cacheKey, response);
     return response;

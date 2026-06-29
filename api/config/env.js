@@ -73,7 +73,13 @@ export const env = {
   paypal: {
     env: process.env.PAYPAL_ENV || "sandbox",
     clientId: process.env.PAYPAL_CLIENT_ID || "",
-    clientSecret: process.env.PAYPAL_CLIENT_SECRET || ""
+    clientSecret: process.env.PAYPAL_CLIENT_SECRET || "",
+    paymentLinks: {
+      starter: process.env.PAYPAL_STARTER_PAYMENT_LINK || "https://www.paypal.com/ncp/payment/39W6KNEUB23KN",
+      professional: process.env.PAYPAL_PROFESSIONAL_PAYMENT_LINK || "https://www.paypal.com/ncp/payment/9EVHZMVYV7A52",
+      growthPlus: process.env.PAYPAL_GROWTH_PLUS_PAYMENT_LINK || "https://www.paypal.com/ncp/payment/YVE74UL365V8W",
+      agency: process.env.PAYPAL_AGENCY_PAYMENT_LINK || "https://www.paypal.com/ncp/payment/SY3RYMGDZ9A7E"
+    }
   },
   rateLimit: {
     windowMs: number(process.env.RATE_LIMIT_WINDOW_MS, 60000),

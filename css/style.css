@@ -1049,6 +1049,18 @@ th {
   color: var(--muted);
 }
 
+.notice.success {
+  border-color: rgba(19, 115, 51, 0.22);
+  background: rgba(19, 115, 51, 0.08);
+  color: var(--accent-2);
+}
+
+.notice.error {
+  border-color: rgba(179, 38, 30, 0.24);
+  background: rgba(179, 38, 30, 0.08);
+  color: var(--danger);
+}
+
 .code-block {
   max-height: 420px;
   overflow: auto;

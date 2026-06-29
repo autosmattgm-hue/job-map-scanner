@@ -97,7 +97,13 @@ function sessionText(user) {
   if (user?.role === "admin" || user?.entitlements?.unlimitedAccess) {
     return "Admin Unlimited Access: every feature is unlocked with no billing required.";
   }
-  return `${user?.subscription || "Starter"} workspace active.`;
+  if (user?.subscription === "trial" || user?.billingStatus === "trial" || user?.entitlements?.trial) {
+    const used = Number(user.trialSearchesUsed || user.entitlements?.trialSearchesUsed || 0);
+    const limit = Number(user.trialSearchLimit || user.entitlements?.trialSearchLimit || 2);
+    const leadLimit = Number(user.trialLeadLimit || user.entitlements?.trialLeadLimit || 5);
+    return `Free Trial active: ${Math.max(0, limit - used)} of ${limit} searches left, ${leadLimit} leads per search.`;
+  }
+  return `${user?.planName || user?.subscription || "Starter"} workspace active.`;
 }
 
 async function initSessionBadge() {

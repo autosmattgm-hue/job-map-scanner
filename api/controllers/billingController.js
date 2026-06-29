@@ -11,3 +11,8 @@ export async function paypalOrder(req, res) {
   const result = await billing.createPaypalOrder(req.body.plan, req.user);
   res.json(result);
 }
+
+export async function paypalConfirm(req, res) {
+  const result = await billing.confirmPaypalPayment(req.body, req.user);
+  res.json(result);
+}

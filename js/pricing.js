@@ -1,5 +1,19 @@
 import { apiFetch, hasUsableToken, requireAuth } from "./api.js";
 
+const PENDING_PAYPAL_CHECKOUT_KEY = "mat_pending_paypal_checkout";
+
+function rememberPaypalCheckout(result) {
+  if (!result?.sessionId || !result?.plan?.key) return;
+  localStorage.setItem(PENDING_PAYPAL_CHECKOUT_KEY, JSON.stringify({
+    provider: "paypal",
+    sessionId: result.sessionId,
+    plan: result.plan.key,
+    planName: result.plan.name,
+    returnUrl: result.returnUrl,
+    startedAt: new Date().toISOString()
+  }));
+}
+
 async function initOwnerPricingState() {
   if (!hasUsableToken()) return;
 
@@ -40,6 +54,13 @@ function initBillingButtons() {
         headers: { "Idempotency-Key": crypto.randomUUID() },
         body: JSON.stringify({ plan: button.dataset.stripePlan || button.dataset.paypalPlan })
       });
+      const checkoutUrl = result.approvalUrl || result.checkoutUrl;
+      if (paypalButton && checkoutUrl) {
+        rememberPaypalCheckout(result);
+        button.textContent = "Opening PayPal...";
+        window.location.href = checkoutUrl;
+        return;
+      }
       button.textContent = result.message || "Ready";
     } catch (error) {
       button.textContent = error.message;

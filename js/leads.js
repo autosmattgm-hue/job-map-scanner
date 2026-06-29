@@ -1,4 +1,4 @@
-import { apiFetch, byId, requireAuth, scoreClass } from "./api.js";
+import { apiFetch, byId, getCurrentUser, requireAuth, scoreClass, setCurrentUser } from "./api.js";
 
 const countries = [
   "United States",
@@ -225,7 +225,6 @@ let currentFilteredLeadResults = [];
 let currentVisibleLeadResults = [];
 let currentResultPage = 1;
 let hasLeadSearchRun = false;
-const resultPageSize = 12;
 const localSavedLeadsKey = "mat_local_saved_leads_v1";
 const defaultCountries = ["Germany"];
 const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
@@ -261,6 +260,36 @@ function displayValue(value) {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   if (value && typeof value === "object") return JSON.stringify(value);
   return value ?? "";
+}
+
+function syncTrialUsage(trial) {
+  if (!trial) return;
+  const user = getCurrentUser();
+  if (!user) return;
+  setCurrentUser({
+    ...user,
+    subscription: "trial",
+    planName: "Free Trial",
+    billingStatus: "trial",
+    monthlyLeadLimit: trial.leadLimit,
+    trialSearchesUsed: trial.used,
+    trialSearchLimit: trial.searchLimit,
+    trialLeadLimit: trial.leadLimit,
+    entitlements: {
+      ...(user.entitlements || {}),
+      billingRequired: true,
+      trial: true,
+      trialSearchesUsed: trial.used,
+      trialSearchLimit: trial.searchLimit,
+      trialLeadLimit: trial.leadLimit,
+      upgradeRequiredAfterTrial: true
+    }
+  });
+}
+
+function trialSearchText(trial) {
+  if (!trial) return "";
+  return ` Free trial: ${trial.remaining} of ${trial.searchLimit} searches left, ${trial.leadLimit} leads per search.`;
 }
 
 function socialLinksFromLead(lead = {}) {
@@ -1270,8 +1299,12 @@ function resetLeadResultPage() {
   currentResultPage = 1;
 }
 
+function selectedResultPageSize() {
+  return normalizedInteger(byId("limit")?.value, 20, 1, 200);
+}
+
 function totalLeadResultPages() {
-  return Math.max(1, Math.ceil(currentFilteredLeadResults.length / resultPageSize));
+  return Math.max(1, Math.ceil(currentFilteredLeadResults.length / selectedResultPageSize()));
 }
 
 function selectedVisibleLeadIds() {
@@ -1306,8 +1339,9 @@ function renderLeadPagination() {
   }
 
   const totalPages = totalLeadResultPages();
-  const start = (currentResultPage - 1) * resultPageSize + 1;
-  const end = Math.min(currentResultPage * resultPageSize, currentFilteredLeadResults.length);
+  const pageSize = selectedResultPageSize();
+  const start = (currentResultPage - 1) * pageSize + 1;
+  const end = Math.min(currentResultPage * pageSize, currentFilteredLeadResults.length);
   const needsPaging = totalPages > 1;
   target.innerHTML = `
     <div class="pagination-controls">
@@ -1326,18 +1360,19 @@ function renderFilteredLeadResults() {
   currentFilteredLeadResults = filteredVisibleLeadResults();
   const totalPages = totalLeadResultPages();
   currentResultPage = Math.min(Math.max(currentResultPage, 1), totalPages);
-  const pageStart = (currentResultPage - 1) * resultPageSize;
-  currentVisibleLeadResults = currentFilteredLeadResults.slice(pageStart, pageStart + resultPageSize);
+  const pageSize = selectedResultPageSize();
+  const pageStart = (currentResultPage - 1) * pageSize;
+  currentVisibleLeadResults = currentFilteredLeadResults.slice(pageStart, pageStart + pageSize);
 
   if (!currentLeadResults.length) {
-    target.innerHTML = `<div class="empty-state">${hasLeadSearchRun ? "No leads found for this search." : "Start a search to discover leads."}</div>`;
+    target.innerHTML = `<div class="empty-state">${hasLeadSearchRun ? "No leads found for this search yet. Try Refresh Leads, choose a different business type, or paste a more exact Google Maps city link." : "Start a search to discover leads."}</div>`;
     renderLeadPagination();
     updateLeadCommandSummary();
     return;
   }
 
   if (!currentFilteredLeadResults.length) {
-    target.innerHTML = `<div class="empty-state">No leads match the current filters.</div>`;
+    target.innerHTML = `<div class="empty-state">No leads match the current filters. Lower the minimum score or switch the filter back to All results.</div>`;
     renderLeadPagination();
     updateLeadCommandSummary();
     return;
@@ -1401,6 +1436,7 @@ function initLeadSearch() {
         method: "POST",
         body: JSON.stringify(getSearchPayload(form, { refresh }))
       });
+      syncTrialUsage(result.trial);
       renderResults(result.leads || []);
       const note = byId("searchNote");
       if (note) {
@@ -1414,13 +1450,16 @@ function initLeadSearch() {
           : "";
         const cacheText = result.cached ? " Cached repeat search." : "";
         const refreshText = result.refreshed ? " Fresh lead refresh was used." : "";
-        const pageText = (result.leads || []).length > resultPageSize ? " Use Next and Previous below the cards to browse all returned leads." : "";
-        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText}${refreshText}${pageText} Query: ${result.query || "businesses"}.`;
+        const trialText = trialSearchText(result.trial);
+        const pageText = (result.leads || []).length > selectedResultPageSize() ? " Use Next and Previous below the cards to browse all returned leads." : "";
+        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText}${refreshText}${trialText}${pageText} Query: ${result.query || "businesses"}.`;
       }
     } catch (error) {
       target.innerHTML = `<div class="error-state">${error.message}</div>`;
       const note = byId("searchNote");
-      if (note) note.textContent = "Real map-link search needs valid coordinates and an available map data provider.";
+      if (note) note.textContent = error.message.includes("free trial")
+        ? `${error.message} Open Pricing to subscribe.`
+        : "Real map-link search needs valid coordinates and an available map data provider.";
     } finally {
       actionButtons.forEach((button) => {
         button.disabled = false;

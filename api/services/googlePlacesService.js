@@ -1252,6 +1252,132 @@ function mapNominatimPlace(place, profileKey, context = {}) {
   };
 }
 
+function photonOsmType(value) {
+  const normalized = String(value || "").toUpperCase();
+  if (normalized === "N") return "node";
+  if (normalized === "W") return "way";
+  if (normalized === "R") return "relation";
+  return "node";
+}
+
+function photonTagsFromFeature(feature, profileKey) {
+  const properties = feature.properties || {};
+  const fallbackFilter = businessProfiles[profileKey]?.filters?.[0] || ["shop", "yes"];
+  const osmKey = properties.osm_key || fallbackFilter[0];
+  const osmValue = properties.osm_value || fallbackFilter[1];
+  return compactObject({
+    name: properties.name,
+    [osmKey]: osmValue,
+    "addr:housenumber": properties.housenumber,
+    "addr:street": properties.street,
+    "addr:city": properties.city || properties.locality || properties.district,
+    "addr:postcode": properties.postcode,
+    "addr:country": String(properties.countrycode || "").toUpperCase(),
+    "is_in:country": properties.country
+  });
+}
+
+function mapPhotonFeature(feature, profileKey, context = {}) {
+  const properties = feature.properties || {};
+  const coordinates = feature.geometry?.coordinates || [];
+  const longitude = Number(coordinates[0]);
+  const latitude = Number(coordinates[1]);
+  const type = photonOsmType(properties.osm_type);
+  const id = properties.osm_id || `${profileKey}-${latitude}-${longitude}`;
+  const tags = photonTagsFromFeature(feature, profileKey);
+  const lead = mapOsmElement({
+    type,
+    id,
+    lat: latitude,
+    lon: longitude,
+    tags
+  }, [profileKey], context);
+
+  return {
+    ...lead,
+    id: `photon-${type}-${id}`,
+    source: "openstreetmap_photon",
+    details: {
+      ...lead.details,
+      source: compactObject({
+        ...(lead.details?.source || {}),
+        provider: "OpenStreetMap Photon",
+        osmType: type,
+        osmId: id,
+        osmUrl: type && id ? `https://www.openstreetmap.org/${type}/${id}` : "",
+        photonProperties: properties,
+        rawTags: tags
+      })
+    },
+    raw: { osmType: type, osmId: id, tags, photon: feature }
+  };
+}
+
+async function searchPhotonFallback(search, location, limitOverride, profileKeys) {
+  if (!location) return [];
+  const selectedCountries = selectedCountryNames(search);
+  const countryCodes = countryCodesFor(selectedCountries);
+  const fallbackCountryName = location.countryName || selectedCountries[0] || "";
+  const fallbackCountryCode = location.countryCode || countryCodes[0] || "";
+  const orderedProfileKeys = freshOrder(profileKeys, search.refreshSeed, "photon-profile");
+  const collected = [];
+  const seen = new Set();
+
+  for (const profileKey of orderedProfileKeys.slice(0, 8)) {
+    if (collected.length >= limitOverride) break;
+    const profileFilters = businessProfiles[profileKey]?.filters || [];
+    const filters = [
+      ...profileFilters.slice(0, 1),
+      ...freshOrder(profileFilters.slice(1), search.refreshSeed, `photon-filter-${profileKey}`)
+    ].slice(0, 6);
+
+    for (const [osmKey, osmValue] of filters) {
+      if (collected.length >= limitOverride) break;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      try {
+        const url = new URL("https://photon.komoot.io/api/");
+        url.searchParams.set("q", nominatimTerm(profileKey));
+        url.searchParams.set("lat", String(location.latitude));
+        url.searchParams.set("lon", String(location.longitude));
+        url.searchParams.set("limit", String(Math.min(20, Math.max(1, limitOverride - collected.length))));
+        url.searchParams.set("lang", "en");
+        url.searchParams.append("osm_tag", `${osmKey}:${osmValue}`);
+
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "MATLeadsAIProX/1.0"
+          }
+        });
+        if (!response.ok) continue;
+
+        const payload = await response.json();
+        for (const feature of payload.features || []) {
+          const lead = mapPhotonFeature(feature, profileKey, {
+            countryName: fallbackCountryName,
+            countryCode: fallbackCountryCode
+          });
+          if (!lead.name || !Number.isFinite(lead.latitude) || !Number.isFinite(lead.longitude)) continue;
+          if (countryCodes.length && lead.countryCode && !countryCodes.includes(String(lead.countryCode).toUpperCase())) continue;
+          const key = normalize(`${lead.name}-${lead.latitude.toFixed(5)}-${lead.longitude.toFixed(5)}`);
+          if (seen.has(key)) continue;
+          seen.add(key);
+          collected.push({ ...lead, searchRelevance: scoreLead(lead, profileKeys) });
+          if (collected.length >= limitOverride) break;
+        }
+      } catch {
+        // Photon is a no-key OSM fallback; failed mirror calls should not mask other provider attempts.
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+  }
+
+  return collected;
+}
+
 async function searchNominatimFallback(search, location, limitOverride, profileKeys) {
   if (!location) return [];
   const selectedCountries = selectedCountryNames(search);
@@ -1478,10 +1604,22 @@ export class GooglePlacesService {
       countryName: location?.countryName || selectedCountries[0] || "",
       countryCode: location?.countryCode || countryCodesFor(selectedCountries)[0] || ""
     };
+    const profileKeys = selectedBusinessProfileKeys(search);
+    const fastPhotonLeads = await searchPhotonFallback(search, location, search.limit, profileKeys);
+    if (fastPhotonLeads.length) {
+      return {
+        source: "openstreetmap_photon",
+        providerLabel: "OpenStreetMap Photon",
+        selectedCountries,
+        queryVariant: "photon_fast",
+        location,
+        query: buildTextQuery(search),
+        leads: fastPhotonLeads.slice(0, search.limit)
+      };
+    }
 
     for (const variant of queryVariants) {
       const query = buildOverpassQuery(location, search.limit, variant.elementTypes, search);
-      const profileKeys = selectedBusinessProfileKeys(search);
       for (const endpoint of env.osm.overpassEndpoints) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), (depth.overpassTimeout + 4) * 1000);
@@ -1535,7 +1673,20 @@ export class GooglePlacesService {
       }
     }
 
-    const fallbackLeads = await searchNominatimFallback(search, location, search.limit, selectedBusinessProfileKeys(search));
+    const photonLeads = await searchPhotonFallback(search, location, search.limit, profileKeys);
+    if (photonLeads.length) {
+      return {
+        source: "openstreetmap_photon",
+        providerLabel: "OpenStreetMap Photon",
+        selectedCountries,
+        queryVariant: "photon_fallback",
+        location,
+        query: buildTextQuery(search),
+        leads: photonLeads.slice(0, search.limit)
+      };
+    }
+
+    const fallbackLeads = await searchNominatimFallback(search, location, search.limit, profileKeys);
     if (fallbackLeads.length) {
       return {
         source: "openstreetmap_nominatim",
@@ -1583,7 +1734,7 @@ export class GooglePlacesService {
         countryCode: normalizedMarket.countryCode
       };
       const result = await this.searchOpenStreetMapSingle(search, marketLocation, perMarketLimit);
-      return { normalizedMarket, leads: result.leads };
+      return { normalizedMarket, leads: result.leads, source: result.source, providerLabel: result.providerLabel };
     }));
 
     for (const marketResult of marketResults) {
@@ -1603,9 +1754,11 @@ export class GooglePlacesService {
       if (collected.length >= search.limit) break;
     }
 
+    const usedPhoton = collected.some((lead) => lead.source === "openstreetmap_photon");
+
     return {
-      source: "openstreetmap_overpass",
-      providerLabel: "OpenStreetMap Overpass",
+      source: usedPhoton ? "openstreetmap_photon" : "openstreetmap_overpass",
+      providerLabel: usedPhoton ? "OpenStreetMap Photon" : "OpenStreetMap Overpass",
       selectedCountries,
       queryVariant: "profitable_markets",
       location: {
@@ -1637,6 +1790,16 @@ export class GooglePlacesService {
     };
     let lastError = null;
     let emptyResult = null;
+    const fastPhotonLeads = await searchPhotonFallback(search, location, limitOverride, profileKeys);
+    if (fastPhotonLeads.length) {
+      return {
+        source: "openstreetmap_photon",
+        providerLabel: "OpenStreetMap Photon",
+        endpoint: "https://photon.komoot.io/api/",
+        location,
+        leads: fastPhotonLeads.slice(0, limitOverride)
+      };
+    }
 
     for (const endpoint of env.osm.overpassEndpoints) {
       const controller = new AbortController();
@@ -1683,6 +1846,17 @@ export class GooglePlacesService {
       } finally {
         clearTimeout(timeout);
       }
+    }
+
+    const photonLeads = await searchPhotonFallback(search, location, limitOverride, profileKeys);
+    if (photonLeads.length) {
+      return {
+        source: "openstreetmap_photon",
+        providerLabel: "OpenStreetMap Photon",
+        endpoint: "https://photon.komoot.io/api/",
+        location,
+        leads: photonLeads.slice(0, limitOverride)
+      };
     }
 
     const fallbackLeads = await searchNominatimFallback(search, location, limitOverride, profileKeys);
