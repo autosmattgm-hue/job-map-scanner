@@ -14,6 +14,15 @@ function statusPill(enabled) {
   return `<span class="status-pill ${enabled ? "success" : "danger"}">${enabled ? "Connected" : "Required"}</span>`;
 }
 
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
 function setSettingsStatus(message, state = "info") {
   const target = document.querySelector("[data-settings-status]");
   if (!target) return;
@@ -28,6 +37,11 @@ function settingsPayload() {
     weeklyDigest: byId("weeklyDigest")?.checked,
     defaultCountry: byId("defaultCountry")?.value || "",
     defaultResults: byId("defaultResults")?.value || 20,
+    brandName: byId("brandName")?.value || "",
+    bookingUrl: byId("bookingUrl")?.value || "",
+    primaryOffer: byId("primaryOffer")?.value || "",
+    proposalPrice: byId("proposalPrice")?.value || 2500,
+    followUpCadence: byId("followUpCadence")?.value || "",
     noWebsiteWeight: byId("noWebsiteWeight")?.value || 50,
     poorMobileWeight: byId("poorMobileWeight")?.value || 20,
     weakSeoWeight: byId("weakSeoWeight")?.value || 20,
@@ -40,6 +54,11 @@ function populateSettings(settings = {}) {
   byId("weeklyDigest").checked = settings.weeklyDigest ?? true;
   byId("defaultCountry").value = settings.defaultCountry || "United States";
   byId("defaultResults").value = settings.defaultResults || 20;
+  byId("brandName").value = settings.brandName || "MAT Leads AI Pro X";
+  byId("bookingUrl").value = settings.bookingUrl || "";
+  byId("primaryOffer").value = settings.primaryOffer || "Website + local lead growth audit";
+  byId("proposalPrice").value = settings.proposalPrice ?? 2500;
+  byId("followUpCadence").value = settings.followUpCadence || "Day 1, Day 3, Day 7";
   byId("noWebsiteWeight").value = settings.noWebsiteWeight ?? 50;
   byId("poorMobileWeight").value = settings.poorMobileWeight ?? 20;
   byId("weakSeoWeight").value = settings.weakSeoWeight ?? 20;
@@ -52,10 +71,16 @@ function renderSettingsSummary(user = {}, settings = {}) {
   const plan = user.role === "admin" || user.entitlements?.unlimitedAccess
     ? "Admin Unlimited"
     : user.planName || user.subscription || "Workspace";
+  const bookingUrl = safeExternalUrl(settings.bookingUrl);
   target.innerHTML = `
     <div class="audit-item"><span>Current plan</span><strong>${escapeHtml(plan)}</strong></div>
+    <div class="audit-item"><span>Report brand</span><strong>${escapeHtml(settings.brandName || "MAT Leads AI Pro X")}</strong></div>
+    <div class="audit-item"><span>Primary offer</span><strong>${escapeHtml(settings.primaryOffer || "Website + local lead growth audit")}</strong></div>
+    <div class="audit-item"><span>Booking URL</span><strong>${bookingUrl ? `<a href="${escapeHtml(bookingUrl)}" target="_blank" rel="noreferrer">${escapeHtml(bookingUrl)}</a>` : "Not set"}</strong></div>
+    <div class="audit-item"><span>Default proposal</span><strong>$${escapeHtml(settings.proposalPrice ?? 2500)}</strong></div>
     <div class="audit-item"><span>Default scan</span><strong>${escapeHtml(settings.defaultCountry || "United States")}</strong></div>
     <div class="audit-item"><span>Default results</span><strong>${escapeHtml(settings.defaultResults || 20)}</strong></div>
+    <div class="audit-item"><span>Follow-up cadence</span><strong>${escapeHtml(settings.followUpCadence || "Day 1, Day 3, Day 7")}</strong></div>
     <div class="audit-item"><span>Lead alerts</span><span class="status-pill ${settings.leadAlerts ? "success" : "warning"}">${settings.leadAlerts ? "On" : "Off"}</span></div>
   `;
 }

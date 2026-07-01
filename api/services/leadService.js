@@ -36,8 +36,12 @@ function hashString(value) {
   return hash >>> 0;
 }
 
-function cacheKeyForSearch(search, isAdmin) {
-  return stableJson({ search, isAdmin });
+function cacheKeyForSearch(search, userOrAdmin) {
+  const isAdmin = typeof userOrAdmin === "boolean"
+    ? userOrAdmin
+    : isAdminUser(userOrAdmin) || userOrAdmin?.entitlements?.unlimitedAccess || userOrAdmin?.permissions?.includes?.("unlimited");
+  const accessTier = typeof userOrAdmin === "object" && isTrialUser(userOrAdmin) ? "trial" : "standard";
+  return stableJson({ search, isAdmin, accessTier });
 }
 
 function getCachedSearch(cacheKey) {
@@ -103,12 +107,15 @@ function trialUsage(user = {}) {
 function normalizeSearchForUser(search, user) {
   const admin = isAdminUser(user) || user?.entitlements?.unlimitedAccess || user?.permissions?.includes?.("unlimited");
   const trial = isTrialUser(user);
-  const trialPlan = getPlan("trial");
   return {
     ...search,
-    limit: trial ? trialPlan.trialLeadLimit : Math.min(Math.max(Number(search.limit) || 20, 1), admin ? 200 : 50),
+    limit: Math.min(Math.max(Number(search.limit) || 20, 1), admin ? 200 : 50),
     searchDepth: admin ? search.searchDepth : (search.searchDepth === "maximum" || trial ? "deep" : search.searchDepth)
   };
+}
+
+function returnLimitForUser(search, user) {
+  return isTrialUser(user) ? getPlan("trial").trialLeadLimit : search.limit;
 }
 
 function candidateLimitForSearch(search, admin) {
@@ -143,6 +150,12 @@ function applyLeadFilters(leads, search) {
   };
   const sorter = sorters[search.sortBy] || sorters.opportunity;
   return filtered.sort((left, right) => sorter(left, right) || String(left.name || "").localeCompare(String(right.name || "")));
+}
+
+function fallbackLeadPool(leads) {
+  return [...leads].sort((left, right) => (
+    (right.opportunityScore ?? right.audit?.score ?? 0) - (left.opportunityScore ?? left.audit?.score ?? 0)
+  ) || contactScore(right) - contactScore(left) || String(left.name || "").localeCompare(String(right.name || "")));
 }
 
 function freshLeadOrder(leads, refreshSeed) {
@@ -550,6 +563,292 @@ function formatWebsiteBuildBrief(lead, dossier) {
   ].join("\n");
 }
 
+function money(value) {
+  return `$${Math.round(Number(value) || 0).toLocaleString("en-US")}`;
+}
+
+function businessLabel(lead, dossier) {
+  return lead.businessType || lead.category || dossier.business?.businessType || dossier.business?.category || "local business";
+}
+
+function primaryContactValue(dossier) {
+  return dossier.contact?.phone || dossier.contact?.mobile || dossier.contact?.email || dossier.contact?.whatsappLink || "";
+}
+
+function estimatedProjectValue(lead, dossier) {
+  const score = Number(dossier.audit?.score ?? lead.opportunityScore ?? 50);
+  const noWebsite = !lead.websiteUrl;
+  const contactBonus = primaryContactValue(dossier) ? 450 : 0;
+  const categoryBonus = score >= 80 ? 900 : score >= 55 ? 550 : 250;
+  const websiteBonus = noWebsite ? 1800 : 650;
+  const bookingBonus = dossier.audit?.checks?.bookingSystem === false ? 450 : 0;
+  const seoBonus = dossier.audit?.checks?.seoMetadata === false ? 400 : 0;
+  return websiteBonus + categoryBonus + contactBonus + bookingBonus + seoBonus + 1200;
+}
+
+function monthlyUpsideEstimate(lead, dossier) {
+  const reviews = Math.max(0, Number(lead.reviewsCount || dossier.business?.reviewsCount || 0));
+  const rating = Math.max(0, Number(lead.rating || dossier.business?.rating || 0));
+  const baseline = lead.websiteUrl ? 750 : 1200;
+  const trustMultiplier = rating >= 4.5 ? 1.35 : rating >= 4 ? 1.18 : 1;
+  const demandLift = Math.min(1400, reviews * 3.5);
+  return Math.round((baseline + demandLift) * trustMultiplier);
+}
+
+function buildLeadReasons(lead, dossier) {
+  const checks = dossier.audit?.checks || {};
+  const reasons = [
+    !lead.websiteUrl && "No public website was found, making a new website build an obvious first offer.",
+    checks.mobileFriendly === false && "The current website appears weak on mobile, which hurts calls, bookings, and form conversions.",
+    checks.seoMetadata === false && "SEO metadata is missing or weak, so the business is likely underperforming in local search.",
+    checks.https === false && "HTTPS is missing, which creates a trust and conversion issue.",
+    checks.contactForm === false && "A contact form or conversion path was not detected.",
+    checks.bookingSystem === false && "No booking or appointment system was detected.",
+    primaryContactValue(dossier) && "Public contact data is available, so outreach can start without manual data hunting.",
+    Object.keys(dossier.social || {}).length > 0 && "Social links were found, giving an extra verification and follow-up channel.",
+    (Number(dossier.business?.rating || lead.rating || 0) >= 4) && "The business has enough reputation signal to benefit from a better conversion funnel."
+  ].filter(Boolean);
+
+  return reasons.length ? reasons.slice(0, 8) : [
+    "The public profile has enough location and business data to support a targeted audit and proposal.",
+    "A concise local SEO, conversion, and follow-up offer can be positioned around measurable revenue improvement."
+  ];
+}
+
+function buildCompetitorGap(lead, dossier) {
+  const label = businessLabel(lead, dossier);
+  const city = dossier.location?.city || dossier.location?.marketName || lead.marketName || "the local market";
+  const checks = dossier.audit?.checks || {};
+  return {
+    searchQuery: `${lead.name || label} competitors ${city}`,
+    competitorSearchUrl: searchUrl(`${label} near ${city} best website booking reviews`),
+    likelyGaps: [
+      !lead.websiteUrl ? "Competitors with modern websites can capture customers before this business is considered." : "Competitors may be winning with clearer landing pages, faster mobile UX, and stronger calls to action.",
+      checks.bookingSystem === false ? "Businesses with online booking can convert after-hours demand automatically." : "Booking is present or unknown, so focus on making the booking path shorter and more visible.",
+      checks.seoMetadata === false ? "Competitors with better titles, descriptions, and local pages may outrank this profile." : "SEO metadata is present or unknown, so the next gap is content depth and local proof.",
+      "Review proof, service pages, photo galleries, and map-ready contact sections should be benchmarked before outreach."
+    ],
+    positioningAngle: `Position the offer as a local ${label} conversion upgrade in ${city}, not just a generic website project.`
+  };
+}
+
+function buildProposalPack(lead, dossier) {
+  const noWebsite = !lead.websiteUrl;
+  const projectValue = estimatedProjectValue(lead, dossier);
+  const monthlyValue = Math.max(497, Math.round(projectValue * 0.18));
+  const label = businessLabel(lead, dossier);
+  return {
+    title: noWebsite ? "Local Website Launch + Lead Capture System" : "Website Conversion + Local SEO Growth Sprint",
+    targetBusiness: lead.name || "Local business",
+    packagePrice: projectValue,
+    monthlyRetainer: monthlyValue,
+    closeRateTarget: "18% to 32% when contact data and decision maker are verified",
+    timeline: noWebsite ? "7 to 14 days" : "5 to 10 days",
+    deliverables: [
+      noWebsite ? "Conversion-focused website with mobile-first pages" : "Website audit fixes for mobile, SEO, speed, and trust",
+      "Google Maps conversion section with phone, directions, reviews, and service area",
+      "Booking, quote, or contact form connected to email/CRM",
+      "Local SEO title, description, schema, and service/category copy",
+      "AI-assisted outreach follow-up sequence for missed calls and warm leads",
+      "Monthly reporting dashboard with calls, leads, bookings, and next actions"
+    ],
+    upsells: [
+      "AI chatbot or SMS assistant",
+      "CRM pipeline automation",
+      "Monthly SEO content pages",
+      "Review generation campaign",
+      "Paid ads landing page"
+    ],
+    firstPitch: `I found a few quick wins for ${lead.name || "your business"} that can help a ${label} turn more local searches into calls, bookings, and quote requests.`
+  };
+}
+
+function buildRoiEstimate(lead, dossier) {
+  const projectValue = estimatedProjectValue(lead, dossier);
+  const monthlyUpside = monthlyUpsideEstimate(lead, dossier);
+  const breakEvenMonths = Math.max(1, Math.ceil(projectValue / monthlyUpside));
+  return {
+    setupInvestment: projectValue,
+    estimatedMonthlyUpside: monthlyUpside,
+    breakEvenMonths,
+    twelveMonthUpside: monthlyUpside * 12,
+    assumptions: [
+      "Assumes a modest lift in calls, form fills, bookings, and map-to-website conversions.",
+      "Uses public reputation, website status, audit gaps, and contact completeness as directional signals.",
+      "Final ROI should be refined after confirming average order value and close rate with the owner."
+    ],
+    roiStory: `${money(projectValue)} in setup can break even in about ${breakEvenMonths} month${breakEvenMonths === 1 ? "" : "s"} if the business captures roughly ${money(monthlyUpside)} in extra monthly revenue.`
+  };
+}
+
+function buildCallScript(lead, dossier) {
+  const name = lead.name || "your business";
+  const label = businessLabel(lead, dossier);
+  const issue = !lead.websiteUrl
+    ? "I could not find a proper website connected to your map listing"
+    : "I noticed a few conversion and local search gaps on your website";
+  return {
+    opener: `Hi, is this the best person to speak with about marketing or the website for ${name}?`,
+    reason: `I was checking local ${label} businesses and ${issue}.`,
+    valueHook: "The quick win is making it easier for people who already find you on Google Maps to call, book, or request a quote.",
+    qualifyingQuestions: [
+      "Do most new customers come from Google, referrals, or repeat business?",
+      "Do you currently track calls, forms, bookings, or missed inquiries?",
+      "If we could add a few more qualified leads each month, what would that be worth?",
+      "Who usually approves website or marketing improvements?"
+    ],
+    close: "Would it be useful if I sent a one-page audit with the exact fixes and a simple price range?"
+  };
+}
+
+function buildObjectionHandlers() {
+  return [
+    {
+      objection: "We already have someone for the website.",
+      response: "That is good. I am not trying to replace them. I can send a short revenue audit showing missed calls, bookings, SEO, and conversion gaps your current team can also use."
+    },
+    {
+      objection: "We do not have budget right now.",
+      response: "Totally fair. That is why I frame it around break-even. If one or two extra jobs can cover the work, it becomes a revenue decision instead of a design expense."
+    },
+    {
+      objection: "Send me information.",
+      response: "Absolutely. I will send the audit, but before I do, what matters most: more calls, more bookings, better Google visibility, or a more professional site?"
+    }
+  ];
+}
+
+function buildOutreachSequence(lead, dossier) {
+  const name = lead.name || "your business";
+  const noWebsite = !lead.websiteUrl;
+  return [
+    {
+      day: 1,
+      channel: "Email or contact form",
+      subject: noWebsite ? `Website opportunity for ${name}` : `Quick website wins for ${name}`,
+      message: `${name} looks like it could win more local customers with ${noWebsite ? "a simple website and lead capture setup" : "a few website conversion and local SEO fixes"}. I can send a one-page audit with the highest-value fixes.`
+    },
+    {
+      day: 2,
+      channel: "Phone or WhatsApp",
+      subject: "Verify decision maker",
+      message: "Call to confirm who handles website or marketing decisions, then ask whether calls, bookings, or quote requests are the highest priority."
+    },
+    {
+      day: 4,
+      channel: "Email follow-up",
+      subject: "3 quick wins",
+      message: "Send three bullets from the audit: conversion path, Google Maps trust signals, and booking/contact automation."
+    },
+    {
+      day: 7,
+      channel: "Final value follow-up",
+      subject: "Should I close this out?",
+      message: "Offer to close the loop unless they want the full proposal and ROI estimate."
+    }
+  ];
+}
+
+function buildSalesAgentPlan(lead, dossier) {
+  const contact = primaryContactValue(dossier) || "Verify phone, email, or owner contact first";
+  return {
+    status: primaryContactValue(dossier) ? "Ready for outreach" : "Needs contact verification",
+    nextBestAction: primaryContactValue(dossier)
+      ? "Send the audit summary, then call within 24 hours."
+      : "Use the owner and contact finder links before starting the outreach sequence.",
+    contactTarget: contact,
+    pipelineStage: "New",
+    recommendedFollowUpDays: [1, 2, 4, 7, 14],
+    automationTasks: [
+      "Create CRM deal with proposal value and source link.",
+      "Copy proposal pack into email or client report.",
+      "Set follow-up reminder after the first call.",
+      "Track reply, meeting booked, proposal sent, won, or lost."
+    ]
+  };
+}
+
+function buildContactFinder(lead, dossier) {
+  return {
+    status: primaryContactValue(dossier) ? "Public contact data found" : "Needs manual verification",
+    bestContact: primaryContactValue(dossier) || "Not found in public data",
+    ownerCandidate: dossier.ownerContact?.ownerName || dossier.ownerContact?.operator || dossier.ownerContact?.contactPerson || "Not found in public data",
+    verifiedChannels: [
+      dossier.contact?.phone && "phone",
+      dossier.contact?.email && "email",
+      dossier.contact?.whatsappLink && "whatsapp",
+      lead.websiteUrl && "website",
+      Object.keys(dossier.social || {}).length && "social"
+    ].filter(Boolean),
+    verificationSteps: [
+      "Open Google Maps and confirm the business is active.",
+      "Check the official website contact page if one exists.",
+      "Search owner, manager, Facebook, Instagram, and LinkedIn links before claiming decision-maker data.",
+      "Call or message using the public business contact channel."
+    ]
+  };
+}
+
+function buildClientReportMeta(lead, dossier, proposal, roi) {
+  return {
+    title: `${lead.name || "Business"} Growth Opportunity Report`,
+    reportUrl: `/client-report.html?id=${encodeURIComponent(lead.id || "")}`,
+    summary: `A proposal-ready audit for ${lead.name || "this business"} with website gaps, outreach plan, projected ROI, and next actions.`,
+    primaryCta: "Book a strategy call",
+    recommendedOffer: proposal.title,
+    estimatedInvestment: proposal.packagePrice,
+    estimatedMonthlyUpside: roi.estimatedMonthlyUpside,
+    disclaimer: "Use this as a directional sales report. Confirm business revenue, margins, and decision-maker details before sending final pricing."
+  };
+}
+
+function formatProposalBrief(lead, dossier, proposal, roi) {
+  return [
+    "PROPOSAL PACK",
+    "",
+    `Business: ${valueOrNotFound(lead.name)}`,
+    `Offer: ${valueOrNotFound(proposal.title)}`,
+    `Package price: ${money(proposal.packagePrice)}`,
+    `Monthly retainer: ${money(proposal.monthlyRetainer)}`,
+    `Timeline: ${proposal.timeline}`,
+    `ROI story: ${roi.roiStory}`,
+    "",
+    "DELIVERABLES",
+    ...proposal.deliverables.map((item) => `- ${item}`),
+    "",
+    "FIRST PITCH",
+    proposal.firstPitch,
+    "",
+    "NEXT STEP",
+    dossier.salesAgent?.nextBestAction || "Verify contact data, send audit, and request a short call."
+  ].join("\n");
+}
+
+function formatOutreachSequence(sequence = []) {
+  return sequence.map((step) => [
+    `DAY ${step.day} - ${step.channel}`,
+    `Subject: ${step.subject}`,
+    step.message
+  ].join("\n")).join("\n\n");
+}
+
+function buildRevenueAssets(lead, dossier) {
+  const proposal = buildProposalPack(lead, dossier);
+  const roi = buildRoiEstimate(lead, dossier);
+  return {
+    leadReasons: buildLeadReasons(lead, dossier),
+    roi,
+    competitorGap: buildCompetitorGap(lead, dossier),
+    proposal,
+    callScript: buildCallScript(lead, dossier),
+    objectionHandlers: buildObjectionHandlers(),
+    outreachSequence: buildOutreachSequence(lead, dossier),
+    salesAgent: buildSalesAgentPlan(lead, dossier),
+    contactFinder: buildContactFinder(lead, dossier),
+    clientReport: buildClientReportMeta(lead, dossier, proposal, roi)
+  };
+}
+
 function buildLeadDossier(lead, audit) {
   const details = lead.details || {};
   const rawTags = details.source?.rawTags || lead.raw?.tags || {};
@@ -650,11 +949,25 @@ function buildLeadDossier(lead, audit) {
   };
   const verificationLinks = buildVerificationLinks(lead, dossier);
   const dossierWithLinks = { ...dossier, verificationLinks };
+  const revenueAssets = buildRevenueAssets(lead, dossierWithLinks);
+  const completeDossier = { ...dossierWithLinks, ...revenueAssets };
 
   return {
-    ...dossierWithLinks,
+    ...completeDossier,
     copyReady: {
-      websiteBuildBrief: formatWebsiteBuildBrief(lead, dossierWithLinks)
+      websiteBuildBrief: formatWebsiteBuildBrief(lead, completeDossier),
+      proposalBrief: formatProposalBrief(lead, completeDossier, revenueAssets.proposal, revenueAssets.roi),
+      callScript: [
+        revenueAssets.callScript.opener,
+        revenueAssets.callScript.reason,
+        revenueAssets.callScript.valueHook,
+        "",
+        "Questions:",
+        ...revenueAssets.callScript.qualifyingQuestions.map((item) => `- ${item}`),
+        "",
+        `Close: ${revenueAssets.callScript.close}`
+      ].join("\n"),
+      outreachSequence: formatOutreachSequence(revenueAssets.outreachSequence)
     }
   };
 }
@@ -727,7 +1040,8 @@ export class LeadService {
       refreshSeed,
       limit: candidateLimitForSearch(effectiveSearch, admin)
     };
-    const cacheKey = cacheKeyForSearch(providerSearch, admin);
+    const resultLimit = returnLimitForUser(effectiveSearch, accessUser);
+    const cacheKey = cacheKeyForSearch(providerSearch, accessUser);
     const cached = bypassCache ? null : getCachedSearch(cacheKey);
     if (cached) {
       const updatedTrialUsage = await this.recordTrialSearch(accessUser, startingTrialUsage);
@@ -762,8 +1076,10 @@ export class LeadService {
         };
       }
     }));
-    const qualifiedPool = freshLeadOrder(applyLeadFilters(audited, effectiveSearch), refreshSeed);
-    const qualified = qualifiedPool.slice(0, effectiveSearch.limit);
+    const filteredPool = applyLeadFilters(audited, effectiveSearch);
+    const filtersRelaxed = filteredPool.length === 0 && audited.length > 0;
+    const qualifiedPool = freshLeadOrder(filtersRelaxed ? fallbackLeadPool(audited) : filteredPool, refreshSeed);
+    const qualified = qualifiedPool.slice(0, resultLimit);
 
     await Promise.all(qualified.map((lead) => this.leads.upsert(lead.id, {
       ...lead,
@@ -790,11 +1106,13 @@ export class LeadService {
       adminUnlimited: admin,
       searchStats: {
         requestedLimit: effectiveSearch.limit,
+        returnedLimit: resultLimit,
         providerCandidateLimit: providerSearch.limit,
         rawCount: result.leads.length,
         auditedCount: audited.length,
         qualifiedCount: qualified.length,
         qualifiedPoolCount: qualifiedPool.length,
+        filtersRelaxed,
         bypassCache,
         searchDepth: effectiveSearch.searchDepth,
         leadQuality: effectiveSearch.leadQuality,

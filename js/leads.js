@@ -228,6 +228,76 @@ let hasLeadSearchRun = false;
 const localSavedLeadsKey = "mat_local_saved_leads_v1";
 const defaultCountries = ["Germany"];
 const defaultBusinessTypes = ["restaurants", "hotels", "boutiques", "car_dealers"];
+const nichePacks = [
+  {
+    id: "no-website-restaurants",
+    name: "Restaurants Need Websites",
+    description: "Missing-site restaurants with phone or map contact data.",
+    countries: ["United States"],
+    city: "",
+    businessTypes: ["restaurants", "bakeries", "coffee_shops"],
+    industry: "restaurants, bakeries, coffee shops",
+    keyword: "online ordering reservation website",
+    leadQuality: "needs_website",
+    sortBy: "website_missing",
+    searchDepth: "deep",
+    limit: 30,
+    missingWebsiteOnly: true,
+    requireContact: false,
+    minOpportunityScore: 45
+  },
+  {
+    id: "med-spa-booking",
+    name: "Med Spa Booking Upgrade",
+    description: "Beauty, spa, and clinic leads that can pay for booking funnels.",
+    countries: ["United States"],
+    city: "",
+    businessTypes: ["beauty_spas", "medical"],
+    industry: "med spa, beauty clinic, wellness clinic",
+    keyword: "booking appointments skincare",
+    leadQuality: "high_opportunity",
+    sortBy: "opportunity",
+    searchDepth: "deep",
+    limit: 30,
+    missingWebsiteOnly: false,
+    requireContact: true,
+    minOpportunityScore: 40
+  },
+  {
+    id: "contractor-high-ticket",
+    name: "High-Ticket Contractors",
+    description: "Roofing, HVAC, plumbing, and electrical companies.",
+    countries: ["United States"],
+    city: "",
+    businessTypes: ["roofing", "hvac", "plumbers_electricians", "contractors"],
+    industry: "roofing HVAC plumbing electrician contractor",
+    keyword: "quote request emergency service",
+    leadQuality: "contact_ready",
+    sortBy: "opportunity",
+    searchDepth: "maximum",
+    limit: 50,
+    missingWebsiteOnly: false,
+    requireContact: true,
+    minOpportunityScore: 35
+  },
+  {
+    id: "professional-services",
+    name: "Professional Services SEO",
+    description: "Law, accounting, real estate, and finance agencies.",
+    countries: ["United States"],
+    city: "",
+    businessTypes: ["law", "accounting", "real_estate", "finance_insurance"],
+    industry: "law firm accountant real estate insurance",
+    keyword: "consultation local SEO lead generation",
+    leadQuality: "high_opportunity",
+    sortBy: "contact",
+    searchDepth: "deep",
+    limit: 40,
+    missingWebsiteOnly: false,
+    requireContact: true,
+    minOpportunityScore: 30
+  }
+];
 const defaultMapLinks = [
   "https://www.google.com/maps/@13.4053888,-16.6887424,11z?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D",
   "https://www.google.com/maps/@13.4053888,-16.6887424,11z?entry=ttu",
@@ -758,6 +828,93 @@ function localVerificationLinks(lead = {}) {
   };
 }
 
+function localRevenueAssets(lead = {}, dossier = {}) {
+  const noWebsite = !lead.websiteUrl;
+  const score = Number(lead.opportunityScore ?? lead.audit?.score ?? 50);
+  const setupInvestment = noWebsite ? 3200 : 1800 + (score >= 70 ? 700 : 350);
+  const estimatedMonthlyUpside = noWebsite ? 1200 : 850;
+  const proposal = {
+    title: noWebsite ? "Local Website Launch + Lead Capture System" : "Website Conversion + Local SEO Growth Sprint",
+    targetBusiness: lead.name || "Saved lead",
+    packagePrice: setupInvestment,
+    monthlyRetainer: Math.max(497, Math.round(setupInvestment * 0.18)),
+    timeline: noWebsite ? "7 to 14 days" : "5 to 10 days",
+    deliverables: [
+      noWebsite ? "Mobile-first website build" : "Website conversion and SEO fixes",
+      "Google Maps trust and contact section",
+      "Booking, quote, or contact form",
+      "Local SEO copy and metadata",
+      "Follow-up sequence for calls and replies"
+    ],
+    firstPitch: `I found a few quick wins for ${lead.name || "your business"} that can help turn more local searches into calls, bookings, and quote requests.`
+  };
+  const roi = {
+    setupInvestment,
+    estimatedMonthlyUpside,
+    breakEvenMonths: Math.max(1, Math.ceil(setupInvestment / estimatedMonthlyUpside)),
+    twelveMonthUpside: estimatedMonthlyUpside * 12,
+    roiStory: `${moneyValue(setupInvestment)} in setup can break even quickly if the business captures roughly ${moneyValue(estimatedMonthlyUpside)} in extra monthly revenue.`
+  };
+  const callScript = {
+    opener: `Hi, is this the best person to speak with about marketing or the website for ${lead.name || "your business"}?`,
+    reason: noWebsite ? "I could not find a proper website connected to your map listing." : "I noticed a few website conversion opportunities.",
+    valueHook: "The quick win is making it easier for people who already find you on Google Maps to call, book, or request a quote.",
+    qualifyingQuestions: [
+      "Where do most new customers come from right now?",
+      "Do you track calls, bookings, forms, or missed inquiries?",
+      "Who approves website or marketing improvements?"
+    ],
+    close: "Would it be useful if I sent a one-page audit with the exact fixes and a price range?"
+  };
+  const outreachSequence = [
+    { day: 1, channel: "Email or contact form", subject: `Quick wins for ${lead.name || "your business"}`, message: proposal.firstPitch },
+    { day: 2, channel: "Phone or WhatsApp", subject: "Verify decision maker", message: "Confirm who handles website or marketing decisions." },
+    { day: 4, channel: "Email follow-up", subject: "3 quick wins", message: "Send conversion path, Google Maps trust, and booking/contact automation bullets." },
+    { day: 7, channel: "Final follow-up", subject: "Should I close this out?", message: "Offer to close the loop unless they want the audit and ROI estimate." }
+  ];
+  return {
+    leadReasons: [
+      noWebsite && "No public website was found, making a new website build an obvious offer.",
+      lead.phone && "A public phone number is available for direct outreach.",
+      lead.email && "A public email is available for written outreach.",
+      "The saved lead has enough business and location data for a targeted proposal."
+    ].filter(Boolean),
+    roi,
+    proposal,
+    callScript,
+    outreachSequence,
+    objectionHandlers: [
+      { objection: "We do not have budget.", response: "Frame the work around break-even and extra monthly leads, not design expense." },
+      { objection: "Send information.", response: "Ask which result matters most first: calls, bookings, Google visibility, or professional trust." }
+    ],
+    competitorGap: {
+      competitorSearchUrl: searchUrl(`${lead.businessType || lead.category || "business"} near ${lead.marketName || lead.countryName || lead.address || ""} best website booking reviews`),
+      positioningAngle: "Compare website, booking, reviews, local SEO, and contact speed before outreach.",
+      likelyGaps: [
+        noWebsite ? "Competitors with websites can capture demand first." : "Competitors may have stronger landing pages and calls to action.",
+        "Better review proof, photos, and service pages can improve trust."
+      ]
+    },
+    salesAgent: {
+      status: lead.phone || lead.email ? "Ready for outreach" : "Needs contact verification",
+      nextBestAction: lead.phone || lead.email ? "Send the audit summary, then call within 24 hours." : "Verify contact channels before outreach.",
+      pipelineStage: lead.localStage || "New"
+    },
+    contactFinder: {
+      status: lead.phone || lead.email ? "Public contact data found" : "Needs manual verification",
+      bestContact: lead.phone || lead.email || dossier.contact?.whatsappLink || "Not found in public data",
+      verifiedChannels: [lead.phone && "phone", lead.email && "email", dossier.contact?.whatsappLink && "whatsapp"].filter(Boolean)
+    },
+    clientReport: {
+      title: `${lead.name || "Saved lead"} Growth Opportunity Report`,
+      reportUrl: `/client-report.html?id=${encodeURIComponent(localLeadId(lead))}`,
+      recommendedOffer: proposal.title,
+      estimatedInvestment: proposal.packagePrice,
+      estimatedMonthlyUpside: roi.estimatedMonthlyUpside
+    }
+  };
+}
+
 function localReportFromLead(lead) {
   const details = lead.details || {};
   const whatsapp = whatsappActionFromLead(lead);
@@ -808,6 +965,33 @@ function localReportFromLead(lead) {
       websiteBuildBrief: localWebsiteBrief(lead)
     }
   };
+  const revenueAssets = localRevenueAssets(lead, dossier);
+  Object.assign(dossier, revenueAssets, {
+    copyReady: {
+      ...dossier.copyReady,
+      proposalBrief: [
+        "PROPOSAL PACK",
+        "",
+        `Business: ${displayValue(lead.name)}`,
+        `Offer: ${displayValue(revenueAssets.proposal.title)}`,
+        `Package price: ${moneyValue(revenueAssets.proposal.packagePrice)}`,
+        `Monthly retainer: ${moneyValue(revenueAssets.proposal.monthlyRetainer)}`,
+        `Timeline: ${displayValue(revenueAssets.proposal.timeline)}`,
+        `ROI story: ${displayValue(revenueAssets.roi.roiStory)}`
+      ].join("\n"),
+      callScript: [
+        revenueAssets.callScript.opener,
+        revenueAssets.callScript.reason,
+        revenueAssets.callScript.valueHook,
+        "",
+        "Questions:",
+        ...revenueAssets.callScript.qualifyingQuestions.map((item) => `- ${item}`),
+        "",
+        `Close: ${revenueAssets.callScript.close}`
+      ].join("\n"),
+      outreachSequence: revenueAssets.outreachSequence.map((step) => `DAY ${step.day} - ${step.channel}\nSubject: ${step.subject}\n${step.message}`).join("\n\n")
+    }
+  });
   return { lead, dossier, aiSummary: "This lead was loaded from local browser storage." };
 }
 
@@ -940,6 +1124,144 @@ function websiteBrief(report) {
   return report?.dossier?.copyReady?.websiteBuildBrief || JSON.stringify(report?.dossier || report?.lead || {}, null, 2);
 }
 
+function moneyValue(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return displayValue(value) || "Not calculated";
+  return `$${Math.round(number).toLocaleString()}`;
+}
+
+function renderBulletList(items = [], empty = "No items available yet.") {
+  const values = (Array.isArray(items) ? items : [items]).filter(Boolean);
+  if (!values.length) return `<div class="empty-state">${escapeHtml(empty)}</div>`;
+  return `<ul>${values.map((item) => `<li>${escapeHtml(displayValue(item))}</li>`).join("")}</ul>`;
+}
+
+function renderAssetSummaryCards(dossier = {}) {
+  const cards = [
+    ["Lead status", dossier.contactFinder?.status || "Needs review"],
+    ["Next action", dossier.salesAgent?.nextBestAction || "Verify the lead and send the audit."],
+    ["Proposal", dossier.proposal?.title || "Proposal pack pending"],
+    ["ROI story", dossier.roi?.roiStory || "ROI estimate pending"]
+  ];
+  return `<div class="asset-grid">${cards.map(([label, value]) => `
+    <div class="asset-card">
+      <strong>${escapeHtml(label)}</strong>
+      <span>${escapeHtml(value)}</span>
+    </div>
+  `).join("")}</div>`;
+}
+
+function renderOutreachSequence(sequence = []) {
+  if (!Array.isArray(sequence) || !sequence.length) return `<div class="empty-state">No outreach sequence generated yet.</div>`;
+  return sequence.map((step) => `
+    <div class="audit-item">
+      <span>Day ${escapeHtml(step.day)} - ${escapeHtml(step.channel || "Follow-up")}</span>
+      <strong>${escapeHtml(step.subject || step.message || "")}</strong>
+    </div>
+  `).join("");
+}
+
+function renderObjectionHandlers(handlers = []) {
+  if (!Array.isArray(handlers) || !handlers.length) return `<div class="empty-state">No objection handlers generated yet.</div>`;
+  return handlers.map((item) => `
+    <div class="audit-item">
+      <span>${escapeHtml(item.objection || "Objection")}</span>
+      <strong>${escapeHtml(item.response || "")}</strong>
+    </div>
+  `).join("");
+}
+
+function reportAssetText(report, asset) {
+  const dossier = report?.dossier || {};
+  if (asset === "proposal") {
+    return dossier.copyReady?.proposalBrief || JSON.stringify(dossier.proposal || {}, null, 2);
+  }
+  if (asset === "call-script") {
+    return dossier.copyReady?.callScript || JSON.stringify(dossier.callScript || {}, null, 2);
+  }
+  if (asset === "outreach-sequence") {
+    return dossier.copyReady?.outreachSequence || JSON.stringify(dossier.outreachSequence || {}, null, 2);
+  }
+  if (asset === "roi") {
+    return [
+      "ROI CALCULATOR",
+      "",
+      `Setup investment: ${moneyValue(dossier.roi?.setupInvestment)}`,
+      `Estimated monthly upside: ${moneyValue(dossier.roi?.estimatedMonthlyUpside)}`,
+      `Break-even months: ${displayValue(dossier.roi?.breakEvenMonths)}`,
+      `12-month upside: ${moneyValue(dossier.roi?.twelveMonthUpside)}`,
+      "",
+      dossier.roi?.roiStory || ""
+    ].join("\n");
+  }
+  return JSON.stringify(dossier, null, 2);
+}
+
+function renderRevenueEngine(report) {
+  const dossier = report?.dossier || {};
+  if (!dossier.proposal && !dossier.roi && !dossier.salesAgent) return "";
+  const leadId = report?.lead?.id || "";
+  const clientReportUrl = leadId ? `/client-report.html?id=${encodeURIComponent(leadId)}` : "";
+  return `
+    <section class="panel" style="grid-column:1 / -1;">
+      <div class="section-header compact-header">
+        <div>
+          <h2>AI Sales Agent</h2>
+          <p>Proposal, ROI, contact verification, and follow-up assets for this lead.</p>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-secondary" type="button" data-copy-report-asset="proposal">Copy Proposal</button>
+          <button class="btn btn-secondary" type="button" data-copy-report-asset="call-script">Copy Script</button>
+          <button class="btn btn-secondary" type="button" data-copy-report-asset="outreach-sequence">Copy Sequence</button>
+          ${clientReportUrl ? `<a class="btn btn-primary" href="${clientReportUrl}">Client Report</a>` : ""}
+        </div>
+      </div>
+      ${renderAssetSummaryCards(dossier)}
+    </section>
+
+    <section class="panel">
+      <h2>Why This Lead Will Buy</h2>
+      ${renderBulletList(dossier.leadReasons, "No purchase reasons generated yet.")}
+      <h2 style="margin-top:20px;">Contact Finder</h2>
+      <div class="audit-list">${renderRows(dossier.contactFinder, { empty: "No contact finder data generated yet." })}</div>
+    </section>
+
+    <section class="panel">
+      <h2>ROI Calculator</h2>
+      <div class="audit-list">
+        <div class="audit-item"><span>Setup investment</span><strong>${moneyValue(dossier.roi?.setupInvestment)}</strong></div>
+        <div class="audit-item"><span>Monthly upside</span><strong>${moneyValue(dossier.roi?.estimatedMonthlyUpside)}</strong></div>
+        <div class="audit-item"><span>Break-even</span><strong>${escapeHtml(displayValue(dossier.roi?.breakEvenMonths))} months</strong></div>
+        <div class="audit-item"><span>12-month upside</span><strong>${moneyValue(dossier.roi?.twelveMonthUpside)}</strong></div>
+      </div>
+      <p style="margin-top:12px;">${escapeHtml(dossier.roi?.roiStory || "ROI estimate pending.")}</p>
+      <button class="btn btn-secondary" type="button" data-copy-report-asset="roi" style="margin-top:14px;">Copy ROI</button>
+    </section>
+
+    <section class="panel">
+      <h2>Proposal Pack</h2>
+      <div class="audit-list">${renderRows(dossier.proposal, { empty: "No proposal pack generated yet." })}</div>
+    </section>
+
+    <section class="panel">
+      <h2>Call Script</h2>
+      <div class="audit-list">${renderRows(dossier.callScript, { empty: "No call script generated yet." })}</div>
+      <h2 style="margin-top:20px;">Objection Handler</h2>
+      <div class="audit-list">${renderObjectionHandlers(dossier.objectionHandlers)}</div>
+    </section>
+
+    <section class="panel">
+      <h2>7-Day Outreach Sequence</h2>
+      <div class="audit-list">${renderOutreachSequence(dossier.outreachSequence)}</div>
+    </section>
+
+    <section class="panel">
+      <h2>Competitor Gap Finder</h2>
+      <div class="audit-list">${renderRows(dossier.competitorGap, { empty: "No competitor gap data generated yet." })}</div>
+    </section>
+  `;
+}
+
 function populateCountries() {
   const select = byId("country");
   if (!select) return;
@@ -955,6 +1277,61 @@ function populateBusinessTypes() {
   select.innerHTML = businessTypes.map(([value, label]) => (
     `<option value="${escapeHtml(value)}"${selectedDefaults.has(value) ? " selected" : ""}>${escapeHtml(label)}</option>`
   )).join("");
+}
+
+function selectMultiValues(id, values = []) {
+  const field = byId(id);
+  if (!field) return;
+  const selected = new Set(values);
+  Array.from(field.options || []).forEach((option) => {
+    option.selected = selected.has(option.value);
+  });
+}
+
+function setFieldValue(id, value) {
+  const field = byId(id);
+  if (field) field.value = value ?? "";
+}
+
+function setCheckedValue(id, value) {
+  const field = byId(id);
+  if (field) field.checked = Boolean(value);
+}
+
+function applyNichePack(pack) {
+  selectMultiValues("country", pack.countries);
+  selectMultiValues("businessTypes", pack.businessTypes);
+  setFieldValue("city", pack.city || "");
+  setFieldValue("industry", pack.industry || "");
+  setFieldValue("keyword", pack.keyword || "");
+  setFieldValue("leadQuality", pack.leadQuality || "all");
+  setFieldValue("sortBy", pack.sortBy || "opportunity");
+  setFieldValue("searchDepth", pack.searchDepth || "deep");
+  setFieldValue("limit", String(pack.limit || 20));
+  setFieldValue("minOpportunityScore", String(pack.minOpportunityScore || 0));
+  setCheckedValue("missingWebsiteOnly", pack.missingWebsiteOnly);
+  setCheckedValue("requireContact", pack.requireContact);
+  updateMapPreview();
+  const note = byId("searchNote");
+  if (note) note.textContent = `${pack.name} loaded. Searching real map data with the selected revenue preset.`;
+  byId("leadSearchForm")?.requestSubmit();
+}
+
+function initNichePacks() {
+  const target = document.querySelector("[data-niche-packs]");
+  if (!target) return;
+  target.innerHTML = nichePacks.map((pack) => `
+    <button class="niche-pack-button" type="button" data-niche-pack="${escapeHtml(pack.id)}">
+      <strong>${escapeHtml(pack.name)}</strong>
+      <span>${escapeHtml(pack.description)}</span>
+    </button>
+  `).join("");
+  target.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-niche-pack]");
+    if (!button) return;
+    const pack = nichePacks.find((item) => item.id === button.dataset.nichePack);
+    if (pack) applyNichePack(pack);
+  });
 }
 
 function selectedValues(select, fallback = []) {
@@ -1221,6 +1598,8 @@ function renderLocalLeadDetail(target, lead) {
       <pre class="copy-brief">${escapeHtml(localWebsiteBrief(lead))}</pre>
     </section>
 
+    ${renderRevenueEngine(report)}
+
     <section class="panel">
       <h2>Contact Details</h2>
       <div class="audit-list">
@@ -1450,9 +1829,10 @@ function initLeadSearch() {
           : "";
         const cacheText = result.cached ? " Cached repeat search." : "";
         const refreshText = result.refreshed ? " Fresh lead refresh was used." : "";
+        const relaxedText = result.searchStats?.filtersRelaxed ? " Strict filters had no matches, so top real candidates were shown." : "";
         const trialText = trialSearchText(result.trial);
         const pageText = (result.leads || []).length > selectedResultPageSize() ? " Use Next and Previous below the cards to browse all returned leads." : "";
-        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText}${refreshText}${trialText}${pageText} Query: ${result.query || "businesses"}.`;
+        note.textContent = `Real ${provider} results loaded${locationText}.${countryText}${stats}${cacheText}${refreshText}${relaxedText}${trialText}${pageText} Query: ${result.query || "businesses"}.`;
       }
     } catch (error) {
       target.innerHTML = `<div class="error-state">${error.message}</div>`;
@@ -1768,6 +2148,8 @@ function initLeadDetails() {
           <pre class="copy-brief">${escapeHtml(brief)}</pre>
         </section>
 
+        ${renderRevenueEngine(result)}
+
         <section class="panel">
           <h2>Owner / Decision Maker</h2>
           <div class="audit-list">
@@ -1947,9 +2329,10 @@ function initLeadDossierActions() {
   document.addEventListener("click", async (event) => {
     const copy = event.target.closest("[data-copy-dossier]");
     const copyBrief = event.target.closest("[data-copy-brief]");
+    const copyAsset = event.target.closest("[data-copy-report-asset]");
     const json = event.target.closest("[data-download-json]");
     const csv = event.target.closest("[data-download-csv]");
-    if (!copy && !copyBrief && !json && !csv) return;
+    if (!copy && !copyBrief && !copyAsset && !json && !csv) return;
 
     const report = activeLeadReport;
     if (!report) return;
@@ -1973,6 +2356,15 @@ function initLeadDossierActions() {
       }, 1400);
     }
 
+    if (copyAsset) {
+      const original = copyAsset.textContent;
+      await navigator.clipboard.writeText(reportAssetText(report, copyAsset.dataset.copyReportAsset));
+      copyAsset.textContent = "Copied";
+      setTimeout(() => {
+        copyAsset.textContent = original;
+      }, 1400);
+    }
+
     if (json) {
       downloadFile(`${leadName}-dossier.json`, "application/json", JSON.stringify(report, null, 2));
     }
@@ -1986,6 +2378,7 @@ function initLeadDossierActions() {
 document.addEventListener("DOMContentLoaded", () => {
   populateCountries();
   populateBusinessTypes();
+  initNichePacks();
   initMapLinkPreview();
   initLeadCommandCenter();
   initLeadSearch();

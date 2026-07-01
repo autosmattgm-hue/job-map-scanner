@@ -49,6 +49,7 @@ const publicFiles = new Set([
   "/dashboard.html",
   "/crm.html",
   "/lead-details.html",
+  "/client-report.html",
   "/pricing.html",
   "/billing-success.html",
   "/profile.html",
