@@ -4,7 +4,8 @@ import path from "node:path";
 import { firestoreClient } from "../config/firebase.js";
 
 const memoryStore = new Map();
-const localStorePath = path.resolve(process.cwd(), process.env.LOCAL_DATA_FILE || "data/local-store.json");
+const storeDir = process.env.VERCEL ? "/tmp" : process.cwd();
+const localStorePath = path.resolve(storeDir, process.env.LOCAL_DATA_FILE || "data/local-store.json");
 let localStoreLoaded = false;
 let localStoreWriteQueue = Promise.resolve();
 

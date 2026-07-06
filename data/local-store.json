@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-05T22:07:59.079Z",
+  "updatedAt": "2026-07-06T21:17:20.349Z",
   "collections": {
     "leads": [
       {
@@ -8285,6 +8285,2408 @@
         "discoveredAt": "2026-07-05T22:07:58.388Z",
         "updatedAt": "2026-07-05T22:07:58.388Z",
         "createdAt": "2026-07-05T22:07:58.388Z"
+      },
+      {
+        "id": "osm-node-244020964",
+        "name": "Ananta",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "39, Hauptstraße, Neubiberg, 85579, DE",
+        "phone": "+49 89 66011133",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Ananta%2039%2C%20Hauptstra%C3%9Fe%2C%20Neubiberg%2C%2085579%2C%20DE",
+        "latitude": 48.0754239,
+        "longitude": 11.6687192,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Tu-Su 11:30-14:30,17:30-22:30",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 66011133"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.0754239,
+            "longitude": 11.6687192,
+            "address": "39, Hauptstraße, Neubiberg, 85579, DE",
+            "houseNumber": "39",
+            "street": "Hauptstraße",
+            "city": "Neubiberg",
+            "postcode": "85579",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Ananta%2039%2C%20Hauptstra%C3%9Fe%2C%20Neubiberg%2C%2085579%2C%20DE"
+          },
+          "business": {
+            "cuisine": "indian"
+          },
+          "operations": {
+            "openingHours": "Tu-Su 11:30-14:30,17:30-22:30",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 244020964,
+            "osmUrl": "https://www.openstreetmap.org/node/244020964",
+            "rawTags": {
+              "addr:city": "Neubiberg",
+              "addr:country": "DE",
+              "addr:housenumber": "39",
+              "addr:postcode": "85579",
+              "addr:street": "Hauptstraße",
+              "amenity": "restaurant",
+              "cuisine": "indian",
+              "diet:vegetarian": "yes",
+              "name": "Ananta",
+              "opening_hours": "Tu-Su 11:30-14:30,17:30-22:30",
+              "phone": "+49 89 66011133",
+              "source": "Neighbour",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 244020964,
+          "tags": {
+            "addr:city": "Neubiberg",
+            "addr:country": "DE",
+            "addr:housenumber": "39",
+            "addr:postcode": "85579",
+            "addr:street": "Hauptstraße",
+            "amenity": "restaurant",
+            "cuisine": "indian",
+            "diet:vegetarian": "yes",
+            "name": "Ananta",
+            "opening_hours": "Tu-Su 11:30-14:30,17:30-22:30",
+            "phone": "+49 89 66011133",
+            "source": "Neighbour",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.147Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-185598898",
+        "name": "Bao Linh",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "24, Dorfstraße, Ismaning, 85737, DE",
+        "phone": "+49 89 88983730",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bao%20Linh%2024%2C%20Dorfstra%C3%9Fe%2C%20Ismaning%2C%2085737%2C%20DE",
+        "latitude": 48.2206311,
+        "longitude": 11.6735963,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 11:00-14:30,17:30-21:00; Su,PH 17:00-21:00; Sa off",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 88983730",
+            "fax": "+49 89 97894604"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.2206311,
+            "longitude": 11.6735963,
+            "address": "24, Dorfstraße, Ismaning, 85737, DE",
+            "houseNumber": "24",
+            "street": "Dorfstraße",
+            "city": "Ismaning",
+            "postcode": "85737",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bao%20Linh%2024%2C%20Dorfstra%C3%9Fe%2C%20Ismaning%2C%2085737%2C%20DE"
+          },
+          "business": {
+            "cuisine": "japanese;thai;vietnamese"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 11:00-14:30,17:30-21:00; Su,PH 17:00-21:00; Sa off"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 185598898,
+            "osmUrl": "https://www.openstreetmap.org/node/185598898",
+            "rawTags": {
+              "addr:city": "Ismaning",
+              "addr:country": "DE",
+              "addr:housenumber": "24",
+              "addr:postcode": "85737",
+              "addr:street": "Dorfstraße",
+              "amenity": "restaurant",
+              "check_date:opening_hours": "2025-11-07",
+              "cuisine": "japanese;thai;vietnamese",
+              "fax": "+49 89 97894604",
+              "name": "Bao Linh",
+              "opening_hours": "Mo-Fr 11:00-14:30,17:30-21:00; Su,PH 17:00-21:00; Sa off",
+              "phone": "+49 89 88983730"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 185598898,
+          "tags": {
+            "addr:city": "Ismaning",
+            "addr:country": "DE",
+            "addr:housenumber": "24",
+            "addr:postcode": "85737",
+            "addr:street": "Dorfstraße",
+            "amenity": "restaurant",
+            "check_date:opening_hours": "2025-11-07",
+            "cuisine": "japanese;thai;vietnamese",
+            "fax": "+49 89 97894604",
+            "name": "Bao Linh",
+            "opening_hours": "Mo-Fr 11:00-14:30,17:30-21:00; Su,PH 17:00-21:00; Sa off",
+            "phone": "+49 89 88983730"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-266793054",
+        "name": "Cafe Filmriss",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "6 H, Adlerflychtstraße, Frankfurt am Main, 60318",
+        "phone": "+49 69 5970845",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Cafe%20Filmriss%206%20H%2C%20Adlerflychtstra%C3%9Fe%2C%20Frankfurt%20am%20Main%2C%2060318",
+        "latitude": 50.1240434,
+        "longitude": 8.6857095,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "\"Täglich 30 Minuten vor der ersten Vorstellung bis 1:00 Uhr\"",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 69 5970845"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1240434,
+            "longitude": 8.6857095,
+            "address": "6 H, Adlerflychtstraße, Frankfurt am Main, 60318",
+            "houseNumber": "6 H",
+            "street": "Adlerflychtstraße",
+            "city": "Frankfurt am Main",
+            "postcode": "60318",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Cafe%20Filmriss%206%20H%2C%20Adlerflychtstra%C3%9Fe%2C%20Frankfurt%20am%20Main%2C%2060318"
+          },
+          "business": {},
+          "operations": {
+            "openingHours": "\"Täglich 30 Minuten vor der ersten Vorstellung bis 1:00 Uhr\"",
+            "delivery": "no",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes",
+            "internetAccess": "wlan"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 266793054,
+            "osmUrl": "https://www.openstreetmap.org/node/266793054",
+            "rawTags": {
+              "addr:city": "Frankfurt am Main",
+              "addr:housenumber": "6 H",
+              "addr:postcode": "60318",
+              "addr:street": "Adlerflychtstraße",
+              "amenity": "cafe",
+              "bar": "yes",
+              "delivery": "no",
+              "internet_access": "wlan",
+              "internet_access:fee": "yes",
+              "name": "Cafe Filmriss",
+              "opening_hours": "\"Täglich 30 Minuten vor der ersten Vorstellung bis 1:00 Uhr\"",
+              "outdoor_seating": "yes",
+              "phone": "+49 69 5970845",
+              "toilets:wheelchair": "yes",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 266793054,
+          "tags": {
+            "addr:city": "Frankfurt am Main",
+            "addr:housenumber": "6 H",
+            "addr:postcode": "60318",
+            "addr:street": "Adlerflychtstraße",
+            "amenity": "cafe",
+            "bar": "yes",
+            "delivery": "no",
+            "internet_access": "wlan",
+            "internet_access:fee": "yes",
+            "name": "Cafe Filmriss",
+            "opening_hours": "\"Täglich 30 Minuten vor der ersten Vorstellung bis 1:00 Uhr\"",
+            "outdoor_seating": "yes",
+            "phone": "+49 69 5970845",
+            "toilets:wheelchair": "yes",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-267538659",
+        "name": "Café Vie",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "47, Mittelweg, Frankfurt am Main, 60318",
+        "phone": "+49 69 550242",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20Vie%2047%2C%20Mittelweg%2C%20Frankfurt%20am%20Main%2C%2060318",
+        "latitude": 50.1210631,
+        "longitude": 8.6807496,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 08:00-18:00; Sa-Su 09:00-18:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 69 550242"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1210631,
+            "longitude": 8.6807496,
+            "address": "47, Mittelweg, Frankfurt am Main, 60318",
+            "houseNumber": "47",
+            "street": "Mittelweg",
+            "city": "Frankfurt am Main",
+            "postcode": "60318",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20Vie%2047%2C%20Mittelweg%2C%20Frankfurt%20am%20Main%2C%2060318"
+          },
+          "business": {
+            "description": "Vormals Café Ana"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 08:00-18:00; Sa-Su 09:00-18:00",
+            "wheelchair": "no"
+          },
+          "payments": {
+            "cash": "yes"
+          },
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 267538659,
+            "osmUrl": "https://www.openstreetmap.org/node/267538659",
+            "rawTags": {
+              "addr:city": "Frankfurt am Main",
+              "addr:housenumber": "47",
+              "addr:postcode": "60318",
+              "addr:street": "Mittelweg",
+              "amenity": "cafe",
+              "check_date": "2025-10-25",
+              "description": "Vormals Café Ana",
+              "name": "Café Vie",
+              "old_name": "Café Wacker",
+              "opening_hours": "Mo-Fr 08:00-18:00; Sa-Su 09:00-18:00",
+              "payment:cash": "yes",
+              "payment:credit_cards": "yes",
+              "payment:debit_cards": "yes",
+              "phone": "+49 69 550242",
+              "smoking": "no",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 267538659,
+          "tags": {
+            "addr:city": "Frankfurt am Main",
+            "addr:housenumber": "47",
+            "addr:postcode": "60318",
+            "addr:street": "Mittelweg",
+            "amenity": "cafe",
+            "check_date": "2025-10-25",
+            "description": "Vormals Café Ana",
+            "name": "Café Vie",
+            "old_name": "Café Wacker",
+            "opening_hours": "Mo-Fr 08:00-18:00; Sa-Su 09:00-18:00",
+            "payment:cash": "yes",
+            "payment:credit_cards": "yes",
+            "payment:debit_cards": "yes",
+            "phone": "+49 69 550242",
+            "smoking": "no",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-91277389",
+        "name": "City Kebap",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "62, Robert-Bosch-Straße, Karben, 61184",
+        "phone": "+49 6039 1821",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=City%20Kebap%2062%2C%20Robert-Bosch-Stra%C3%9Fe%2C%20Karben%2C%2061184",
+        "latitude": 50.2332668,
+        "longitude": 8.7571785,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Sa 11:00-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 6039 1821"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.2332668,
+            "longitude": 8.7571785,
+            "address": "62, Robert-Bosch-Straße, Karben, 61184",
+            "houseNumber": "62",
+            "street": "Robert-Bosch-Straße",
+            "city": "Karben",
+            "postcode": "61184",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=City%20Kebap%2062%2C%20Robert-Bosch-Stra%C3%9Fe%2C%20Karben%2C%2061184"
+          },
+          "business": {
+            "cuisine": "kebab",
+            "altName": "City Kebap-Haus Klein Istanbul"
+          },
+          "operations": {
+            "openingHours": "Mo-Sa 11:00-22:00",
+            "delivery": "yes",
+            "takeaway": "yes",
+            "outdoorSeating": "yes",
+            "wheelchair": "limited"
+          },
+          "payments": {
+            "cash": "yes",
+            "cards": "yes"
+          },
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 91277389,
+            "osmUrl": "https://www.openstreetmap.org/node/91277389",
+            "rawTags": {
+              "addr:city": "Karben",
+              "addr:housenumber": "62",
+              "addr:postcode": "61184",
+              "addr:street": "Robert-Bosch-Straße",
+              "addr:suburb": "Klein-Karben",
+              "alt_name": "City Kebap-Haus Klein Istanbul",
+              "amenity": "fast_food",
+              "cuisine": "kebab",
+              "delivery": "yes",
+              "diet:halal": "yes",
+              "diet:meat": "yes",
+              "diet:vegetarian": "yes",
+              "drive_through": "no",
+              "level": "0",
+              "name": "City Kebap",
+              "opening_hours": "Mo-Sa 11:00-22:00",
+              "outdoor_seating": "yes",
+              "payment:cards": "yes",
+              "payment:cash": "yes",
+              "phone": "+49 6039 1821",
+              "takeaway": "yes",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 91277389,
+          "tags": {
+            "addr:city": "Karben",
+            "addr:housenumber": "62",
+            "addr:postcode": "61184",
+            "addr:street": "Robert-Bosch-Straße",
+            "addr:suburb": "Klein-Karben",
+            "alt_name": "City Kebap-Haus Klein Istanbul",
+            "amenity": "fast_food",
+            "cuisine": "kebab",
+            "delivery": "yes",
+            "diet:halal": "yes",
+            "diet:meat": "yes",
+            "diet:vegetarian": "yes",
+            "drive_through": "no",
+            "level": "0",
+            "name": "City Kebap",
+            "opening_hours": "Mo-Sa 11:00-22:00",
+            "outdoor_seating": "yes",
+            "payment:cards": "yes",
+            "payment:cash": "yes",
+            "phone": "+49 6039 1821",
+            "takeaway": "yes",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-87657301",
+        "name": "Comfort Hotel Atlantic München Süd",
+        "category": "Hotel",
+        "businessType": "Hotel",
+        "address": "90, Rosenheimer Landstraße, Ottobrunn, 85521, DE",
+        "phone": "+49 89 6085290",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Comfort%20Hotel%20Atlantic%20M%C3%BCnchen%20S%C3%BCd%2090%2C%20Rosenheimer%20Landstra%C3%9Fe%2C%20Ottobrunn%2C%2085521%2C%20DE",
+        "latitude": 48.0591872,
+        "longitude": 11.6649329,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "hotel-atlantic@t-online.de",
+        "social": "",
+        "openingHours": "",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 6085290",
+            "email": "hotel-atlantic@t-online.de"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.0591872,
+            "longitude": 11.6649329,
+            "address": "90, Rosenheimer Landstraße, Ottobrunn, 85521, DE",
+            "houseNumber": "90",
+            "street": "Rosenheimer Landstraße",
+            "city": "Ottobrunn",
+            "postcode": "85521",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Comfort%20Hotel%20Atlantic%20M%C3%BCnchen%20S%C3%BCd%2090%2C%20Rosenheimer%20Landstra%C3%9Fe%2C%20Ottobrunn%2C%2085521%2C%20DE"
+          },
+          "business": {},
+          "operations": {
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 87657301,
+            "osmUrl": "https://www.openstreetmap.org/node/87657301",
+            "rawTags": {
+              "addr:city": "Ottobrunn",
+              "addr:country": "DE",
+              "addr:housenumber": "90",
+              "addr:postcode": "85521",
+              "addr:street": "Rosenheimer Landstraße",
+              "check_date": "2025-04-28",
+              "email": "hotel-atlantic@t-online.de",
+              "name": "Comfort Hotel Atlantic München Süd",
+              "phone": "+49 89 6085290",
+              "source": "survey",
+              "stars": "3",
+              "tourism": "hotel",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 87657301,
+          "tags": {
+            "addr:city": "Ottobrunn",
+            "addr:country": "DE",
+            "addr:housenumber": "90",
+            "addr:postcode": "85521",
+            "addr:street": "Rosenheimer Landstraße",
+            "check_date": "2025-04-28",
+            "email": "hotel-atlantic@t-online.de",
+            "name": "Comfort Hotel Atlantic München Süd",
+            "phone": "+49 89 6085290",
+            "source": "survey",
+            "stars": "3",
+            "tourism": "hotel",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 93,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-243518450",
+        "name": "Eichen Schlössl",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "1, Ranertstraße, München, 81249",
+        "phone": "+49 89 94389066",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Eichen%20Schl%C3%B6ssl%201%2C%20Ranertstra%C3%9Fe%2C%20M%C3%BCnchen%2C%2081249",
+        "latitude": 48.1785701,
+        "longitude": 11.4069951,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "info@eichen-schloessl.com",
+        "social": "",
+        "openingHours": "Tu-Su 11:00-23:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 94389066",
+            "email": "info@eichen-schloessl.com"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.1785701,
+            "longitude": 11.4069951,
+            "address": "1, Ranertstraße, München, 81249",
+            "houseNumber": "1",
+            "street": "Ranertstraße",
+            "city": "München",
+            "postcode": "81249",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Eichen%20Schl%C3%B6ssl%201%2C%20Ranertstra%C3%9Fe%2C%20M%C3%BCnchen%2C%2081249"
+          },
+          "business": {
+            "cuisine": "bavarian"
+          },
+          "operations": {
+            "openingHours": "Tu-Su 11:00-23:00",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 243518450,
+            "osmUrl": "https://www.openstreetmap.org/node/243518450",
+            "rawTags": {
+              "addr:city": "München",
+              "addr:housenumber": "1",
+              "addr:postcode": "81249",
+              "addr:street": "Ranertstraße",
+              "amenity": "restaurant",
+              "cuisine": "bavarian",
+              "email": "info@eichen-schloessl.com",
+              "name": "Eichen Schlössl",
+              "opening_hours": "Tu-Su 11:00-23:00",
+              "phone": "+49 89 94389066",
+              "start_date": "2024-11-26",
+              "wheelchair": "limited",
+              "wheelchair:description": "Zugang über Rampe auf der Rückseite"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 243518450,
+          "tags": {
+            "addr:city": "München",
+            "addr:housenumber": "1",
+            "addr:postcode": "81249",
+            "addr:street": "Ranertstraße",
+            "amenity": "restaurant",
+            "cuisine": "bavarian",
+            "email": "info@eichen-schloessl.com",
+            "name": "Eichen Schlössl",
+            "opening_hours": "Tu-Su 11:00-23:00",
+            "phone": "+49 89 94389066",
+            "start_date": "2024-11-26",
+            "wheelchair": "limited",
+            "wheelchair:description": "Zugang über Rampe auf der Rückseite"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-268124680",
+        "name": "Endstation 148",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "148, Ginnheimer Landstraße, Frankfurt am Main, 60431",
+        "phone": "+49 69 50682424",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Endstation%20148%20148%2C%20Ginnheimer%20Landstra%C3%9Fe%2C%20Frankfurt%20am%20Main%2C%2060431",
+        "latitude": 50.1398015,
+        "longitude": 8.6471601,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Th 17:00-00:00; Fr 15:00-00:00; Sa 17:00-00:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 69 50682424"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1398015,
+            "longitude": 8.6471601,
+            "address": "148, Ginnheimer Landstraße, Frankfurt am Main, 60431",
+            "houseNumber": "148",
+            "street": "Ginnheimer Landstraße",
+            "city": "Frankfurt am Main",
+            "postcode": "60431",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Endstation%20148%20148%2C%20Ginnheimer%20Landstra%C3%9Fe%2C%20Frankfurt%20am%20Main%2C%2060431"
+          },
+          "business": {},
+          "operations": {
+            "openingHours": "Mo-Th 17:00-00:00; Fr 15:00-00:00; Sa 17:00-00:00",
+            "outdoorSeating": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 268124680,
+            "osmUrl": "https://www.openstreetmap.org/node/268124680",
+            "rawTags": {
+              "addr:city": "Frankfurt am Main",
+              "addr:housenumber": "148",
+              "addr:postcode": "60431",
+              "addr:street": "Ginnheimer Landstraße",
+              "amenity": "pub",
+              "check_date:opening_hours": "2024-08-23",
+              "indoor_seating": "yes",
+              "name": "Endstation 148",
+              "opening_hours": "Mo-Th 17:00-00:00; Fr 15:00-00:00; Sa 17:00-00:00",
+              "opening_hours:signed": "no",
+              "outdoor_seating": "yes",
+              "phone": "+49 69 50682424",
+              "smoking": "dedicated"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 268124680,
+          "tags": {
+            "addr:city": "Frankfurt am Main",
+            "addr:housenumber": "148",
+            "addr:postcode": "60431",
+            "addr:street": "Ginnheimer Landstraße",
+            "amenity": "pub",
+            "check_date:opening_hours": "2024-08-23",
+            "indoor_seating": "yes",
+            "name": "Endstation 148",
+            "opening_hours": "Mo-Th 17:00-00:00; Fr 15:00-00:00; Sa 17:00-00:00",
+            "opening_hours:signed": "no",
+            "outdoor_seating": "yes",
+            "phone": "+49 69 50682424",
+            "smoking": "dedicated"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-140274896",
+        "name": "Haus Bierwerk",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "18, Amendestraße, Berlin, 13409, DE",
+        "phone": "+49 163 2304476",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Haus%20Bierwerk%2018%2C%20Amendestra%C3%9Fe%2C%20Berlin%2C%2013409%2C%20DE",
+        "latitude": 52.5682701,
+        "longitude": 13.367889,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "https://www.facebook.com/Haus-Bierwerk-103429807717152/",
+        "openingHours": "Mo-Sa 11:00-23:00+",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 163 2304476"
+          },
+          "social": {
+            "facebook": "https://www.facebook.com/Haus-Bierwerk-103429807717152/"
+          },
+          "location": {
+            "latitude": 52.5682701,
+            "longitude": 13.367889,
+            "address": "18, Amendestraße, Berlin, 13409, DE",
+            "houseNumber": "18",
+            "street": "Amendestraße",
+            "city": "Berlin",
+            "postcode": "13409",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Haus%20Bierwerk%2018%2C%20Amendestra%C3%9Fe%2C%20Berlin%2C%2013409%2C%20DE"
+          },
+          "business": {},
+          "operations": {
+            "openingHours": "Mo-Sa 11:00-23:00+",
+            "wheelchair": "no"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 140274896,
+            "osmUrl": "https://www.openstreetmap.org/node/140274896",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:housenumber": "18",
+              "addr:postcode": "13409",
+              "addr:street": "Amendestraße",
+              "addr:suburb": "Reinickendorf",
+              "amenity": "pub",
+              "check_date:opening_hours": "2026-06-15",
+              "facebook": "https://www.facebook.com/Haus-Bierwerk-103429807717152/",
+              "name": "Haus Bierwerk",
+              "opening_hours": "Mo-Sa 11:00-23:00+",
+              "opening_hours:signed": "no",
+              "phone": "+49 163 2304476",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 140274896,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:housenumber": "18",
+            "addr:postcode": "13409",
+            "addr:street": "Amendestraße",
+            "addr:suburb": "Reinickendorf",
+            "amenity": "pub",
+            "check_date:opening_hours": "2026-06-15",
+            "facebook": "https://www.facebook.com/Haus-Bierwerk-103429807717152/",
+            "name": "Haus Bierwerk",
+            "opening_hours": "Mo-Sa 11:00-23:00+",
+            "opening_hours:signed": "no",
+            "phone": "+49 163 2304476",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 103,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-281252823",
+        "name": "Hotel Adam",
+        "category": "Hotel",
+        "businessType": "Hotel",
+        "address": "241, Hauptstraße, Eschborn, 65760",
+        "phone": "+49 6173 318199-0",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Hotel%20Adam%20241%2C%20Hauptstra%C3%9Fe%2C%20Eschborn%2C%2065760",
+        "latitude": 50.1537861,
+        "longitude": 8.5502752,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "hotel-adam@t-online.de",
+        "social": "",
+        "openingHours": "",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 6173 318199-0",
+            "email": "hotel-adam@t-online.de",
+            "fax": "+49 6173 318199-33"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1537861,
+            "longitude": 8.5502752,
+            "address": "241, Hauptstraße, Eschborn, 65760",
+            "houseNumber": "241",
+            "street": "Hauptstraße",
+            "city": "Eschborn",
+            "postcode": "65760",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Hotel%20Adam%20241%2C%20Hauptstra%C3%9Fe%2C%20Eschborn%2C%2065760"
+          },
+          "business": {},
+          "operations": {
+            "wheelchair": "no",
+            "internetAccess": "wlan"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 281252823,
+            "osmUrl": "https://www.openstreetmap.org/node/281252823",
+            "rawTags": {
+              "addr:city": "Eschborn",
+              "addr:housenumber": "241",
+              "addr:postcode": "65760",
+              "addr:street": "Hauptstraße",
+              "addr:suburb": "Niederhöchstadt",
+              "email": "hotel-adam@t-online.de",
+              "fax": "+49 6173 318199-33",
+              "internet_access": "wlan",
+              "name": "Hotel Adam",
+              "phone": "+49 6173 318199-0",
+              "tourism": "hotel",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 281252823,
+          "tags": {
+            "addr:city": "Eschborn",
+            "addr:housenumber": "241",
+            "addr:postcode": "65760",
+            "addr:street": "Hauptstraße",
+            "addr:suburb": "Niederhöchstadt",
+            "email": "hotel-adam@t-online.de",
+            "fax": "+49 6173 318199-33",
+            "internet_access": "wlan",
+            "name": "Hotel Adam",
+            "phone": "+49 6173 318199-0",
+            "tourism": "hotel",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 93,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-248651464",
+        "name": "I Due Forni",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "12, Schönhauser Allee, Berlin, 10119, DE",
+        "phone": "+49 30 44017333",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=I%20Due%20Forni%2012%2C%20Sch%C3%B6nhauser%20Allee%2C%20Berlin%2C%2010119%2C%20DE",
+        "latitude": 52.5308311,
+        "longitude": 13.412464,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Su 12:00-24:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 30 44017333"
+          },
+          "social": {},
+          "location": {
+            "latitude": 52.5308311,
+            "longitude": 13.412464,
+            "address": "12, Schönhauser Allee, Berlin, 10119, DE",
+            "houseNumber": "12",
+            "street": "Schönhauser Allee",
+            "city": "Berlin",
+            "postcode": "10119",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=I%20Due%20Forni%2012%2C%20Sch%C3%B6nhauser%20Allee%2C%20Berlin%2C%2010119%2C%20DE"
+          },
+          "business": {
+            "cuisine": "italian"
+          },
+          "operations": {
+            "openingHours": "Mo-Su 12:00-24:00",
+            "takeaway": "yes",
+            "reservation": "yes",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes"
+          },
+          "payments": {
+            "cash": "yes",
+            "cards": "yes"
+          },
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 248651464,
+            "osmUrl": "https://www.openstreetmap.org/node/248651464",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:housenumber": "12",
+              "addr:postcode": "10119",
+              "addr:street": "Schönhauser Allee",
+              "addr:suburb": "Prenzlauer Berg",
+              "amenity": "restaurant",
+              "check_date": "2026-05-24",
+              "check_date:diet:vegan": "2025-04-07",
+              "contact:phone": "+49 30 44017333",
+              "cuisine": "italian",
+              "diet:vegan": "no",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "level": "1",
+              "name": "I Due Forni",
+              "opening_hours": "Mo-Su 12:00-24:00",
+              "outdoor_seating": "yes",
+              "payment:cards": "yes",
+              "payment:cash": "yes",
+              "payment:credit_cards": "yes",
+              "payment:debit_cards": "yes",
+              "payment:qr_code": "no",
+              "ref:vatin": "DE3735731130",
+              "reservation": "yes",
+              "smoking": "outside",
+              "takeaway": "yes",
+              "toilets:wheelchair": "yes",
+              "wheelchair": "yes",
+              "wheelchair:description": "Erreichbar über Rampe am Hintereingang (Saarbrücker Str), Rolliklo vorhanden, Tische stehen sehr eng, d.h. zu Stoßzeiten wird's eng/schwierig durchzukommen"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 248651464,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:housenumber": "12",
+            "addr:postcode": "10119",
+            "addr:street": "Schönhauser Allee",
+            "addr:suburb": "Prenzlauer Berg",
+            "amenity": "restaurant",
+            "check_date": "2026-05-24",
+            "check_date:diet:vegan": "2025-04-07",
+            "contact:phone": "+49 30 44017333",
+            "cuisine": "italian",
+            "diet:vegan": "no",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "level": "1",
+            "name": "I Due Forni",
+            "opening_hours": "Mo-Su 12:00-24:00",
+            "outdoor_seating": "yes",
+            "payment:cards": "yes",
+            "payment:cash": "yes",
+            "payment:credit_cards": "yes",
+            "payment:debit_cards": "yes",
+            "payment:qr_code": "no",
+            "ref:vatin": "DE3735731130",
+            "reservation": "yes",
+            "smoking": "outside",
+            "takeaway": "yes",
+            "toilets:wheelchair": "yes",
+            "wheelchair": "yes",
+            "wheelchair:description": "Erreichbar über Rampe am Hintereingang (Saarbrücker Str), Rolliklo vorhanden, Tische stehen sehr eng, d.h. zu Stoßzeiten wird's eng/schwierig durchzukommen"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-87040394",
+        "name": "Izumi Sushi Bar",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "66, Kronenstraße, Berlin, 10117, DE",
+        "phone": "+49 30 20649938",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Izumi%20Sushi%20Bar%2066%2C%20Kronenstra%C3%9Fe%2C%20Berlin%2C%2010117%2C%20DE",
+        "latitude": 52.511292,
+        "longitude": 13.3887116,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 11:00-23:00; Sa 12:00-23:00; Su 01:00-23:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 30 20649938"
+          },
+          "social": {},
+          "location": {
+            "latitude": 52.511292,
+            "longitude": 13.3887116,
+            "address": "66, Kronenstraße, Berlin, 10117, DE",
+            "houseNumber": "66",
+            "street": "Kronenstraße",
+            "city": "Berlin",
+            "postcode": "10117",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Izumi%20Sushi%20Bar%2066%2C%20Kronenstra%C3%9Fe%2C%20Berlin%2C%2010117%2C%20DE"
+          },
+          "business": {
+            "cuisine": "japanese"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 11:00-23:00; Sa 12:00-23:00; Su 01:00-23:00",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes",
+            "internetAccess": "wlan"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 87040394,
+            "osmUrl": "https://www.openstreetmap.org/node/87040394",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:housenumber": "66",
+              "addr:postcode": "10117",
+              "addr:street": "Kronenstraße",
+              "addr:suburb": "Mitte",
+              "amenity": "restaurant",
+              "check_date": "2025-06-30",
+              "check_date:smoking": "2025-06-30",
+              "cuisine": "japanese",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "internet_access": "wlan",
+              "name": "Izumi Sushi Bar",
+              "opening_hours": "Mo-Fr 11:00-23:00; Sa 12:00-23:00; Su 01:00-23:00",
+              "outdoor_seating": "yes",
+              "phone": "+49 30 20649938",
+              "smoking": "no",
+              "toilets:wheelchair": "no",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 87040394,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:housenumber": "66",
+            "addr:postcode": "10117",
+            "addr:street": "Kronenstraße",
+            "addr:suburb": "Mitte",
+            "amenity": "restaurant",
+            "check_date": "2025-06-30",
+            "check_date:smoking": "2025-06-30",
+            "cuisine": "japanese",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "internet_access": "wlan",
+            "name": "Izumi Sushi Bar",
+            "opening_hours": "Mo-Fr 11:00-23:00; Sa 12:00-23:00; Su 01:00-23:00",
+            "outdoor_seating": "yes",
+            "phone": "+49 30 20649938",
+            "smoking": "no",
+            "toilets:wheelchair": "no",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-286817318",
+        "name": "Karatas-Kebab Haus",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "20, Frankfurter Straße, Bad Vilbel, 61118, DE",
+        "phone": "+49 6101 86437",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Karatas-Kebab%20Haus%2020%2C%20Frankfurter%20Stra%C3%9Fe%2C%20Bad%20Vilbel%2C%2061118%2C%20DE",
+        "latitude": 50.1823345,
+        "longitude": 8.7429644,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Sa 11:00-22:00; Su,PH 13:00-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 6101 86437"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1823345,
+            "longitude": 8.7429644,
+            "address": "20, Frankfurter Straße, Bad Vilbel, 61118, DE",
+            "houseNumber": "20",
+            "street": "Frankfurter Straße",
+            "city": "Bad Vilbel",
+            "postcode": "61118",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Karatas-Kebab%20Haus%2020%2C%20Frankfurter%20Stra%C3%9Fe%2C%20Bad%20Vilbel%2C%2061118%2C%20DE"
+          },
+          "business": {
+            "cuisine": "turkish;kebab"
+          },
+          "operations": {
+            "openingHours": "Mo-Sa 11:00-22:00; Su,PH 13:00-22:00",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 286817318,
+            "osmUrl": "https://www.openstreetmap.org/node/286817318",
+            "rawTags": {
+              "addr:city": "Bad Vilbel",
+              "addr:country": "DE",
+              "addr:housenumber": "20",
+              "addr:postcode": "61118",
+              "addr:street": "Frankfurter Straße",
+              "amenity": "fast_food",
+              "check_date:opening_hours": "2024-02-19",
+              "cuisine": "turkish;kebab",
+              "name": "Karatas-Kebab Haus",
+              "opening_hours": "Mo-Sa 11:00-22:00; Su,PH 13:00-22:00",
+              "phone": "+49 6101 86437",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 286817318,
+          "tags": {
+            "addr:city": "Bad Vilbel",
+            "addr:country": "DE",
+            "addr:housenumber": "20",
+            "addr:postcode": "61118",
+            "addr:street": "Frankfurter Straße",
+            "amenity": "fast_food",
+            "check_date:opening_hours": "2024-02-19",
+            "cuisine": "turkish;kebab",
+            "name": "Karatas-Kebab Haus",
+            "opening_hours": "Mo-Sa 11:00-22:00; Su,PH 13:00-22:00",
+            "phone": "+49 6101 86437",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-255944476",
+        "name": "La Fattoria",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "1a, Neurieder Straße, Planegg, 82152, DE",
+        "phone": "+49 89 89988937",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=La%20Fattoria%201a%2C%20Neurieder%20Stra%C3%9Fe%2C%20Planegg%2C%2082152%2C%20DE",
+        "latitude": 48.1069547,
+        "longitude": 11.4527431,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Tu-Sa 11:30-14:30,17:00-23:00; Su 11:30-23:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 89988937"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.1069547,
+            "longitude": 11.4527431,
+            "address": "1a, Neurieder Straße, Planegg, 82152, DE",
+            "houseNumber": "1a",
+            "street": "Neurieder Straße",
+            "city": "Planegg",
+            "postcode": "82152",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=La%20Fattoria%201a%2C%20Neurieder%20Stra%C3%9Fe%2C%20Planegg%2C%2082152%2C%20DE"
+          },
+          "business": {
+            "cuisine": "pizza"
+          },
+          "operations": {
+            "openingHours": "Tu-Sa 11:30-14:30,17:00-23:00; Su 11:30-23:00",
+            "outdoorSeating": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 255944476,
+            "osmUrl": "https://www.openstreetmap.org/node/255944476",
+            "rawTags": {
+              "addr:city": "Planegg",
+              "addr:country": "DE",
+              "addr:housenumber": "1a",
+              "addr:postcode": "82152",
+              "addr:street": "Neurieder Straße",
+              "addr:suburb": "Martinsried",
+              "amenity": "restaurant",
+              "brewery": "Paulaner",
+              "cuisine": "pizza",
+              "diet:vegan": "no",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "name": "La Fattoria",
+              "opening_hours": "Tu-Sa 11:30-14:30,17:00-23:00; Su 11:30-23:00",
+              "outdoor_seating": "yes",
+              "phone": "+49 89 89988937"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 255944476,
+          "tags": {
+            "addr:city": "Planegg",
+            "addr:country": "DE",
+            "addr:housenumber": "1a",
+            "addr:postcode": "82152",
+            "addr:street": "Neurieder Straße",
+            "addr:suburb": "Martinsried",
+            "amenity": "restaurant",
+            "brewery": "Paulaner",
+            "cuisine": "pizza",
+            "diet:vegan": "no",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "name": "La Fattoria",
+            "opening_hours": "Tu-Sa 11:30-14:30,17:00-23:00; Su 11:30-23:00",
+            "outdoor_seating": "yes",
+            "phone": "+49 89 89988937"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-36310174",
+        "name": "La Foresta (Schatulle)",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "Berlin, 13351, DE",
+        "phone": "+49 30 4513071",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=La%20Foresta%20(Schatulle)%20Berlin%2C%2013351%2C%20DE",
+        "latitude": 52.5542713,
+        "longitude": 13.3311277,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Tu-Fr 12:00-22:00, Sa,Su 10:00-22:00, PH 10:00-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 30 4513071"
+          },
+          "social": {},
+          "location": {
+            "latitude": 52.5542713,
+            "longitude": 13.3311277,
+            "address": "Berlin, 13351, DE",
+            "city": "Berlin",
+            "postcode": "13351",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=La%20Foresta%20(Schatulle)%20Berlin%2C%2013351%2C%20DE"
+          },
+          "business": {
+            "cuisine": "italian;regional"
+          },
+          "operations": {
+            "openingHours": "Tu-Fr 12:00-22:00, Sa,Su 10:00-22:00, PH 10:00-22:00",
+            "outdoorSeating": "yes",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 36310174,
+            "osmUrl": "https://www.openstreetmap.org/node/36310174",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:place": "Im Volkspark Rehberge",
+              "addr:postcode": "13351",
+              "amenity": "restaurant",
+              "cuisine": "italian;regional",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "name": "La Foresta (Schatulle)",
+              "opening_hours": "Tu-Fr 12:00-22:00, Sa,Su 10:00-22:00, PH 10:00-22:00",
+              "outdoor_seating": "yes",
+              "phone": "+49 30 4513071",
+              "smoking": "outside",
+              "toilets:wheelchair": "yes",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 36310174,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:place": "Im Volkspark Rehberge",
+            "addr:postcode": "13351",
+            "amenity": "restaurant",
+            "cuisine": "italian;regional",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "name": "La Foresta (Schatulle)",
+            "opening_hours": "Tu-Fr 12:00-22:00, Sa,Su 10:00-22:00, PH 10:00-22:00",
+            "outdoor_seating": "yes",
+            "phone": "+49 30 4513071",
+            "smoking": "outside",
+            "toilets:wheelchair": "yes",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-81362605",
+        "name": "Lindenwirtin",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "28, Lindenallee, Berlin, 14050, DE",
+        "phone": "+49 30 3027747",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Lindenwirtin%2028%2C%20Lindenallee%2C%20Berlin%2C%2014050%2C%20DE",
+        "latitude": 52.5106205,
+        "longitude": 13.2716607,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Su,PH 15:00+",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 30 3027747"
+          },
+          "social": {},
+          "location": {
+            "latitude": 52.5106205,
+            "longitude": 13.2716607,
+            "address": "28, Lindenallee, Berlin, 14050, DE",
+            "houseNumber": "28",
+            "street": "Lindenallee",
+            "city": "Berlin",
+            "postcode": "14050",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Lindenwirtin%2028%2C%20Lindenallee%2C%20Berlin%2C%2014050%2C%20DE"
+          },
+          "business": {
+            "cuisine": "regional"
+          },
+          "operations": {
+            "openingHours": "Mo-Su,PH 15:00+",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 81362605,
+            "osmUrl": "https://www.openstreetmap.org/node/81362605",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:housenumber": "28",
+              "addr:postcode": "14050",
+              "addr:street": "Lindenallee",
+              "addr:suburb": "Westend",
+              "amenity": "restaurant",
+              "check_date:opening_hours": "2023-06-10",
+              "cuisine": "regional",
+              "indoor_seating": "yes",
+              "name": "Lindenwirtin",
+              "opening_hours": "Mo-Su,PH 15:00+",
+              "outdoor_seating": "yes",
+              "phone": "+49 30 3027747",
+              "toilets:wheelchair": "yes",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 81362605,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:housenumber": "28",
+            "addr:postcode": "14050",
+            "addr:street": "Lindenallee",
+            "addr:suburb": "Westend",
+            "amenity": "restaurant",
+            "check_date:opening_hours": "2023-06-10",
+            "cuisine": "regional",
+            "indoor_seating": "yes",
+            "name": "Lindenwirtin",
+            "opening_hours": "Mo-Su,PH 15:00+",
+            "outdoor_seating": "yes",
+            "phone": "+49 30 3027747",
+            "toilets:wheelchair": "yes",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-244038459",
+        "name": "Little Tokyo",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "21, Steinheilstraße, München, 80333, DE",
+        "phone": "+49 89 52059937",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Little%20Tokyo%2021%2C%20Steinheilstra%C3%9Fe%2C%20M%C3%BCnchen%2C%2080333%2C%20DE",
+        "latitude": 48.1498059,
+        "longitude": 11.5635544,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 11:00-22:00; Su 12:00-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 52059937"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.1498059,
+            "longitude": 11.5635544,
+            "address": "21, Steinheilstraße, München, 80333, DE",
+            "houseNumber": "21",
+            "street": "Steinheilstraße",
+            "city": "München",
+            "postcode": "80333",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Little%20Tokyo%2021%2C%20Steinheilstra%C3%9Fe%2C%20M%C3%BCnchen%2C%2080333%2C%20DE"
+          },
+          "business": {
+            "cuisine": "sushi"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 11:00-22:00; Su 12:00-22:00",
+            "outdoorSeating": "yes",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 244038459,
+            "osmUrl": "https://www.openstreetmap.org/node/244038459",
+            "rawTags": {
+              "addr:city": "München",
+              "addr:country": "DE",
+              "addr:housenumber": "21",
+              "addr:postcode": "80333",
+              "addr:street": "Steinheilstraße",
+              "amenity": "fast_food",
+              "check_date": "2026-01-31",
+              "check_date:diet:vegetarian": "2026-01-31",
+              "cuisine": "sushi",
+              "diet:vegetarian": "yes",
+              "drive_through": "no",
+              "indoor_seating": "yes",
+              "name": "Little Tokyo",
+              "opening_hours": "Mo-Fr 11:00-22:00; Su 12:00-22:00",
+              "outdoor_seating": "yes",
+              "phone": "+49 89 52059937",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 244038459,
+          "tags": {
+            "addr:city": "München",
+            "addr:country": "DE",
+            "addr:housenumber": "21",
+            "addr:postcode": "80333",
+            "addr:street": "Steinheilstraße",
+            "amenity": "fast_food",
+            "check_date": "2026-01-31",
+            "check_date:diet:vegetarian": "2026-01-31",
+            "cuisine": "sushi",
+            "diet:vegetarian": "yes",
+            "drive_through": "no",
+            "indoor_seating": "yes",
+            "name": "Little Tokyo",
+            "opening_hours": "Mo-Fr 11:00-22:00; Su 12:00-22:00",
+            "outdoor_seating": "yes",
+            "phone": "+49 89 52059937",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-249664726",
+        "name": "Mamma Mia",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "11, Hauptstraße, Sulzbach (Taunus), 65843",
+        "phone": "+49 6196 56 19 114",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Mamma%20Mia%2011%2C%20Hauptstra%C3%9Fe%2C%20Sulzbach%20(Taunus)%2C%2065843",
+        "latitude": 50.1326219,
+        "longitude": 8.5277797,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Tu off; We-Su 11:30-14:30,17:30-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 6196 56 19 114"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.1326219,
+            "longitude": 8.5277797,
+            "address": "11, Hauptstraße, Sulzbach (Taunus), 65843",
+            "houseNumber": "11",
+            "street": "Hauptstraße",
+            "city": "Sulzbach (Taunus)",
+            "postcode": "65843",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Mamma%20Mia%2011%2C%20Hauptstra%C3%9Fe%2C%20Sulzbach%20(Taunus)%2C%2065843"
+          },
+          "business": {
+            "cuisine": "italian"
+          },
+          "operations": {
+            "openingHours": "Mo-Tu off; We-Su 11:30-14:30,17:30-22:00",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 249664726,
+            "osmUrl": "https://www.openstreetmap.org/node/249664726",
+            "rawTags": {
+              "addr:city": "Sulzbach (Taunus)",
+              "addr:housenumber": "11",
+              "addr:postcode": "65843",
+              "addr:street": "Hauptstraße",
+              "amenity": "restaurant",
+              "check_date": "2024-09-13",
+              "cuisine": "italian",
+              "microbrewery": "no",
+              "name": "Mamma Mia",
+              "opening_hours": "Mo-Tu off; We-Su 11:30-14:30,17:30-22:00",
+              "phone": "+49 6196 56 19 114",
+              "smoking": "no",
+              "source": "survey",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 249664726,
+          "tags": {
+            "addr:city": "Sulzbach (Taunus)",
+            "addr:housenumber": "11",
+            "addr:postcode": "65843",
+            "addr:street": "Hauptstraße",
+            "amenity": "restaurant",
+            "check_date": "2024-09-13",
+            "cuisine": "italian",
+            "microbrewery": "no",
+            "name": "Mamma Mia",
+            "opening_hours": "Mo-Tu off; We-Su 11:30-14:30,17:30-22:00",
+            "phone": "+49 6196 56 19 114",
+            "smoking": "no",
+            "source": "survey",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Frankfurt",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-175685782",
+        "name": "Märkische Bierstuben",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "91, Oranienburger Straße, Berlin, 13437, DE",
+        "phone": "+49 30 41190562",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=M%C3%A4rkische%20Bierstuben%2091%2C%20Oranienburger%20Stra%C3%9Fe%2C%20Berlin%2C%2013437%2C%20DE",
+        "latitude": 52.5965582,
+        "longitude": 13.3330486,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "https://facebook.com/pages/M%C3%A4rkische-Bierstuben/349471292244526",
+        "openingHours": "",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 30 41190562"
+          },
+          "social": {
+            "facebook": "https://facebook.com/pages/M%C3%A4rkische-Bierstuben/349471292244526"
+          },
+          "location": {
+            "latitude": 52.5965582,
+            "longitude": 13.3330486,
+            "address": "91, Oranienburger Straße, Berlin, 13437, DE",
+            "houseNumber": "91",
+            "street": "Oranienburger Straße",
+            "city": "Berlin",
+            "postcode": "13437",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=M%C3%A4rkische%20Bierstuben%2091%2C%20Oranienburger%20Stra%C3%9Fe%2C%20Berlin%2C%2013437%2C%20DE"
+          },
+          "business": {},
+          "operations": {
+            "outdoorSeating": "yes",
+            "wheelchair": "no"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 175685782,
+            "osmUrl": "https://www.openstreetmap.org/node/175685782",
+            "rawTags": {
+              "addr:city": "Berlin",
+              "addr:country": "DE",
+              "addr:housenumber": "91",
+              "addr:postcode": "13437",
+              "addr:street": "Oranienburger Straße",
+              "addr:suburb": "Wittenau",
+              "amenity": "pub",
+              "contact:facebook": "https://facebook.com/pages/M%C3%A4rkische-Bierstuben/349471292244526",
+              "contact:phone": "+49 30 41190562",
+              "indoor_seating": "yes",
+              "name": "Märkische Bierstuben",
+              "outdoor_seating": "yes",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 175685782,
+          "tags": {
+            "addr:city": "Berlin",
+            "addr:country": "DE",
+            "addr:housenumber": "91",
+            "addr:postcode": "13437",
+            "addr:street": "Oranienburger Straße",
+            "addr:suburb": "Wittenau",
+            "amenity": "pub",
+            "contact:facebook": "https://facebook.com/pages/M%C3%A4rkische-Bierstuben/349471292244526",
+            "contact:phone": "+49 30 41190562",
+            "indoor_seating": "yes",
+            "name": "Märkische Bierstuben",
+            "outdoor_seating": "yes",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 99,
+        "marketName": "Berlin",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-185542943",
+        "name": "Neuwirt",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "7, Schloßstraße, Ismaning, 85737, DE",
+        "phone": "+49 89 961020",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Neuwirt%207%2C%20Schlo%C3%9Fstra%C3%9Fe%2C%20Ismaning%2C%2085737%2C%20DE",
+        "latitude": 48.2290963,
+        "longitude": 11.6728481,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Su 10:00-23:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 89 961020"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.2290963,
+            "longitude": 11.6728481,
+            "address": "7, Schloßstraße, Ismaning, 85737, DE",
+            "houseNumber": "7",
+            "street": "Schloßstraße",
+            "city": "Ismaning",
+            "postcode": "85737",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Neuwirt%207%2C%20Schlo%C3%9Fstra%C3%9Fe%2C%20Ismaning%2C%2085737%2C%20DE"
+          },
+          "business": {
+            "cuisine": "international",
+            "altName": "Gasthof Neuwirt"
+          },
+          "operations": {
+            "openingHours": "Mo-Su 10:00-23:00",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 185542943,
+            "osmUrl": "https://www.openstreetmap.org/node/185542943",
+            "rawTags": {
+              "addr:city": "Ismaning",
+              "addr:country": "DE",
+              "addr:housenumber": "7",
+              "addr:postcode": "85737",
+              "addr:street": "Schloßstraße",
+              "alt_name": "Gasthof Neuwirt",
+              "amenity": "restaurant",
+              "cuisine": "international",
+              "indoor_seating": "yes",
+              "name": "Neuwirt",
+              "opening_hours": "Mo-Su 10:00-23:00",
+              "outdoor_seating": "yes",
+              "phone": "+49 89 961020",
+              "toilets:wheelchair": "yes",
+              "tourism": "hotel",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 185542943,
+          "tags": {
+            "addr:city": "Ismaning",
+            "addr:country": "DE",
+            "addr:housenumber": "7",
+            "addr:postcode": "85737",
+            "addr:street": "Schloßstraße",
+            "alt_name": "Gasthof Neuwirt",
+            "amenity": "restaurant",
+            "cuisine": "international",
+            "indoor_seating": "yes",
+            "name": "Neuwirt",
+            "opening_hours": "Mo-Su 10:00-23:00",
+            "outdoor_seating": "yes",
+            "phone": "+49 89 961020",
+            "toilets:wheelchair": "yes",
+            "tourism": "hotel",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Munich",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "owner",
+        "discoveredAt": "2026-07-06T21:15:06.148Z",
+        "updatedAt": "2026-07-06T21:15:06.148Z",
+        "createdAt": "2026-07-06T21:15:06.148Z"
       }
     ],
     "users": [
@@ -8309,6 +10711,33 @@
           "billingRequired": true,
           "trial": true,
           "trialSearchesUsed": 2,
+          "trialSearchLimit": 2,
+          "trialLeadLimit": 5,
+          "upgradeRequiredAfterTrial": true
+        },
+        "emailVerified": false
+      },
+      {
+        "name": "danny daniel",
+        "email": "dannydanielzzg@gmail.com",
+        "passwordHash": "scrypt$cc123fc9cd0996936e4531a71c7b7d0e$08a6c2dbee463708e420f8f741973829243713e15b8804f0e193e0733cd45a92f191a7ae84530d7dcf009127103f395f76402ca7108b7fc030fffed970521b6f",
+        "role": "user",
+        "tokenVersion": 1,
+        "id": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "createdAt": "2026-07-06T21:17:19.807Z",
+        "updatedAt": "2026-07-06T21:17:20.349Z",
+        "uid": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "subscription": "trial",
+        "planName": "Free Trial",
+        "monthlyLeadLimit": 5,
+        "trialSearchLimit": 2,
+        "trialLeadLimit": 5,
+        "billingStatus": "trial",
+        "trialSearchesUsed": 0,
+        "entitlements": {
+          "billingRequired": true,
+          "trial": true,
+          "trialSearchesUsed": 0,
           "trialSearchLimit": 2,
           "trialLeadLimit": 5,
           "upgradeRequiredAfterTrial": true
@@ -8729,6 +11158,44 @@
         "id": "deea297e-f99d-43dd-851e-125f13494365",
         "createdAt": "2026-07-05T22:07:59.079Z",
         "updatedAt": "2026-07-05T22:07:59.079Z"
+      },
+      {
+        "actor": "owner@matleads.local",
+        "action": "lead_search",
+        "query": {
+          "country": "Germany",
+          "countries": [
+            "Germany"
+          ],
+          "state": "",
+          "city": "",
+          "zip": "",
+          "industry": "restaurants, hotels, boutiques, car_dealers",
+          "keyword": "",
+          "businessTypes": [
+            "restaurants",
+            "hotels",
+            "boutiques",
+            "car_dealers"
+          ],
+          "mapLink": "",
+          "latitude": null,
+          "longitude": null,
+          "radiusMeters": 15000,
+          "limit": 20,
+          "searchDepth": "deep",
+          "leadQuality": "all",
+          "sortBy": "opportunity",
+          "minOpportunityScore": 0,
+          "requireContact": false,
+          "missingWebsiteOnly": false,
+          "bypassCache": false,
+          "refreshSeed": ""
+        },
+        "count": 20,
+        "id": "0d9d0e76-ddf8-4cc5-9c8a-4195031ae178",
+        "createdAt": "2026-07-06T21:15:13.501Z",
+        "updatedAt": "2026-07-06T21:15:13.501Z"
       }
     ]
   }
