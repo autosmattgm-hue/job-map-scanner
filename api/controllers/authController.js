@@ -12,6 +12,11 @@ export async function login(req, res) {
   res.json(result);
 }
 
+export async function refresh(req, res) {
+  const result = await authService.refreshSession(req.body?.refreshToken);
+  res.json(result);
+}
+
 export async function me(req, res) {
   res.json({ user: await authService.currentUser(req.user) });
 }

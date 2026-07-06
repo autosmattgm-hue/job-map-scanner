@@ -1,11 +1,58 @@
 import { randomUUID } from "node:crypto";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { firestoreClient } from "../config/firebase.js";
 
 const memoryStore = new Map();
+const localStorePath = path.resolve(process.cwd(), process.env.LOCAL_DATA_FILE || "data/local-store.json");
+let localStoreLoaded = false;
+let localStoreWriteQueue = Promise.resolve();
 
 function collectionStore(name) {
   if (!memoryStore.has(name)) memoryStore.set(name, new Map());
   return memoryStore.get(name);
+}
+
+async function loadLocalStore() {
+  if (localStoreLoaded) return;
+  localStoreLoaded = true;
+
+  try {
+    const raw = await fs.readFile(localStorePath, "utf8");
+    const parsed = JSON.parse(raw);
+    for (const [collection, records] of Object.entries(parsed.collections || {})) {
+      collectionStore(collection).clear();
+      for (const record of Array.isArray(records) ? records : []) {
+        if (record?.id) collectionStore(collection).set(record.id, record);
+      }
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
+
+function localStorePayload() {
+  return {
+    updatedAt: new Date().toISOString(),
+    collections: Object.fromEntries([...memoryStore.entries()].map(([collection, records]) => [
+      collection,
+      [...records.values()]
+    ]))
+  };
+}
+
+async function persistLocalStore() {
+  const payload = JSON.stringify(localStorePayload(), null, 2);
+  const directory = path.dirname(localStorePath);
+  const tempPath = `${localStorePath}.${process.pid}.tmp`;
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(tempPath, payload, "utf8");
+  await fs.rename(tempPath, localStorePath);
+}
+
+async function queueLocalStorePersist() {
+  localStoreWriteQueue = localStoreWriteQueue.then(persistLocalStore, persistLocalStore);
+  return localStoreWriteQueue;
 }
 
 function applyWhere(items, where = []) {
@@ -34,7 +81,9 @@ export class FirestoreRepository {
       return client.set(this.collectionName, id, payload);
     }
 
+    await loadLocalStore();
     collectionStore(this.collectionName).set(id, payload);
+    await queueLocalStorePersist();
     return payload;
   }
 
@@ -48,7 +97,9 @@ export class FirestoreRepository {
       return client.set(this.collectionName, id, payload);
     }
 
+    await loadLocalStore();
     collectionStore(this.collectionName).set(id, payload);
+    await queueLocalStorePersist();
     return payload;
   }
 
@@ -58,6 +109,7 @@ export class FirestoreRepository {
       return client.get(this.collectionName, id);
     }
 
+    await loadLocalStore();
     return collectionStore(this.collectionName).get(id) || null;
   }
 
@@ -70,6 +122,7 @@ export class FirestoreRepository {
         .slice(0, limit);
     }
 
+    await loadLocalStore();
     const items = Array.from(collectionStore(this.collectionName).values());
     return applyWhere(items, where)
       .sort((a, b) => String(b[orderBy] || "").localeCompare(String(a[orderBy] || "")))

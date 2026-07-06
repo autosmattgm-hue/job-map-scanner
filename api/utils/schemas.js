@@ -111,6 +111,9 @@ export const authSchemas = {
   login: schema((input) => ({
     email: stringField(input, "email", { required: true, email: true, max: 255 }).toLowerCase(),
     password: stringField(input, "password", { required: true, min: 8, max: 128 })
+  })),
+  refresh: schema((input) => ({
+    refreshToken: stringField(input, "refreshToken", { required: true, min: 20, max: 4000 })
   }))
 };
 

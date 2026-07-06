@@ -1,4 +1,4 @@
-import { clearToken, hasUsableToken } from "../js/api.js";
+import { apiFetch, hasStoredSession } from "../js/api.js";
 
 const navItems = [
   { href: "/dashboard.html", label: "Dashboard", icon: "D" },
@@ -19,6 +19,34 @@ function brandMarkup() {
       <span>MAT LEADS AI PRO X</span>
     </a>
   `;
+}
+
+function injectPwaMeta() {
+  if (document.querySelector('link[rel="manifest"]')) return;
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = '/manifest.webmanifest';
+  document.head.appendChild(link);
+
+  const appleIcon = document.createElement('link');
+  appleIcon.rel = 'apple-touch-icon';
+  appleIcon.href = '/assets/logo-mark.svg';
+  document.head.appendChild(appleIcon);
+
+  const appleTitle = document.createElement('meta');
+  appleTitle.name = 'apple-mobile-web-app-title';
+  appleTitle.content = 'MAT Leads';
+  document.head.appendChild(appleTitle);
+
+  const appleCapable = document.createElement('meta');
+  appleCapable.name = 'apple-mobile-web-app-capable';
+  appleCapable.content = 'yes';
+  document.head.appendChild(appleCapable);
+
+  const themeColor = document.createElement('meta');
+  themeColor.name = 'theme-color';
+  themeColor.content = '#101828';
+  document.head.appendChild(themeColor);
 }
 
 function initTheme() {
@@ -110,7 +138,6 @@ async function initSessionBadge() {
   const target = document.querySelector("[data-session-badge]");
   if (!target) return;
 
-  const token = localStorage.getItem("mat_access_token");
   const cached = localStorage.getItem("mat_user");
   if (cached) {
     try {
@@ -121,22 +148,13 @@ async function initSessionBadge() {
     }
   }
 
-  if (!token) return;
-  if (!hasUsableToken()) {
+  if (!hasStoredSession()) {
     target.textContent = "Login required to access the workspace.";
     return;
   }
 
   try {
-    const response = await fetch("/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!response.ok) {
-      clearToken();
-      target.textContent = "Login required to access the workspace.";
-      return;
-    }
-    const result = await response.json();
+    const result = await apiFetch("/api/auth/me");
     const user = result.user;
     localStorage.setItem("mat_user", JSON.stringify(user));
     target.textContent = sessionText(user);
@@ -175,10 +193,18 @@ function initThemeButtons() {
 }
 
 initTheme();
+injectPwaMeta();
 document.addEventListener("DOMContentLoaded", () => {
   initPublicNav();
   initAppShell();
   initMenu();
   initThemeButtons();
   initSessionBadge();
+
+  // Load PWA registration script
+  if (!document.querySelector('script[src="/js/pwa.js"]')) {
+    const pwaScript = document.createElement('script');
+    pwaScript.src = '/js/pwa.js';
+    document.body.appendChild(pwaScript);
+  }
 });
