@@ -121,18 +121,9 @@ function extractPhones(html) {
     phones.push(tel[1]);
   }
 
-  const plainPattern = /(?:\+|00)?\d[\d\s().-]{6,}\d/g;
-  let plain;
-  while ((plain = plainPattern.exec(html))) {
-    phones.push(plain[0]);
-  }
-
   return unique(phones
-    .map((phone) => decodeURIComponent(phone).replace(/[^\d+().\-\s]/g, "").replace(/\s+/g, " ").trim())
-    .filter((phone) => {
-      const digits = phone.replace(/\D/g, "");
-      return digits.length >= 7 && digits.length <= 16;
-    })
+    .map((phone) => decodeURIComponent(phone).replace(/[^\d+().\-\s]/g, "").trim())
+    .filter((phone) => phone.replace(/\D/g, "").length >= 7)
     .slice(0, 8));
 }
 

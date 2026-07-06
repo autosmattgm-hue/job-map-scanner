@@ -6,7 +6,7 @@ import { getPlan } from "../config/plans.js";
 import { FirestoreRepository } from "../repositories/firestoreRepository.js";
 import { AppError } from "../utils/errors.js";
 import { applyAdminEntitlements } from "../utils/entitlements.js";
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../middleware/auth.js";
+import { signAccessToken, signRefreshToken } from "../middleware/auth.js";
 
 const scrypt = promisify(crypto.scrypt);
 
@@ -184,7 +184,7 @@ export class AuthService {
       idToken: user.idToken,
       firebaseRefreshToken: user.firebaseRefreshToken,
       accessToken: signAccessToken(sessionUser),
-      refreshToken: signRefreshToken({ uid: user.uid || user.id, email: normalizedEmail, role: user.role || "user", tokenVersion: user.tokenVersion || 1 })
+      refreshToken: signRefreshToken({ uid: user.uid || user.id, tokenVersion: user.tokenVersion || 1 })
     };
   }
 
@@ -254,50 +254,7 @@ export class AuthService {
     return {
       user: entitledUser,
       accessToken: signAccessToken(entitledUser),
-      refreshToken: signRefreshToken({ uid: user.uid || user.id, email: normalizedEmail, role: user.role || "user", tokenVersion: user.tokenVersion || 1 })
-    };
-  }
-
-  async refreshSession(refreshToken) {
-    if (!refreshToken) throw new AppError("Refresh token required.", 401, "REFRESH_REQUIRED");
-    let decoded;
-    try {
-      decoded = await verifyRefreshToken(refreshToken);
-    } catch {
-      throw new AppError("Invalid or expired refresh token.", 401, "INVALID_REFRESH_TOKEN");
-    }
-
-    if (decoded.uid === "owner") {
-      return this.ownerSession();
-    }
-
-    const stored = await this.users.findById(decoded.uid);
-    if (stored?.tokenVersion && Number(stored.tokenVersion) !== Number(decoded.tokenVersion || 1)) {
-      throw new AppError("Session has been revoked. Please log in again.", 401, "SESSION_REVOKED");
-    }
-
-    const source = stored || decoded;
-    const sessionUser = applyAdminEntitlements({
-      uid: decoded.uid,
-      name: source.name || "",
-      email: source.email || decoded.email || "",
-      role: source.role || decoded.role || "user",
-      ...planFields(storedPlanKey(source)),
-      billingStatus: storedBillingStatus(source),
-      trialSearchesUsed: Number(source.trialSearchesUsed || 0),
-      permissions: source.permissions || [],
-      entitlements: storedEntitlements(source)
-    });
-
-    return {
-      user: sessionUser,
-      accessToken: signAccessToken(sessionUser),
-      refreshToken: signRefreshToken({
-        uid: sessionUser.uid,
-        email: sessionUser.email,
-        role: sessionUser.role,
-        tokenVersion: source.tokenVersion || decoded.tokenVersion || 1
-      })
+      refreshToken: signRefreshToken({ uid: user.uid || user.id, tokenVersion: user.tokenVersion || 1 })
     };
   }
 
