@@ -68,6 +68,8 @@ export function signAccessToken(user) {
 export function signRefreshToken(user) {
   return signJwt({
     uid: user.uid,
+    email: user.email,
+    role: user.role || "user",
     tokenVersion: user.tokenVersion || 1
   }, env.jwtRefreshSecret, "30d");
 }
@@ -90,6 +92,18 @@ export async function verifyAccessToken(token) {
     entitlements: decoded.entitlements || {},
     provider: "jwt"
   });
+}
+
+export async function verifyRefreshToken(token) {
+  const decoded = verifyJwt(token, env.jwtRefreshSecret);
+  if (!decoded.uid) throw new Error("Missing subject");
+  return {
+    uid: decoded.uid,
+    email: decoded.email || "",
+    role: decoded.role || "user",
+    tokenVersion: decoded.tokenVersion || 1,
+    provider: "refresh_jwt"
+  };
 }
 
 export async function requireUser(req, _res, next) {

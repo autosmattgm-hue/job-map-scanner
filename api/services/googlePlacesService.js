@@ -852,6 +852,51 @@ function tagValue(tags, keys) {
   return "";
 }
 
+const businessPhoneKeys = [
+  "phone",
+  "contact:phone",
+  "telephone",
+  "contact:telephone",
+  "phone:main",
+  "phone:office",
+  "contact:office_phone",
+  "addr:phone"
+];
+
+const businessMobileKeys = [
+  "mobile",
+  "contact:mobile",
+  "contact:cell",
+  "phone:mobile",
+  "phone:whatsapp",
+  "contact:whatsapp"
+];
+
+function cleanPhone(value) {
+  const candidates = String(value || "")
+    .split(/[;|]+/)
+    .map((item) => item.replace(/[^\d+()\-\s]/g, "").replace(/\s+/g, " ").trim())
+    .filter((item) => {
+      const digits = item.replace(/\D/g, "");
+      return digits.length >= 7 && digits.length <= 16;
+    });
+  // Prefer numbers with international prefix (+), then longer numbers
+  return candidates.sort((a, b) => {
+    const aHasPlus = a.startsWith("+") ? 1 : 0;
+    const bHasPlus = b.startsWith("+") ? 1 : 0;
+    if (aHasPlus !== bHasPlus) return bHasPlus - aHasPlus;
+    return b.replace(/\D/g, "").length - a.replace(/\D/g, "").length;
+  })[0] || "";
+}
+
+function phoneFromTags(tags = {}) {
+  return cleanPhone(tagValue(tags, businessPhoneKeys));
+}
+
+function mobileFromTags(tags = {}) {
+  return cleanPhone(tagValue(tags, businessMobileKeys));
+}
+
 function splitTagValues(value) {
   return String(value || "").split(";").map((item) => item.trim().toLowerCase()).filter(Boolean);
 }
@@ -953,8 +998,8 @@ function socialLinksFromTags(tags = {}) {
 function osmDetailsFromTags(tags = {}, coords = {}, element = {}, context = {}) {
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
-  const phone = tagValue(tags, ["phone", "contact:phone"]);
-  const mobile = tagValue(tags, ["mobile", "contact:mobile"]);
+  const phone = phoneFromTags(tags);
+  const mobile = mobileFromTags(tags);
   const city = tags["addr:city"] || tags["addr:town"] || tags["addr:village"] || "";
   const country = displayCountry(tags, context);
   const countryCode = displayCountryCode(tags, context);
@@ -990,7 +1035,7 @@ function osmDetailsFromTags(tags = {}, coords = {}, element = {}, context = {}) 
       postcode: tags["addr:postcode"],
       country,
       countryCode,
-      googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${tags.name || tags.brand || ""} ${coords.latitude},${coords.longitude}`)}`
+      googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${tags.name || tags.brand || ""} ${addressFromTags(tags)}`.trim() || `${coords.latitude},${coords.longitude}`)}`
     }),
     business: compactObject({
       brand: tags.brand,
@@ -1041,12 +1086,12 @@ function mapOsmElement(element, profileKeys, context = {}) {
   const name = tags.name || tags.brand || "Unnamed business";
   const profileMatch = profileFromTags(tags, profileKeys);
   const category = categoryFromTags(tags, profileKeys);
-  const phone = tagValue(tags, ["phone", "contact:phone", "mobile", "contact:mobile"]);
+  const phone = phoneFromTags(tags) || mobileFromTags(tags);
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
   const social = Object.values(socialLinksFromTags(tags))[0] || "";
   const address = addressFromTags(tags);
-  const mapsQuery = encodeURIComponent(`${name} ${coords.latitude},${coords.longitude}`);
+  const mapsQuery = `${name} ${address}`.trim() || `${name} ${coords.latitude},${coords.longitude}`;
   const country = displayCountry(tags, context);
   const countryCode = displayCountryCode(tags, context);
   const details = osmDetailsFromTags(tags, coords, element, context);
@@ -1061,7 +1106,7 @@ function mapOsmElement(element, profileKeys, context = {}) {
     rating: null,
     reviewsCount: 0,
     websiteUrl,
-    googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
+    googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`,
     latitude: coords.latitude,
     longitude: coords.longitude,
     country,
@@ -1208,11 +1253,12 @@ function mapNominatimPlace(place, profileKey, context = {}) {
   const latitude = Number(place.lat);
   const longitude = Number(place.lon);
   const name = place.namedetails?.name || place.name || String(place.display_name || "Unknown business").split(",")[0];
-  const phone = tagValue(tags, ["phone", "contact:phone", "mobile", "contact:mobile"]);
+  const phone = phoneFromTags(tags) || mobileFromTags(tags);
   const websiteUrl = tagValue(tags, ["website", "contact:website", "url"]);
   const email = tagValue(tags, ["email", "contact:email"]);
   const social = Object.values(socialLinksFromTags(tags))[0] || "";
-  const mapsQuery = encodeURIComponent(`${name} ${latitude},${longitude}`);
+  const address = place.display_name || "";
+  const mapsQuery = `${name} ${address}`.trim() || `${name} ${latitude},${longitude}`;
   const country = displayCountry(tags, context);
   const countryCode = displayCountryCode(tags, context);
   const details = {
@@ -1233,12 +1279,12 @@ function mapNominatimPlace(place, profileKey, context = {}) {
     name,
     category: profile?.label || place.type || "Local business",
     businessType: profile?.label || place.type || "Local business",
-    address: place.display_name || "",
+    address,
     phone,
     rating: null,
     reviewsCount: 0,
     websiteUrl,
-    googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
+    googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`,
     latitude,
     longitude,
     country,
@@ -1605,18 +1651,6 @@ export class GooglePlacesService {
       countryCode: location?.countryCode || countryCodesFor(selectedCountries)[0] || ""
     };
     const profileKeys = selectedBusinessProfileKeys(search);
-    const fastPhotonLeads = await searchPhotonFallback(search, location, search.limit, profileKeys);
-    if (fastPhotonLeads.length) {
-      return {
-        source: "openstreetmap_photon",
-        providerLabel: "OpenStreetMap Photon",
-        selectedCountries,
-        queryVariant: "photon_fast",
-        location,
-        query: buildTextQuery(search),
-        leads: fastPhotonLeads.slice(0, search.limit)
-      };
-    }
 
     for (const variant of queryVariants) {
       const query = buildOverpassQuery(location, search.limit, variant.elementTypes, search);
@@ -1790,16 +1824,6 @@ export class GooglePlacesService {
     };
     let lastError = null;
     let emptyResult = null;
-    const fastPhotonLeads = await searchPhotonFallback(search, location, limitOverride, profileKeys);
-    if (fastPhotonLeads.length) {
-      return {
-        source: "openstreetmap_photon",
-        providerLabel: "OpenStreetMap Photon",
-        endpoint: "https://photon.komoot.io/api/",
-        location,
-        leads: fastPhotonLeads.slice(0, limitOverride)
-      };
-    }
 
     for (const endpoint of env.osm.overpassEndpoints) {
       const controller = new AbortController();

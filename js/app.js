@@ -1,4 +1,4 @@
-import { apiFetch, setToken, setCurrentUser, clearToken } from "./api.js";
+import { apiFetch, setSession, clearToken } from "./api.js";
 
 function initAuthForm() {
   const form = document.querySelector("[data-auth-form]");
@@ -19,8 +19,7 @@ function initAuthForm() {
         method: "POST",
         body: JSON.stringify(payload)
       });
-      setToken(result.accessToken || result.idToken);
-      setCurrentUser(result.user);
+      setSession(result);
       status.textContent = "Success. Redirecting...";
       const next = new URLSearchParams(window.location.search).get("next");
       window.location.href = next && next.startsWith("/") ? next : "/dashboard.html";

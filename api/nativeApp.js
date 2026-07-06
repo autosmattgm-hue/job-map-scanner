@@ -36,6 +36,7 @@ const mimeTypes = new Map([
   [".jpg", "image/jpeg"],
   [".jpeg", "image/jpeg"],
   [".webp", "image/webp"],
+  [".webmanifest", "application/manifest+json; charset=utf-8"],
   [".txt", "text/plain; charset=utf-8"],
   [".xml", "application/xml; charset=utf-8"]
 ]);
@@ -57,6 +58,8 @@ const publicFiles = new Set([
   "/admin.html",
   "/reports.html",
   "/analytics.html",
+  "/manifest.webmanifest",
+  "/sw.js",
   "/robots.txt",
   "/sitemap.xml"
 ]);
@@ -225,6 +228,12 @@ const routes = [
     regex: /^\/api\/auth\/login$/,
     keys: [],
     handler: async ({ body }) => authService.login(validate(authSchemas.login, body))
+  },
+  {
+    method: "POST",
+    regex: /^\/api\/auth\/refresh$/,
+    keys: [],
+    handler: async ({ body }) => authService.refreshSession(validate(authSchemas.refresh, body).refreshToken)
   },
   {
     method: "GET",
