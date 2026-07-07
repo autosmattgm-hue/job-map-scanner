@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-06T21:17:20.349Z",
+  "updatedAt": "2026-07-07T14:12:22.317Z",
   "collections": {
     "leads": [
       {
@@ -10687,6 +10687,1145 @@
         "discoveredAt": "2026-07-06T21:15:06.148Z",
         "updatedAt": "2026-07-06T21:15:06.148Z",
         "createdAt": "2026-07-06T21:15:06.148Z"
+      },
+      {
+        "id": "osm-node-243924634",
+        "name": "Anju Korean Tapas",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "",
+        "phone": "+49 221 16825210",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Anju%20Korean%20Tapas",
+        "latitude": 50.9547349,
+        "longitude": 6.9172551,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "https://www.instagram.com/anju_koeln",
+        "openingHours": "Mo off; Tu-Su 18:00+",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 221 16825210"
+          },
+          "social": {
+            "instagram": "https://www.instagram.com/anju_koeln"
+          },
+          "location": {
+            "latitude": 50.9547349,
+            "longitude": 6.9172551,
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Anju%20Korean%20Tapas"
+          },
+          "business": {
+            "cuisine": "korean"
+          },
+          "operations": {
+            "openingHours": "Mo off; Tu-Su 18:00+",
+            "wheelchair": "no"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 243924634,
+            "osmUrl": "https://www.openstreetmap.org/node/243924634",
+            "rawTags": {
+              "amenity": "restaurant",
+              "check_date": "2025-12-24",
+              "contact:instagram": "anju_koeln",
+              "cuisine": "korean",
+              "name": "Anju Korean Tapas",
+              "opening_hours": "Mo off; Tu-Su 18:00+",
+              "phone": "+49 221 16825210",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 243924634,
+          "tags": {
+            "amenity": "restaurant",
+            "check_date": "2025-12-24",
+            "contact:instagram": "anju_koeln",
+            "cuisine": "korean",
+            "name": "Anju Korean Tapas",
+            "opening_hours": "Mo off; Tu-Su 18:00+",
+            "phone": "+49 221 16825210",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 98,
+        "marketName": "Cologne",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-06T22:42:12.853Z",
+        "updatedAt": "2026-07-06T22:42:12.853Z",
+        "createdAt": "2026-07-06T22:42:12.853Z"
+      },
+      {
+        "id": "osm-node-280740265",
+        "name": "Asia House",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "10, Schulterblatt, Hamburg, 20357, DE",
+        "phone": "+49 40 43095712",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Asia%20House%2010%2C%20Schulterblatt%2C%20Hamburg%2C%2020357%2C%20DE",
+        "latitude": 53.5597713,
+        "longitude": 9.9639605,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Th 12:00-23:00; Fr-Su 12:00-23:00+",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 40 43095712"
+          },
+          "social": {},
+          "location": {
+            "latitude": 53.5597713,
+            "longitude": 9.9639605,
+            "address": "10, Schulterblatt, Hamburg, 20357, DE",
+            "houseNumber": "10",
+            "street": "Schulterblatt",
+            "city": "Hamburg",
+            "postcode": "20357",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Asia%20House%2010%2C%20Schulterblatt%2C%20Hamburg%2C%2020357%2C%20DE"
+          },
+          "business": {},
+          "operations": {
+            "openingHours": "Mo-Th 12:00-23:00; Fr-Su 12:00-23:00+",
+            "wheelchair": "no"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 280740265,
+            "osmUrl": "https://www.openstreetmap.org/node/280740265",
+            "rawTags": {
+              "addr:city": "Hamburg",
+              "addr:country": "DE",
+              "addr:housenumber": "10",
+              "addr:postcode": "20357",
+              "addr:street": "Schulterblatt",
+              "amenity": "restaurant",
+              "check_date:opening_hours": "2025-06-25",
+              "diet:vegan": "yes",
+              "diet:vegetarian": "yes",
+              "name": "Asia House",
+              "opening_hours": "Mo-Th 12:00-23:00; Fr-Su 12:00-23:00+",
+              "phone": "+49 40 43095712",
+              "source": "knowledge",
+              "wheelchair": "no"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 280740265,
+          "tags": {
+            "addr:city": "Hamburg",
+            "addr:country": "DE",
+            "addr:housenumber": "10",
+            "addr:postcode": "20357",
+            "addr:street": "Schulterblatt",
+            "amenity": "restaurant",
+            "check_date:opening_hours": "2025-06-25",
+            "diet:vegan": "yes",
+            "diet:vegetarian": "yes",
+            "name": "Asia House",
+            "opening_hours": "Mo-Th 12:00-23:00; Fr-Su 12:00-23:00+",
+            "phone": "+49 40 43095712",
+            "source": "knowledge",
+            "wheelchair": "no"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Hamburg",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-06T22:42:12.853Z",
+        "updatedAt": "2026-07-06T22:42:12.853Z",
+        "createdAt": "2026-07-06T22:42:12.853Z"
+      },
+      {
+        "id": "osm-node-267626214",
+        "name": "Berliner Betrüger",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "15, Juliusstraße, Hamburg, 22769, DE",
+        "phone": "+49 40 40135735",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Berliner%20Betr%C3%BCger%2015%2C%20Juliusstra%C3%9Fe%2C%20Hamburg%2C%2022769%2C%20DE",
+        "latitude": 53.5610295,
+        "longitude": 9.9606179,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 40 40135735"
+          },
+          "social": {},
+          "location": {
+            "latitude": 53.5610295,
+            "longitude": 9.9606179,
+            "address": "15, Juliusstraße, Hamburg, 22769, DE",
+            "houseNumber": "15",
+            "street": "Juliusstraße",
+            "city": "Hamburg",
+            "postcode": "22769",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Berliner%20Betr%C3%BCger%2015%2C%20Juliusstra%C3%9Fe%2C%20Hamburg%2C%2022769%2C%20DE"
+          },
+          "business": {},
+          "operations": {
+            "outdoorSeating": "yes",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 267626214,
+            "osmUrl": "https://www.openstreetmap.org/node/267626214",
+            "rawTags": {
+              "addr:city": "Hamburg",
+              "addr:country": "DE",
+              "addr:housenumber": "15",
+              "addr:postcode": "22769",
+              "addr:street": "Juliusstraße",
+              "amenity": "pub",
+              "indoor_seating": "yes",
+              "name": "Berliner Betrüger",
+              "opening_hours:signed": "no",
+              "outdoor_seating": "yes",
+              "phone": "+49 40 40135735",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 267626214,
+          "tags": {
+            "addr:city": "Hamburg",
+            "addr:country": "DE",
+            "addr:housenumber": "15",
+            "addr:postcode": "22769",
+            "addr:street": "Juliusstraße",
+            "amenity": "pub",
+            "indoor_seating": "yes",
+            "name": "Berliner Betrüger",
+            "opening_hours:signed": "no",
+            "outdoor_seating": "yes",
+            "phone": "+49 40 40135735",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 93,
+        "marketName": "Hamburg",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-06T22:42:12.853Z",
+        "updatedAt": "2026-07-06T22:42:12.853Z",
+        "createdAt": "2026-07-06T22:42:12.853Z"
+      },
+      {
+        "id": "osm-node-39606803",
+        "name": "Burger King",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "5, Ehrenfeldgürtel, Köln, 50823, DE",
+        "phone": "+49 221 69055090",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Burger%20King%205%2C%20Ehrenfeldg%C3%BCrtel%2C%20K%C3%B6ln%2C%2050823%2C%20DE",
+        "latitude": 50.9491514,
+        "longitude": 6.9150847,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Su-Th 10:00-01:00, Fr,Sa 10:00-03:00",
+        "details": {
+          "ownerContact": {
+            "operator": "Schloss Burger GmbH",
+            "publicContactNote": "Owner/operator/contact fields were found in public map data."
+          },
+          "contact": {
+            "phone": "+49 221 69055090"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.9491514,
+            "longitude": 6.9150847,
+            "address": "5, Ehrenfeldgürtel, Köln, 50823, DE",
+            "houseNumber": "5",
+            "street": "Ehrenfeldgürtel",
+            "city": "Köln",
+            "postcode": "50823",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Burger%20King%205%2C%20Ehrenfeldg%C3%BCrtel%2C%20K%C3%B6ln%2C%2050823%2C%20DE"
+          },
+          "business": {
+            "brand": "Burger King",
+            "operator": "Schloss Burger GmbH",
+            "cuisine": "burger"
+          },
+          "operations": {
+            "openingHours": "Su-Th 10:00-01:00, Fr,Sa 10:00-03:00",
+            "takeaway": "yes",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes",
+            "internetAccess": "wlan"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 39606803,
+            "osmUrl": "https://www.openstreetmap.org/node/39606803",
+            "rawTags": {
+              "addr:city": "Köln",
+              "addr:country": "DE",
+              "addr:housenumber": "5",
+              "addr:postcode": "50823",
+              "addr:street": "Ehrenfeldgürtel",
+              "amenity": "fast_food",
+              "brand": "Burger King",
+              "brand:wikidata": "Q177054",
+              "brand:wikipedia": "en:Burger King",
+              "cuisine": "burger",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "internet_access": "wlan",
+              "internet_access:fee": "no",
+              "name": "Burger King",
+              "opening_hours": "Su-Th 10:00-01:00, Fr,Sa 10:00-03:00",
+              "operator": "Schloss Burger GmbH",
+              "outdoor_seating": "yes",
+              "phone": "+49 221 69055090",
+              "ref": "14090",
+              "smoking": "no",
+              "takeaway": "yes",
+              "toilets:wheelchair": "yes",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 39606803,
+          "tags": {
+            "addr:city": "Köln",
+            "addr:country": "DE",
+            "addr:housenumber": "5",
+            "addr:postcode": "50823",
+            "addr:street": "Ehrenfeldgürtel",
+            "amenity": "fast_food",
+            "brand": "Burger King",
+            "brand:wikidata": "Q177054",
+            "brand:wikipedia": "en:Burger King",
+            "cuisine": "burger",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "internet_access": "wlan",
+            "internet_access:fee": "no",
+            "name": "Burger King",
+            "opening_hours": "Su-Th 10:00-01:00, Fr,Sa 10:00-03:00",
+            "operator": "Schloss Burger GmbH",
+            "outdoor_seating": "yes",
+            "phone": "+49 221 69055090",
+            "ref": "14090",
+            "smoking": "no",
+            "takeaway": "yes",
+            "toilets:wheelchair": "yes",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Cologne",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-06T22:42:12.853Z",
+        "updatedAt": "2026-07-06T22:42:12.853Z",
+        "createdAt": "2026-07-06T22:42:12.853Z"
+      },
+      {
+        "id": "osm-node-247383461",
+        "name": "Da Franco",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "61, Siebachstraße, Köln, 50733",
+        "phone": "+49 221 728862",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Da%20Franco%2061%2C%20Siebachstra%C3%9Fe%2C%20K%C3%B6ln%2C%2050733",
+        "latitude": 50.9608398,
+        "longitude": 6.9496582,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Su 18:00-23:30",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 221 728862"
+          },
+          "social": {},
+          "location": {
+            "latitude": 50.9608398,
+            "longitude": 6.9496582,
+            "address": "61, Siebachstraße, Köln, 50733",
+            "houseNumber": "61",
+            "street": "Siebachstraße",
+            "city": "Köln",
+            "postcode": "50733",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Da%20Franco%2061%2C%20Siebachstra%C3%9Fe%2C%20K%C3%B6ln%2C%2050733"
+          },
+          "business": {
+            "cuisine": "italian"
+          },
+          "operations": {
+            "openingHours": "Mo-Su 18:00-23:30",
+            "delivery": "no",
+            "takeaway": "yes",
+            "outdoorSeating": "yes",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 247383461,
+            "osmUrl": "https://www.openstreetmap.org/node/247383461",
+            "rawTags": {
+              "addr:city": "Köln",
+              "addr:housenumber": "61",
+              "addr:postcode": "50733",
+              "addr:street": "Siebachstraße",
+              "amenity": "restaurant",
+              "cuisine": "italian",
+              "delivery": "no",
+              "diet:vegetarian": "yes",
+              "indoor_seating": "yes",
+              "name": "Da Franco",
+              "opening_hours": "Mo-Su 18:00-23:30",
+              "outdoor_seating": "yes",
+              "phone": "+49 221 728862",
+              "source": "survey",
+              "takeaway": "yes",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 247383461,
+          "tags": {
+            "addr:city": "Köln",
+            "addr:housenumber": "61",
+            "addr:postcode": "50733",
+            "addr:street": "Siebachstraße",
+            "amenity": "restaurant",
+            "cuisine": "italian",
+            "delivery": "no",
+            "diet:vegetarian": "yes",
+            "indoor_seating": "yes",
+            "name": "Da Franco",
+            "opening_hours": "Mo-Su 18:00-23:30",
+            "outdoor_seating": "yes",
+            "phone": "+49 221 728862",
+            "source": "survey",
+            "takeaway": "yes",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Cologne",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-06T22:42:12.853Z",
+        "updatedAt": "2026-07-06T22:42:12.853Z",
+        "createdAt": "2026-07-06T22:42:12.853Z"
+      },
+      {
+        "id": "osm-node-251115504",
+        "name": "Bambus",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "",
+        "phone": "+49 711 9077159",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bambus",
+        "latitude": 48.6535277,
+        "longitude": 9.2162081,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "https://facebook.com/Bambus-Filderstadt-1013362755342374",
+        "openingHours": "Tu-Su 11:30-14:30,17:00-22:00; Mo off",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 711 9077159"
+          },
+          "social": {
+            "facebook": "https://facebook.com/Bambus-Filderstadt-1013362755342374"
+          },
+          "location": {
+            "latitude": 48.6535277,
+            "longitude": 9.2162081,
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bambus"
+          },
+          "business": {
+            "cuisine": "thai"
+          },
+          "operations": {
+            "openingHours": "Tu-Su 11:30-14:30,17:00-22:00; Mo off",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 251115504,
+            "osmUrl": "https://www.openstreetmap.org/node/251115504",
+            "rawTags": {
+              "amenity": "restaurant",
+              "contact:facebook": "www.facebook.com/Bambus-Filderstadt-1013362755342374",
+              "cuisine": "thai",
+              "name": "Bambus",
+              "opening_hours": "Tu-Su 11:30-14:30,17:00-22:00; Mo off",
+              "phone": "+49 711 9077159",
+              "wheelchair": "yes",
+              "wheelchair:description": "Ebenerdig"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 251115504,
+          "tags": {
+            "amenity": "restaurant",
+            "contact:facebook": "www.facebook.com/Bambus-Filderstadt-1013362755342374",
+            "cuisine": "thai",
+            "name": "Bambus",
+            "opening_hours": "Tu-Su 11:30-14:30,17:00-22:00; Mo off",
+            "phone": "+49 711 9077159",
+            "wheelchair": "yes",
+            "wheelchair:description": "Ebenerdig"
+          }
+        },
+        "searchRelevance": 98,
+        "marketName": "Stuttgart",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-07T14:12:15.343Z",
+        "updatedAt": "2026-07-07T14:12:15.343Z",
+        "createdAt": "2026-07-07T14:12:15.343Z"
+      },
+      {
+        "id": "osm-node-251115510",
+        "name": "Batman Kebap",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "",
+        "phone": "+49 711 7776520",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Batman%20Kebap",
+        "latitude": 48.6548353,
+        "longitude": 9.2141646,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "https://www.facebook.com/batmankebap/",
+        "openingHours": "Mo-Fr 11:00-19:30; Sa 11:00-19:00; Su,PH off",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 711 7776520"
+          },
+          "social": {
+            "facebook": "https://www.facebook.com/batmankebap/"
+          },
+          "location": {
+            "latitude": 48.6548353,
+            "longitude": 9.2141646,
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Batman%20Kebap"
+          },
+          "business": {
+            "cuisine": "kebab"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 11:00-19:30; Sa 11:00-19:00; Su,PH off",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 251115510,
+            "osmUrl": "https://www.openstreetmap.org/node/251115510",
+            "rawTags": {
+              "amenity": "fast_food",
+              "contact:facebook": "https://www.facebook.com/batmankebap/",
+              "cuisine": "kebab",
+              "name": "Batman Kebap",
+              "opening_hours": "Mo-Fr 11:00-19:30; Sa 11:00-19:00; Su,PH off",
+              "outdoor_seating": "yes",
+              "phone": "+49 711 7776520",
+              "toilets:wheelchair": "no",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 251115510,
+          "tags": {
+            "amenity": "fast_food",
+            "contact:facebook": "https://www.facebook.com/batmankebap/",
+            "cuisine": "kebab",
+            "name": "Batman Kebap",
+            "opening_hours": "Mo-Fr 11:00-19:30; Sa 11:00-19:00; Su,PH off",
+            "outdoor_seating": "yes",
+            "phone": "+49 711 7776520",
+            "toilets:wheelchair": "no",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 98,
+        "marketName": "Stuttgart",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-07T14:12:15.343Z",
+        "updatedAt": "2026-07-07T14:12:15.343Z",
+        "createdAt": "2026-07-07T14:12:15.343Z"
+      },
+      {
+        "id": "osm-node-37088049",
+        "name": "Bosporus",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "1, Nürtinger Straße, Filderstadt, 70794, DE",
+        "phone": "+49 711 704572",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bosporus%201%2C%20N%C3%BCrtinger%20Stra%C3%9Fe%2C%20Filderstadt%2C%2070794%2C%20DE",
+        "latitude": 48.678581,
+        "longitude": 9.2184345,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Th 09:30-22:30; Fr,Sa 09:30-23:00; Su 11:00-22:30",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 711 704572"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.678581,
+            "longitude": 9.2184345,
+            "address": "1, Nürtinger Straße, Filderstadt, 70794, DE",
+            "houseNumber": "1",
+            "street": "Nürtinger Straße",
+            "city": "Filderstadt",
+            "postcode": "70794",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Bosporus%201%2C%20N%C3%BCrtinger%20Stra%C3%9Fe%2C%20Filderstadt%2C%2070794%2C%20DE"
+          },
+          "business": {
+            "cuisine": "turkish"
+          },
+          "operations": {
+            "openingHours": "Mo-Th 09:30-22:30; Fr,Sa 09:30-23:00; Su 11:00-22:30",
+            "takeaway": "yes",
+            "outdoorSeating": "yes",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 37088049,
+            "osmUrl": "https://www.openstreetmap.org/node/37088049",
+            "rawTags": {
+              "addr:city": "Filderstadt",
+              "addr:country": "DE",
+              "addr:housenumber": "1",
+              "addr:postcode": "70794",
+              "addr:street": "Nürtinger Straße",
+              "addr:suburb": "Bernhausen",
+              "amenity": "fast_food",
+              "check_date": "2025-12-27",
+              "cuisine": "turkish",
+              "drive_through": "no",
+              "highchair": "no",
+              "name": "Bosporus",
+              "opening_hours": "Mo-Th 09:30-22:30; Fr,Sa 09:30-23:00; Su 11:00-22:30",
+              "outdoor_seating": "yes",
+              "phone": "+49 711 704572",
+              "takeaway": "yes",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 37088049,
+          "tags": {
+            "addr:city": "Filderstadt",
+            "addr:country": "DE",
+            "addr:housenumber": "1",
+            "addr:postcode": "70794",
+            "addr:street": "Nürtinger Straße",
+            "addr:suburb": "Bernhausen",
+            "amenity": "fast_food",
+            "check_date": "2025-12-27",
+            "cuisine": "turkish",
+            "drive_through": "no",
+            "highchair": "no",
+            "name": "Bosporus",
+            "opening_hours": "Mo-Th 09:30-22:30; Fr,Sa 09:30-23:00; Su 11:00-22:30",
+            "outdoor_seating": "yes",
+            "phone": "+49 711 704572",
+            "takeaway": "yes",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Stuttgart",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-07T14:12:15.343Z",
+        "updatedAt": "2026-07-07T14:12:15.343Z",
+        "createdAt": "2026-07-07T14:12:15.343Z"
+      },
+      {
+        "id": "osm-node-101457859",
+        "name": "Briem",
+        "category": "Car Dealer",
+        "businessType": "Car Dealer",
+        "address": "87, Stuttgarter Straße, Leinfelden-Echterdingen, 70771, DE",
+        "phone": "+49 711 903620-0",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Briem%2087%2C%20Stuttgarter%20Stra%C3%9Fe%2C%20Leinfelden-Echterdingen%2C%2070771%2C%20DE",
+        "latitude": 48.7021267,
+        "longitude": 9.1404489,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 07:00-18:00; Sa 09:00-13:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 711 903620-0"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.7021267,
+            "longitude": 9.1404489,
+            "address": "87, Stuttgarter Straße, Leinfelden-Echterdingen, 70771, DE",
+            "houseNumber": "87",
+            "street": "Stuttgarter Straße",
+            "city": "Leinfelden-Echterdingen",
+            "postcode": "70771",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Briem%2087%2C%20Stuttgarter%20Stra%C3%9Fe%2C%20Leinfelden-Echterdingen%2C%2070771%2C%20DE"
+          },
+          "business": {
+            "brand": "BMW"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 07:00-18:00; Sa 09:00-13:00",
+            "wheelchair": "yes"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 101457859,
+            "osmUrl": "https://www.openstreetmap.org/node/101457859",
+            "rawTags": {
+              "addr:city": "Leinfelden-Echterdingen",
+              "addr:country": "DE",
+              "addr:housenumber": "87",
+              "addr:postcode": "70771",
+              "addr:street": "Stuttgarter Straße",
+              "brand": "BMW",
+              "brand:wikidata": "Q26678",
+              "contact:phone": "+49 711 903620-0",
+              "name": "Briem",
+              "opening_hours": "Mo-Fr 07:00-18:00; Sa 09:00-13:00",
+              "shop": "car",
+              "wheelchair": "yes"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 101457859,
+          "tags": {
+            "addr:city": "Leinfelden-Echterdingen",
+            "addr:country": "DE",
+            "addr:housenumber": "87",
+            "addr:postcode": "70771",
+            "addr:street": "Stuttgarter Straße",
+            "brand": "BMW",
+            "brand:wikidata": "Q26678",
+            "contact:phone": "+49 711 903620-0",
+            "name": "Briem",
+            "opening_hours": "Mo-Fr 07:00-18:00; Sa 09:00-13:00",
+            "shop": "car",
+            "wheelchair": "yes"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Stuttgart",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-07T14:12:15.343Z",
+        "updatedAt": "2026-07-07T14:12:15.343Z",
+        "createdAt": "2026-07-07T14:12:15.343Z"
+      },
+      {
+        "id": "osm-node-137858862",
+        "name": "Dang - asian cooking",
+        "category": "Restaurant",
+        "businessType": "Restaurant",
+        "address": "75, Haldenrainstraße, Stuttgart, 70437",
+        "phone": "+49 711 50466891",
+        "rating": null,
+        "reviewsCount": 0,
+        "websiteUrl": "",
+        "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Dang%20-%20asian%20cooking%2075%2C%20Haldenrainstra%C3%9Fe%2C%20Stuttgart%2C%2070437",
+        "latitude": 48.830996,
+        "longitude": 9.1859614,
+        "country": "Germany",
+        "countryCode": "DE",
+        "email": "",
+        "social": "",
+        "openingHours": "Mo-Fr 11:30-15:00,17:30-22:00; Sa,Su,PH 12:00-22:00",
+        "details": {
+          "ownerContact": {
+            "publicContactNote": "Owner or direct contact person was not listed in the public map data."
+          },
+          "contact": {
+            "phone": "+49 711 50466891"
+          },
+          "social": {},
+          "location": {
+            "latitude": 48.830996,
+            "longitude": 9.1859614,
+            "address": "75, Haldenrainstraße, Stuttgart, 70437",
+            "houseNumber": "75",
+            "street": "Haldenrainstraße",
+            "city": "Stuttgart",
+            "postcode": "70437",
+            "country": "Germany",
+            "countryCode": "DE",
+            "googleMapsLink": "https://www.google.com/maps/search/?api=1&query=Dang%20-%20asian%20cooking%2075%2C%20Haldenrainstra%C3%9Fe%2C%20Stuttgart%2C%2070437"
+          },
+          "business": {
+            "cuisine": "asian"
+          },
+          "operations": {
+            "openingHours": "Mo-Fr 11:30-15:00,17:30-22:00; Sa,Su,PH 12:00-22:00",
+            "wheelchair": "limited"
+          },
+          "payments": {},
+          "source": {
+            "provider": "OpenStreetMap Overpass",
+            "osmType": "node",
+            "osmId": 137858862,
+            "osmUrl": "https://www.openstreetmap.org/node/137858862",
+            "rawTags": {
+              "addr:city": "Stuttgart",
+              "addr:housenumber": "75",
+              "addr:postcode": "70437",
+              "addr:street": "Haldenrainstraße",
+              "amenity": "restaurant",
+              "contact:phone": "+49 711 50466891",
+              "cuisine": "asian",
+              "name": "Dang - asian cooking",
+              "opening_hours": "Mo-Fr 11:30-15:00,17:30-22:00; Sa,Su,PH 12:00-22:00",
+              "wheelchair": "limited"
+            }
+          }
+        },
+        "source": "openstreetmap_photon",
+        "raw": {
+          "osmType": "node",
+          "osmId": 137858862,
+          "tags": {
+            "addr:city": "Stuttgart",
+            "addr:housenumber": "75",
+            "addr:postcode": "70437",
+            "addr:street": "Haldenrainstraße",
+            "amenity": "restaurant",
+            "contact:phone": "+49 711 50466891",
+            "cuisine": "asian",
+            "name": "Dang - asian cooking",
+            "opening_hours": "Mo-Fr 11:30-15:00,17:30-22:00; Sa,Su,PH 12:00-22:00",
+            "wheelchair": "limited"
+          }
+        },
+        "searchRelevance": 97,
+        "marketName": "Stuttgart",
+        "countryName": "Germany",
+        "audit": {
+          "score": 100,
+          "category": "Very High Opportunity",
+          "checks": {
+            "websiteExists": false,
+            "https": false,
+            "mobileFriendly": false,
+            "seoMetadata": false,
+            "contactForm": false,
+            "socialLinksFound": false,
+            "businessEmailDetected": false,
+            "bookingSystem": false,
+            "outdatedDesign": true
+          },
+          "elapsedMs": 0
+        },
+        "opportunityScore": 100,
+        "opportunityCategory": "Very High Opportunity",
+        "discoveredBy": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "discoveredAt": "2026-07-07T14:12:15.343Z",
+        "updatedAt": "2026-07-07T14:12:15.343Z",
+        "createdAt": "2026-07-07T14:12:15.343Z"
       }
     ],
     "users": [
@@ -10725,7 +11864,7 @@
         "tokenVersion": 1,
         "id": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
         "createdAt": "2026-07-06T21:17:19.807Z",
-        "updatedAt": "2026-07-06T21:17:20.349Z",
+        "updatedAt": "2026-07-07T14:12:21.597Z",
         "uid": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
         "subscription": "trial",
         "planName": "Free Trial",
@@ -10733,11 +11872,11 @@
         "trialSearchLimit": 2,
         "trialLeadLimit": 5,
         "billingStatus": "trial",
-        "trialSearchesUsed": 0,
+        "trialSearchesUsed": 2,
         "entitlements": {
           "billingRequired": true,
           "trial": true,
-          "trialSearchesUsed": 0,
+          "trialSearchesUsed": 2,
           "trialSearchLimit": 2,
           "trialLeadLimit": 5,
           "upgradeRequiredAfterTrial": true
@@ -11196,7 +12335,84 @@
         "id": "0d9d0e76-ddf8-4cc5-9c8a-4195031ae178",
         "createdAt": "2026-07-06T21:15:13.501Z",
         "updatedAt": "2026-07-06T21:15:13.501Z"
+      },
+      {
+        "actor": "dannydanielzzg@gmail.com",
+        "action": "lead_search",
+        "query": {
+          "country": "Germany",
+          "countries": [
+            "Germany"
+          ],
+          "state": "",
+          "city": "",
+          "zip": "",
+          "industry": "restaurants, hotels, boutiques, car_dealers",
+          "keyword": "",
+          "businessTypes": [
+            "restaurants",
+            "hotels",
+            "boutiques",
+            "car_dealers"
+          ],
+          "mapLink": "",
+          "latitude": null,
+          "longitude": null,
+          "radiusMeters": 15000,
+          "limit": 20,
+          "searchDepth": "deep",
+          "leadQuality": "all",
+          "sortBy": "opportunity",
+          "minOpportunityScore": 0,
+          "requireContact": false,
+          "missingWebsiteOnly": false,
+          "bypassCache": false,
+          "refreshSeed": ""
+        },
+        "count": 5,
+        "id": "420fa423-6215-4ffb-8cec-2db0f7ab0d6f",
+        "createdAt": "2026-07-06T22:42:15.637Z",
+        "updatedAt": "2026-07-06T22:42:15.637Z"
+      },
+      {
+        "actor": "dannydanielzzg@gmail.com",
+        "action": "lead_search",
+        "query": {
+          "country": "Germany",
+          "countries": [
+            "Germany"
+          ],
+          "state": "",
+          "city": "",
+          "zip": "",
+          "industry": "restaurants, hotels, boutiques, car_dealers",
+          "keyword": "",
+          "businessTypes": [
+            "restaurants",
+            "hotels",
+            "boutiques",
+            "car_dealers"
+          ],
+          "mapLink": "",
+          "latitude": null,
+          "longitude": null,
+          "radiusMeters": 15000,
+          "limit": 20,
+          "searchDepth": "deep",
+          "leadQuality": "all",
+          "sortBy": "opportunity",
+          "minOpportunityScore": 0,
+          "requireContact": false,
+          "missingWebsiteOnly": false,
+          "bypassCache": false,
+          "refreshSeed": ""
+        },
+        "count": 5,
+        "id": "7d009c02-6753-4f2b-b450-469dc2211453",
+        "createdAt": "2026-07-07T14:12:22.317Z",
+        "updatedAt": "2026-07-07T14:12:22.317Z"
       }
-    ]
+    ],
+    "activities": []
   }
 }

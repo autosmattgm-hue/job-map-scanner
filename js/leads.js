@@ -2307,7 +2307,7 @@ function initAiButtons() {
     const originalText = button.textContent;
     button.disabled = true;
     button.textContent = "Running...";
-    if (output) output.textContent = "Running NVIDIA analysis...";
+    if (output) output.textContent = "Loading analysis...";
 
     try {
       const endpoint = analyze ? "/api/ai/analyze" : "/api/ai/outreach";
