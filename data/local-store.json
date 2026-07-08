@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-07T14:12:22.317Z",
+  "updatedAt": "2026-07-07T14:20:59.126Z",
   "collections": {
     "leads": [
       {
@@ -12413,6 +12413,21 @@
         "updatedAt": "2026-07-07T14:12:22.317Z"
       }
     ],
-    "activities": []
+    "activities": [],
+    "checkoutSessions": [
+      {
+        "userId": "29ff1e1b-8bde-4e5e-b24e-eeae455a1b48",
+        "email": "dannydanielzzg@gmail.com",
+        "provider": "paypal",
+        "plan": "growth_plus",
+        "status": "pending",
+        "paymentLink": "https://www.paypal.com/ncp/payment/YVE74UL365V8W",
+        "cancelUrl": "http://localhost:3000/pricing.html?checkout=cancelled&plan=growth_plus",
+        "id": "ada472dd-6e04-44b0-8356-3aa8c03c92d2",
+        "createdAt": "2026-07-07T14:20:58.568Z",
+        "updatedAt": "2026-07-07T14:20:59.126Z",
+        "returnUrl": "http://localhost:3000/billing-success.html?provider=paypal&plan=growth_plus&session=ada472dd-6e04-44b0-8356-3aa8c03c92d2"
+      }
+    ]
   }
 }
